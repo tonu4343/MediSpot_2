@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediSpot | 医療のスポット求人マッチング</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#">
+      <span class="brand-mark">+</span>
+      <span>
+        <strong>MediSpot</strong>
+        <small>メディスポット</small>
+      </span>
+    </a>
+    <nav class="nav-links" aria-label="メインナビゲーション">
+      <a href="#jobs">人気の求人</a>
+      <a href="#professions">職種から探す</a>
+      <a href="#flow">ご利用の流れ</a>
+      <a href="#pricing">料金について</a>
+      <a href="#faq">よくある質問</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-outline" href="#">ログイン</a>
+      <a class="btn btn-green" href="#">会員登録（無料）</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">医療資格者と医療機関をつなぐ</p>
+        <h1>医療のスポット求人を、<br>もっと身近に。</h1>
+        <p class="hero-copy">
+          看護師・検査技師・リハビリ職など、医療資格者と医療機関を成功報酬型でつなぐマッチングサービス。
+        </p>
+
+        <form class="search-panel" aria-label="求人検索">
+          <label>
+            <span>職種</span>
+            <select>
+              <option>職種を選択</option>
+              <option>看護師</option>
+              <option>臨床検査技師</option>
+              <option>放射線技師</option>
+            </select>
+          </label>
+          <label>
+            <span>勤務地</span>
+            <select>
+              <option>勤務地を選択</option>
+              <option>東京都</option>
+              <option>神奈川県</option>
+              <option>大阪府</option>
+            </select>
+          </label>
+          <label>
+            <span>雇用形態</span>
+            <select>
+              <option>雇用形態を選択</option>
+              <option>スポット</option>
+              <option>業務委託</option>
+            </select>
+          </label>
+          <button class="btn btn-search" type="button">求人を探す</button>
+          <div class="chips" aria-label="人気のキーワード">
+            <span>人気のキーワード</span>
+            <a href="#">スポット</a>
+            <a href="#">業務委託</a>
+            <a href="#">看護師</a>
+            <a href="#">検査技師</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="hero-visual" aria-label="医療スタッフのイメージ">
+        <img src="assets/hero-medical-staff.png" alt="医療スタッフのイメージ">
+        <div class="staff-card staff-card-main">
+          <div class="avatar avatar-nurse"></div>
+          
+        </div>
+        <div class="staff-card staff-card-sub">
+          <div class="avatar avatar-doctor"></div>
+          
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="サービスの特徴">
+      <div>
+        <span class="trust-icon">¥</span>
+        <strong>掲載無料</strong>
+        <p>採用決定まで求人掲載は無料</p>
+      </div>
+      <div>
+        <span class="trust-icon">✓</span>
+        <strong>安心の本人確認</strong>
+        <p>資格・身分証で安心のマッチング</p>
+      </div>
+      <div>
+        <span class="trust-icon">◎</span>
+        <strong>成功報酬型</strong>
+        <p>採用決定時のみ費用が発生</p>
+      </div>
+    </section>
+
+    <section class="section" id="jobs">
+      <div class="section-heading centered">
+        <h2>人気の求人</h2>
+        <a href="#">もっと見る</a>
+      </div>
+      <div class="job-grid">
+        <article class="job-card">
+          <div class="job-image nurse"></div>
+          <div class="job-body">
+            <button class="heart" aria-label="お気に入り">♡</button>
+            <span class="badge">スポット</span>
+            <h3>スポット看護師</h3>
+            <p class="location">東京都 新宿区</p>
+            <p class="salary">日給 18,000円〜22,000円</p>
+            <div class="tags"><span>スポット</span><span>看護師</span></div>
+          </div>
+        </article>
+        <article class="job-card">
+          <div class="job-image lab"></div>
+          <div class="job-body">
+            <button class="heart" aria-label="お気に入り">♡</button>
+            <span class="badge">業務委託</span>
+            <h3>臨床検査技師</h3>
+            <p class="location">神奈川県 横浜市</p>
+            <p class="salary">日給 16,000円〜20,000円</p>
+            <div class="tags"><span>スポット</span><span>臨床検査技師</span></div>
+          </div>
+        </article>
+        <article class="job-card">
+          <div class="job-image radiology"></div>
+          <div class="job-body">
+            <button class="heart" aria-label="お気に入り">♡</button>
+            <span class="badge">スポット</span>
+            <h3>放射線技師</h3>
+            <p class="location">大阪府 大阪市</p>
+            <p class="salary">日給 16,000円〜20,000円</p>
+            <div class="tags"><span>スポット</span><span>放射線技師</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section profession-section" id="professions">
+      <div class="section-heading centered">
+        <h2>選べる7つの医療職種</h2>
+      </div>
+      <div class="profession-grid">
+        <article><span>⚕</span><strong>看護師</strong></article>
+        <article><span>⌕</span><strong>臨床検査技師</strong></article>
+        <article><span>▣</span><strong>放射線技師</strong></article>
+        <article><span>◌</span><strong>理学療法士</strong></article>
+        <article><span>✋</span><strong>作業療法士</strong></article>
+        <article><span>☊</span><strong>言語聴覚士</strong></article>
+        <article><span>♡</span><strong>ヘルパー</strong></article>
+      </div>
+    </section>
+
+    <section class="flow-section" id="flow">
+      <div class="flow-block seekers">
+        <div class="flow-copy">
+          <h2>求職者の方へ</h2>
+          <p>資格や希望条件を登録して、あなたに合う医療求人へすぐに応募できます。</p>
+        </div>
+        <div class="steps">
+          <article><small>STEP 01</small><span>▤</span><h3>プロフィール登録</h3><p>資格や経験、希望条件を登録します。</p></article>
+          <article><small>STEP 02</small><span>⌕</span><h3>求人検索・応募</h3><p>条件に合う求人を検索して応募します。</p></article>
+          <article><small>STEP 03</small><span>☏</span><h3>成立後チャット</h3><p>詳細確認や勤務調整をチャットで行えます。</p></article>
+        </div>
+        <a class="wide-cta" href="#">新規会員登録（無料）</a>
+      </div>
+
+      <div class="flow-block employers" id="pricing">
+        <div class="flow-copy">
+          <h2>求人者の方へ</h2>
+          <p>必要な人材を、必要な時に。掲載無料で応募者の選考まで進められます。</p>
+        </div>
+        <div class="steps">
+          <article><small>STEP 01</small><span>¥</span><h3>掲載無料</h3><p>求人情報の掲載は無料です。</p></article>
+          <article><small>STEP 02</small><span>◎</span><h3>応募者選考</h3><p>応募者プロフィールを確認し選考します。</p></article>
+          <article><small>STEP 03</small><span>🤝</span><h3>採用決定時のみ成功報酬</h3><p>採用決定後にのみ費用が発生します。</p></article>
+        </div>
+        <div class="fee-badge">成功報酬<br><strong>55,000円</strong><br><span>税込</span></div>
+        <a class="wide-cta" href="#">求人を掲載する（無料）</a>
+      </div>
+    </section>
+
+    <section class="section stories">
+      <div class="section-heading centered">
+        <h2>マッチング事例</h2>
+        <a href="#">もっと見る</a>
+      </div>
+      <div class="story-grid">
+        <article>
+          <div class="mini-avatar story-nurse"></div>
+          <span>看護師 ／ 30代</span>
+          <h3>子育てと両立しながら柔軟に働けています</h3>
+          <p>単発でも自分の都合に合わせて働けるので、家庭とのバランスが取りやすいです。</p>
+        </article>
+        <article>
+          <div class="mini-avatar story-lab"></div>
+          <span>臨床検査技師 ／ 20代</span>
+          <h3>専門性を活かして効率よく収入アップ</h3>
+          <p>空いた時間に検査センターの仕事へ応募でき、とても助かっています。</p>
+        </article>
+        <article>
+          <div class="mini-avatar story-pt"></div>
+          <span>理学療法士 ／ 30代</span>
+          <h3>人手が足りない時にすぐ来てもらえます</h3>
+          <p>急な欠員にも対応しやすく、負担軽減につながりました。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq">
+      <div class="section-heading centered">
+        <h2>よくある質問</h2>
+      </div>
+      <details>
+        <summary>求人掲載は無料ですか？</summary>
+        <p>はい。掲載は無料で、採用決定時のみ成功報酬が発生します。</p>
+      </details>
+      <details>
+        <summary>応募後の連絡はどうしますか？</summary>
+        <p>マッチング成立後、専用チャットで連絡や勤務条件の確認ができます。</p>
+      </details>
+      <details>
+        <summary>どの職種に対応していますか？</summary>
+        <p>看護師、臨床検査技師、放射線技師、理学療法士、作業療法士、言語聴覚士、ヘルパーに対応しています。</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <a class="brand inverse" href="#">
+        <span class="brand-mark">+</span>
+        <span>
+          <strong>MediSpot</strong>
+          <small>メディスポット</small>
+        </span>
+      </a>
+      <p>医療資格者と医療機関をつなぐスポット求人マッチングサービス</p>
+      <div class="socials" aria-label="SNSリンク">
+        <a href="#">f</a>
+        <a href="#">x</a>
+        <a href="#">m</a>
+      </div>
+    </div>
+    <div>
+      <h3>求職者向け</h3>
+      <a href="#">求人を探す</a>
+      <a href="#">職種から探す</a>
+      <a href="#">ご利用の流れ</a>
+      <a href="#">よくある質問</a>
+    </div>
+    <div>
+      <h3>求人者向け</h3>
+      <a href="#">求人を掲載する</a>
+      <a href="#">料金について</a>
+      <a href="#">ご利用の流れ</a>
+      <a href="#">よくある質問</a>
+    </div>
+    <div>
+      <h3>会社情報</h3>
+      <a href="#">運営会社</a>
+      <a href="#">プライバシーポリシー</a>
+      <a href="#">利用規約</a>
+      <a href="#">お問い合わせ</a>
+    </div>
+    <div class="footer-cta">
+      <strong>まずは無料で会員登録</strong>
+      <span>すぐに求人検索・応募ができます</span>
+      <a class="btn btn-green" href="#">新規会員登録（無料）</a>
+    </div>
+    <p class="copyright">© 2024 MediSpot. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
