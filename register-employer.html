@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>求人者登録 | MediSpot</title><style>
+    :root { --blue:#005bac; --blue-dark:#003f7d; --green:#21b761; --green-dark:#10964d; --ink:#08335f; --muted:#64798a; --line:#d8e8f4; --field:#cbdbea; --danger:#e60012; --shadow:0 12px 30px rgba(0,63,125,.1); --radius:8px; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:linear-gradient(180deg,#f3f9ff 0%,#fff 42%,#f7fbff 100%); font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,sans-serif; line-height:1.65; overflow-x:hidden; }
+    a { color:inherit; text-decoration:none; } button,input,select,textarea { font:inherit; }
+    .site-header { position:sticky; top:0; z-index:20; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); box-shadow:0 2px 16px rgba(0,63,125,.08); backdrop-filter:blur(12px); }
+    .header-inner { display:flex; align-items:center; justify-content:space-between; gap:22px; width:min(1180px,calc(100% - 48px)); min-height:64px; margin:0 auto; }
+    .brand { display:inline-flex; align-items:center; gap:10px; flex:0 0 auto; color:var(--blue); font-weight:900; }
+    .brand-mark { position:relative; width:38px; height:38px; border-radius:8px; }
+    .brand-mark::before,.brand-mark::after,.brand-mark span::before,.brand-mark span::after { content:""; position:absolute; background:#fff; border:4px solid var(--blue); }
+    .brand-mark::before { left:13px; top:1px; width:12px; height:36px; border-radius:4px; }
+    .brand-mark::after { left:1px; top:13px; width:36px; height:12px; border-radius:4px; }
+    .brand-mark span::before { left:15px; top:3px; z-index:2; width:8px; height:32px; border:0; background:#fff; }
+    .brand-mark span::after { left:3px; top:15px; z-index:3; width:32px; height:8px; border:0; background:var(--green); }
+    .brand strong { display:block; font-size:24px; line-height:1; letter-spacing:0; } .brand small { display:block; margin-top:3px; color:var(--blue-dark); font-size:10px; line-height:1; }
+    .site-nav { display:flex; align-items:center; justify-content:flex-end; gap:clamp(14px,2vw,30px); color:var(--blue-dark); font-size:14px; font-weight:800; white-space:nowrap; }
+    .site-nav a { display:inline-flex; align-items:center; min-height:38px; padding:0 4px; border-radius:var(--radius); } .site-nav a.active { padding:0 18px; color:var(--blue); background:#edf6ff; font-weight:900; }
+    .page { width:min(820px,calc(100% - 40px)); margin:0 auto; padding:42px 0 58px; }
+    .back-link { display:inline-flex; margin-bottom:16px; color:var(--blue); font-size:13px; font-weight:900; }
+    .page-title { margin:0; color:var(--blue-dark); font-size:clamp(28px,4vw,36px); line-height:1.25; font-weight:900; letter-spacing:0; }
+    .page-title::after { content:""; display:block; width:68px; height:4px; margin-top:10px; background:var(--blue); border-radius:999px; }
+    .page-lead { margin:14px 0 28px; color:var(--muted); font-size:16px; font-weight:700; }
+    .form-card { padding:30px 34px 34px; background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); }
+    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 18px; }
+    .field { margin-bottom:22px; } .field.full { grid-column:1/-1; }
+    .field label { display:block; margin-bottom:8px; color:#061a30; font-size:16px; font-weight:900; line-height:1.35; }
+    .req { margin-left:5px; color:var(--danger); font-size:13px; font-weight:900; }
+    .field input,.field select,.field textarea { width:100%; min-height:52px; padding:0 16px; color:#0f2140; background:#fff; border:1px solid var(--field); border-radius:8px; outline:none; font-size:15px; font-weight:700; }
+    .field textarea { min-height:104px; padding-top:12px; resize:vertical; }
+    .field input::placeholder,.field textarea::placeholder { color:#748293; }
+    .field input:focus,.field select:focus,.field textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(0,91,172,.1); }
+    .hint { margin:8px 0 0; color:#58677b; font-size:13px; font-weight:700; }
+    .submit-btn { display:inline-flex; align-items:center; justify-content:center; width:100%; min-height:54px; margin-top:2px; color:#fff; background:linear-gradient(180deg,#0b6fc8,var(--blue)); border:0; border-radius:8px; font-size:18px; font-weight:900; cursor:pointer; box-shadow:0 10px 22px rgba(0,91,172,.2); }
+    .submit-btn.employer { background:linear-gradient(180deg,#28c975,var(--green)); box-shadow:0 10px 22px rgba(33,183,97,.22); }
+    .notice { display:none; margin-top:16px; padding:12px 14px; color:#1e3a8a; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; font-size:13px; font-weight:800; } .notice.show { display:block; }
+    @media (max-width:760px) { .header-inner { flex-wrap:wrap; width:calc(100% - 32px); padding:12px 0; } .site-nav { width:100%; justify-content:flex-start; gap:16px; overflow-x:auto; padding-bottom:2px; font-size:13px; } .page { width:calc(100% - 32px); padding-top:32px; } .form-card { padding:24px 18px; } .form-grid { grid-template-columns:1fr; } .field { grid-column:1/-1; } }
+    @media (max-width:430px) { .brand strong { font-size:21px; } .brand small { font-size:9px; } .brand-mark { transform:scale(.9); transform-origin:left center; } .page-title { font-size:27px; } .page-lead { font-size:14px; } .field label { font-size:15px; } .field input,.field select { min-height:50px; font-size:15px; } .submit-btn { min-height:52px; font-size:16px; } }
+</style></head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="index.html" aria-label="MediSpot ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span><strong>MediSpot</strong><small>メディスポット</small></span></a><nav class="site-nav" aria-label="メインナビゲーション"><a href="index.html">サービス紹介</a><a class="active" href="register.html">新規会員登録</a><a href="login.html">ログイン</a></nav></div></header>
+  <main class="page">
+    <a class="back-link" href="register.html">‹ 登録種別を選び直す</a>
+    <h1 class="page-title">求人者登録</h1>
+    <p class="page-lead">医療機関向けの登録フォームです。施設情報とご担当者情報を入力してください。</p>
+    <form class="form-card" action="#" method="post" id="registerForm">
+      <input type="hidden" name="role" value="employer">
+      <div class="form-grid">
+        <div class="field"><label for="name">ご担当者名 <span class="req">必須</span></label><input id="name" name="name" type="text" placeholder="例）佐藤 花子" required></div>
+        <div class="field"><label for="position">部署・役職</label><input id="position" name="position" type="text" placeholder="例）採用担当"></div>
+        <div class="field full"><label for="facilityName">医療機関名 <span class="req">必須</span></label><input id="facilityName" name="facilityName" type="text" placeholder="例）ブランチ総合クリニック" required></div>
+        <div class="field"><label for="facilityType">施設区分</label><select id="facilityType" name="facilityType"><option>病院</option><option>クリニック</option><option>薬局</option><option>介護施設</option><option>健診センター</option><option>その他</option></select></div>
+        <div class="field"><label for="phone">電話番号</label><input id="phone" name="phone" type="tel" placeholder="例）03-1234-5678"></div>
+        <div class="field full"><label for="address">所在地</label><input id="address" name="address" type="text" placeholder="例）東京都世田谷区〇〇1-2-3"></div>
+        <div class="field"><label for="email">メールアドレス <span class="req">必須</span></label><input id="email" name="email" type="email" placeholder="例）example@example.com" required></div>
+        <div class="field"><label for="password">パスワード <span class="req">必須</span></label><input id="password" name="password" type="password" placeholder="8文字以上" minlength="8" required></div>
+        <div class="field full"><label for="note">募集予定・相談内容</label><textarea id="note" name="note" placeholder="例）健診シーズンの看護師スポット募集を予定しています。"></textarea><p class="hint">※ プロトタイプのため実際の個人情報やパスワードは入力しないでください。</p></div>
+      </div>
+      <button class="submit-btn employer" type="submit">この内容で登録する</button>
+      <p class="notice" id="notice">登録画面の見本です。実際の保存処理はまだ接続されていません。</p>
+    </form>
+  </main>
+  <script>document.querySelector('#registerForm').addEventListener('submit',e=>{e.preventDefault();document.querySelector('#notice').classList.add('show');});</script>
+</body>
+</html>
