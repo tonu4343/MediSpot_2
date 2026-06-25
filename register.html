@@ -1,0 +1,483 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新規会員登録 | MediSpot</title>
+  <style>
+    :root {
+      --blue: #005bac;
+      --blue-dark: #003f7d;
+      --green: #21b761;
+      --green-dark: #10964d;
+      --sky: #eaf7ff;
+      --ink: #08335f;
+      --muted: #64798a;
+      --line: #d8e8f4;
+      --field: #cbdbea;
+      --danger: #e60012;
+      --shadow: 0 12px 30px rgba(0, 63, 125, 0.1);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f3f9ff 0%, #ffffff 42%, #f7fbff 100%);
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, system-ui, sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 2px 16px rgba(0, 63, 125, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      width: min(1180px, calc(100% - 48px));
+      min-height: 64px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+    }
+    .brand-mark::before,
+    .brand-mark::after,
+    .brand-mark span::before,
+    .brand-mark span::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border: 4px solid var(--blue);
+    }
+    .brand-mark::before {
+      left: 13px;
+      top: 1px;
+      width: 12px;
+      height: 36px;
+      border-radius: 4px;
+    }
+    .brand-mark::after {
+      left: 1px;
+      top: 13px;
+      width: 36px;
+      height: 12px;
+      border-radius: 4px;
+    }
+    .brand-mark span::before {
+      left: 15px;
+      top: 3px;
+      z-index: 2;
+      width: 8px;
+      height: 32px;
+      border: 0;
+      background: #fff;
+    }
+    .brand-mark span::after {
+      left: 3px;
+      top: 15px;
+      z-index: 3;
+      width: 32px;
+      height: 8px;
+      border: 0;
+      background: var(--green);
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    .brand small {
+      display: block;
+      margin-top: 3px;
+      color: var(--blue-dark);
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: clamp(14px, 2vw, 30px);
+      color: var(--blue-dark);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .site-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 4px;
+      border-radius: var(--radius);
+    }
+    .site-nav a.active {
+      padding: 0 18px;
+      color: var(--blue);
+      background: #edf6ff;
+      font-weight: 900;
+    }
+
+    .page {
+      position: relative;
+      width: min(820px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 46px 0 58px;
+    }
+    .page::before {
+      content: "";
+      position: absolute;
+      top: 24px;
+      right: -180px;
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(33,183,97,0.12), rgba(33,183,97,0) 68%);
+      pointer-events: none;
+    }
+
+    .page-title {
+      position: relative;
+      margin: 0 0 6px;
+      color: var(--blue-dark);
+      font-size: clamp(28px, 4vw, 36px);
+      line-height: 1.25;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    .page-title::after {
+      content: "";
+      display: block;
+      width: 68px;
+      height: 4px;
+      margin-top: 10px;
+      background: var(--blue);
+      border-radius: 999px;
+    }
+    .page-lead {
+      margin: 14px 0 28px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .role-select {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+    .role-card {
+      display: grid;
+      place-items: center;
+      min-height: 170px;
+      padding: 22px 24px;
+      text-align: center;
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 8px 18px rgba(0, 63, 125, 0.06);
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .role-card:hover { transform: translateY(-1px); }
+    .role-card.selected.seeker {
+      background: #edf6ff;
+      border-color: var(--blue);
+      box-shadow: 0 12px 28px rgba(0, 91, 172, 0.13);
+    }
+    .role-card.selected.employer {
+      background: #effbf5;
+      border-color: var(--green-dark);
+      box-shadow: 0 12px 28px rgba(33, 183, 97, 0.13);
+    }
+    .role-card .icon {
+      margin-bottom: 10px;
+      font-size: 34px;
+      line-height: 1;
+    }
+    .role-card h2 {
+      margin: 0 0 5px;
+      color: #061a30;
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+    .role-card p {
+      max-width: 310px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .form-card {
+      position: relative;
+      padding: 30px 34px 34px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .field { margin-bottom: 22px; }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #061a30;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+    .req {
+      margin-left: 5px;
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .field input,
+    .field select {
+      width: 100%;
+      height: 52px;
+      padding: 0 16px;
+      color: #0f2140;
+      background: #fff;
+      border: 1px solid var(--field);
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .field input::placeholder { color: #748293; }
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 91, 172, 0.1);
+    }
+    .hint {
+      margin: 8px 0 0;
+      color: #58677b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 54px;
+      margin-top: 2px;
+      color: #fff;
+      background: linear-gradient(180deg, #0b6fc8, var(--blue));
+      border: 0;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0, 91, 172, 0.2);
+    }
+    .submit-btn.employer {
+      background: linear-gradient(180deg, #28c975, var(--green));
+      box-shadow: 0 10px 22px rgba(33, 183, 97, 0.22);
+    }
+    .submit-btn:hover { filter: brightness(0.98); }
+    .hidden { display: none; }
+
+    @media (max-width: 760px) {
+      .header-inner {
+        flex-wrap: wrap;
+        width: calc(100% - 32px);
+        padding: 12px 0;
+      }
+      .site-nav {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 16px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        font-size: 13px;
+      }
+      .page {
+        width: calc(100% - 32px);
+        padding-top: 32px;
+      }
+      .role-select { grid-template-columns: 1fr; gap: 14px; }
+      .role-card { min-height: 150px; }
+      .form-card { padding: 24px 18px; }
+    }
+
+    @media (max-width: 430px) {
+      .brand strong { font-size: 21px; }
+      .brand small { font-size: 9px; }
+      .brand-mark { transform: scale(0.9); transform-origin: left center; }
+      .page-title { font-size: 27px; }
+      .page-lead { font-size: 14px; }
+      .role-card h2 { font-size: 20px; }
+      .role-card p { font-size: 13px; }
+      .field label { font-size: 15px; }
+      .field input,
+      .field select { height: 50px; font-size: 15px; }
+      .submit-btn { min-height: 52px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="MediSpot ホーム">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span><strong>MediSpot</strong><small>メディスポット</small></span>
+      </a>
+      <nav class="site-nav" aria-label="メインナビゲーション">
+        <a href="index.html">サービス紹介</a>
+        <a class="active" href="register.html">新規会員登録</a>
+        <a href="login.html">ログイン</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <h1 class="page-title">新規会員登録</h1>
+    <p class="page-lead">登録種別を選択して、必要事項を入力してください。</p>
+
+    <section class="role-select" aria-label="登録種別">
+      <button class="role-card seeker selected" type="button" data-role="seeker" aria-pressed="true">
+        <span class="icon" aria-hidden="true">👩‍⚕️</span>
+        <span>
+          <h2>求職者として登録</h2>
+          <p>医療資格者（看護師・検査技師・リハビリ職など）</p>
+        </span>
+      </button>
+      <button class="role-card employer" type="button" data-role="employer" aria-pressed="false">
+        <span class="icon" aria-hidden="true">🏥</span>
+        <span>
+          <h2>求人者として登録</h2>
+          <p>医療機関（病院・クリニック・薬局 など）</p>
+        </span>
+      </button>
+    </section>
+
+    <form class="form-card" action="#" method="post">
+      <input type="hidden" name="role" id="roleInput" value="seeker">
+
+      <div class="field">
+        <label for="name">お名前（ご担当者名） <span class="req">必須</span></label>
+        <input id="name" name="name" type="text" placeholder="例）佐藤 花子" required>
+      </div>
+
+      <div class="field seeker-field">
+        <label for="license">保有資格（職種） <span class="req">必須</span></label>
+        <select id="license" name="license">
+          <option>看護師</option>
+          <option>臨床検査技師</option>
+          <option>放射線技師</option>
+          <option>理学療法士</option>
+          <option>作業療法士</option>
+          <option>言語聴覚士</option>
+          <option>ヘルパー</option>
+        </select>
+      </div>
+
+      <div class="field employer-field hidden">
+        <label for="facilityName">医療機関名 <span class="req">必須</span></label>
+        <input id="facilityName" name="facilityName" type="text" placeholder="例）ブランチ総合クリニック">
+      </div>
+
+      <div class="field employer-field hidden">
+        <label for="facilityType">施設区分</label>
+        <select id="facilityType" name="facilityType">
+          <option>病院</option>
+          <option>クリニック</option>
+          <option>薬局</option>
+          <option>介護施設</option>
+          <option>健診センター</option>
+          <option>その他</option>
+        </select>
+      </div>
+
+      <div class="field employer-field hidden">
+        <label for="address">所在地</label>
+        <input id="address" name="address" type="text" placeholder="例）東京都世田谷区〇〇1-2-3">
+      </div>
+
+      <div class="field">
+        <label for="email">メールアドレス <span class="req">必須</span></label>
+        <input id="email" name="email" type="email" placeholder="例）example@example.com" required>
+      </div>
+
+      <div class="field">
+        <label for="password">パスワード <span class="req">必須</span></label>
+        <input id="password" name="password" type="password" placeholder="8文字以上" minlength="8" required>
+        <p class="hint">※ プロトタイプのためパスワードは平文でブラウザ内に保存されます。実際のパスワードを使用しないでください。</p>
+      </div>
+
+      <button class="submit-btn" type="submit">この内容で登録する</button>
+    </form>
+  </main>
+
+  <script>
+    const roleCards = document.querySelectorAll('.role-card');
+    const roleInput = document.querySelector('#roleInput');
+    const seekerFields = document.querySelectorAll('.seeker-field');
+    const employerFields = document.querySelectorAll('.employer-field');
+    const submitBtn = document.querySelector('.submit-btn');
+    const license = document.querySelector('#license');
+    const facilityName = document.querySelector('#facilityName');
+
+    function setRole(role) {
+      roleCards.forEach((card) => {
+        const active = card.dataset.role === role;
+        card.classList.toggle('selected', active);
+        card.setAttribute('aria-pressed', String(active));
+      });
+
+      roleInput.value = role;
+      const isEmployer = role === 'employer';
+
+      seekerFields.forEach((field) => field.classList.toggle('hidden', isEmployer));
+      employerFields.forEach((field) => field.classList.toggle('hidden', !isEmployer));
+
+      license.required = !isEmployer;
+      facilityName.required = isEmployer;
+      submitBtn.classList.toggle('employer', isEmployer);
+    }
+
+    roleCards.forEach((card) => {
+      card.addEventListener('click', () => setRole(card.dataset.role));
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    setRole(params.get('role') === 'employer' ? 'employer' : 'seeker');
+  </script>
+</body>
+</html>
