@@ -1170,4 +1170,65 @@ body {
     font-size: 20px;
   }
 }
+/* Hero audience shortcuts */
+.hero-audience {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 2px;
+  border-top: 1px solid rgba(216, 232, 244, 0.72);
+}
+
+.hero-audience > span {
+  color: var(--blue-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.audience-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.seeker-link {
+  color: var(--blue);
+  background: #f4fbff;
+  border: 1px solid #acd3f1;
+}
+
+.employer-link {
+  color: var(--green-dark);
+  background: #f2fff7;
+  border: 1px solid #86d9ab;
+}
+
+.audience-link::after {
+  content: "›";
+  margin-left: 8px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .hero-audience {
+    align-items: stretch;
+  }
+
+  .hero-audience > span {
+    flex-basis: 100%;
+  }
+
+  .audience-link {
+    flex: 1 1 150px;
+  }
+}
 
