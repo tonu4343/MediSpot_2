@@ -1709,3 +1709,33 @@ body {
     font-size: 20px;
   }
 }
+
+/* Show full role-section photos without cropping */
+.seeker-single-photo {
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+}
+
+.seeker-single-photo img {
+  object-fit: contain;
+  object-position: center bottom;
+  padding: 0;
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+}
+
+.seeker-single-photo::after {
+  background: linear-gradient(180deg, rgba(0,91,172,0) 62%, rgba(0,63,125,0.34) 100%);
+}
+
+.role-employer .role-visual img {
+  object-fit: contain;
+  object-position: center center;
+  padding: 0;
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+}
+
+@media (max-width: 640px) {
+  .role-employer .role-visual img {
+    object-fit: contain;
+    object-position: center center;
+  }
+}
