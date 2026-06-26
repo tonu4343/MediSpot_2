@@ -1,64 +1,477 @@
 ﻿<!DOCTYPE html>
 <html lang="ja">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>求職者登録 | MediSpot</title><style>
-    :root { --blue:#005bac; --blue-dark:#003f7d; --green:#21b761; --green-dark:#10964d; --ink:#08335f; --muted:#64798a; --line:#d8e8f4; --field:#cbdbea; --danger:#e60012; --shadow:0 12px 30px rgba(0,63,125,.1); --radius:8px; }
-    * { box-sizing:border-box; }
-    body { margin:0; color:var(--ink); background:linear-gradient(180deg,#f3f9ff 0%,#fff 42%,#f7fbff 100%); font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,system-ui,sans-serif; line-height:1.65; overflow-x:hidden; }
-    a { color:inherit; text-decoration:none; } button,input,select,textarea { font:inherit; }
-    .site-header { position:sticky; top:0; z-index:20; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); box-shadow:0 2px 16px rgba(0,63,125,.08); backdrop-filter:blur(12px); }
-    .header-inner { display:flex; align-items:center; justify-content:space-between; gap:22px; width:min(1180px,calc(100% - 48px)); min-height:64px; margin:0 auto; }
-    .brand { display:inline-flex; align-items:center; gap:10px; flex:0 0 auto; color:var(--blue); font-weight:900; }
-    .brand-mark { position:relative; width:38px; height:38px; border-radius:8px; }
-    .brand-mark::before,.brand-mark::after,.brand-mark span::before,.brand-mark span::after { content:""; position:absolute; background:#fff; border:4px solid var(--blue); }
-    .brand-mark::before { left:13px; top:1px; width:12px; height:36px; border-radius:4px; }
-    .brand-mark::after { left:1px; top:13px; width:36px; height:12px; border-radius:4px; }
-    .brand-mark span::before { left:15px; top:3px; z-index:2; width:8px; height:32px; border:0; background:#fff; }
-    .brand-mark span::after { left:3px; top:15px; z-index:3; width:32px; height:8px; border:0; background:var(--green); }
-    .brand strong { display:block; font-size:24px; line-height:1; letter-spacing:0; } .brand small { display:block; margin-top:3px; color:var(--blue-dark); font-size:10px; line-height:1; }
-    .site-nav { display:flex; align-items:center; justify-content:flex-end; gap:clamp(14px,2vw,30px); color:var(--blue-dark); font-size:14px; font-weight:800; white-space:nowrap; }
-    .site-nav a { display:inline-flex; align-items:center; min-height:38px; padding:0 4px; border-radius:var(--radius); } .site-nav a.active { padding:0 18px; color:var(--blue); background:#edf6ff; font-weight:900; }
-    .page { width:min(820px,calc(100% - 40px)); margin:0 auto; padding:42px 0 58px; }
-    .back-link { display:inline-flex; margin-bottom:16px; color:var(--blue); font-size:13px; font-weight:900; }
-    .page-title { margin:0; color:var(--blue-dark); font-size:clamp(28px,4vw,36px); line-height:1.25; font-weight:900; letter-spacing:0; }
-    .page-title::after { content:""; display:block; width:68px; height:4px; margin-top:10px; background:var(--blue); border-radius:999px; }
-    .page-lead { margin:14px 0 28px; color:var(--muted); font-size:16px; font-weight:700; }
-    .form-card { padding:30px 34px 34px; background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); }
-    .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 18px; }
-    .field { margin-bottom:22px; } .field.full { grid-column:1/-1; }
-    .field label { display:block; margin-bottom:8px; color:#061a30; font-size:16px; font-weight:900; line-height:1.35; }
-    .req { margin-left:5px; color:var(--danger); font-size:13px; font-weight:900; }
-    .field input,.field select,.field textarea { width:100%; min-height:52px; padding:0 16px; color:#0f2140; background:#fff; border:1px solid var(--field); border-radius:8px; outline:none; font-size:15px; font-weight:700; }
-    .field textarea { min-height:104px; padding-top:12px; resize:vertical; }
-    .field input::placeholder,.field textarea::placeholder { color:#748293; }
-    .field input:focus,.field select:focus,.field textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(0,91,172,.1); }
-    .hint { margin:8px 0 0; color:#58677b; font-size:13px; font-weight:700; }
-    .submit-btn { display:inline-flex; align-items:center; justify-content:center; width:100%; min-height:54px; margin-top:2px; color:#fff; background:linear-gradient(180deg,#0b6fc8,var(--blue)); border:0; border-radius:8px; font-size:18px; font-weight:900; cursor:pointer; box-shadow:0 10px 22px rgba(0,91,172,.2); }
-    .submit-btn.employer { background:linear-gradient(180deg,#28c975,var(--green)); box-shadow:0 10px 22px rgba(33,183,97,.22); }
-    .notice { display:none; margin-top:16px; padding:12px 14px; color:#1e3a8a; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; font-size:13px; font-weight:800; } .notice.show { display:block; }
-    @media (max-width:760px) { .header-inner { flex-wrap:wrap; width:calc(100% - 32px); padding:12px 0; } .site-nav { width:100%; justify-content:flex-start; gap:16px; overflow-x:auto; padding-bottom:2px; font-size:13px; } .page { width:calc(100% - 32px); padding-top:32px; } .form-card { padding:24px 18px; } .form-grid { grid-template-columns:1fr; } .field { grid-column:1/-1; } }
-    @media (max-width:430px) { .brand strong { font-size:21px; } .brand small { font-size:9px; } .brand-mark { transform:scale(.9); transform-origin:left center; } .page-title { font-size:27px; } .page-lead { font-size:14px; } .field label { font-size:15px; } .field input,.field select { min-height:50px; font-size:15px; } .submit-btn { min-height:52px; font-size:16px; } }
-</style></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求職者登録 | MediSpot</title>
+  <style>
+    :root {
+      --blue: #005bac;
+      --blue-2: #0b6fc8;
+      --blue-dark: #003f7d;
+      --green: #21b761;
+      --green-dark: #10964d;
+      --ink: #08335f;
+      --muted: #64798a;
+      --line: #d8e8f4;
+      --field: #cbdbea;
+      --danger: #e60012;
+      --bg: #f3f9ff;
+      --shadow: 0 12px 30px rgba(0, 63, 125, 0.1);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f3f9ff 0%, #ffffff 46%, #f7fbff 100%);
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, system-ui, sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 2px 16px rgba(0, 63, 125, 0.08);
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      width: min(1180px, calc(100% - 48px));
+      min-height: 64px;
+      margin: 0 auto;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      color: var(--blue);
+      font-weight: 900;
+    }
+    .brand-mark { position: relative; width: 38px; height: 38px; border-radius: 8px; }
+    .brand-mark::before,
+    .brand-mark::after,
+    .brand-mark span::before,
+    .brand-mark span::after { content: ""; position: absolute; background: #fff; border: 4px solid var(--blue); }
+    .brand-mark::before { left: 13px; top: 1px; width: 12px; height: 36px; border-radius: 4px; }
+    .brand-mark::after { left: 1px; top: 13px; width: 36px; height: 12px; border-radius: 4px; }
+    .brand-mark span::before { left: 15px; top: 3px; z-index: 2; width: 8px; height: 32px; border: 0; background: #fff; }
+    .brand-mark span::after { left: 3px; top: 15px; z-index: 3; width: 32px; height: 8px; border: 0; background: var(--green); }
+    .brand strong { display: block; font-size: 24px; line-height: 1; letter-spacing: 0; }
+    .brand small { display: block; margin-top: 3px; color: var(--blue-dark); font-size: 10px; line-height: 1; }
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: clamp(14px, 2vw, 30px);
+      color: var(--blue-dark);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .site-nav a { display: inline-flex; align-items: center; min-height: 38px; padding: 0 4px; border-radius: var(--radius); }
+    .site-nav a.active { padding: 0 18px; color: var(--blue); background: #edf6ff; font-weight: 900; }
+
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 38px 0 58px;
+    }
+    .back-link {
+      display: inline-flex;
+      margin-bottom: 16px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .register-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+    .intro-card {
+      position: sticky;
+      top: 88px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .intro-photo {
+      height: 310px;
+      background: linear-gradient(180deg, #eaf7ff, #fff);
+    }
+    .intro-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .intro-body { padding: 22px; }
+    .role-label {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      padding: 0 12px;
+      color: var(--blue);
+      background: #f4fbff;
+      border: 1px solid #acd3f1;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .intro-body h1 {
+      margin: 12px 0 10px;
+      color: var(--blue-dark);
+      font-size: 28px;
+      line-height: 1.25;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    .intro-body h1::after {
+      content: "";
+      display: block;
+      width: 64px;
+      height: 4px;
+      margin-top: 10px;
+      background: var(--blue);
+      border-radius: 999px;
+    }
+    .intro-body p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .profile-tips {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .profile-tips li {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      align-items: start;
+      gap: 10px;
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .profile-tips span {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .form-card {
+      padding: 30px 34px 34px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .form-head {
+      margin-bottom: 24px;
+    }
+    .form-head h2 {
+      margin: 0;
+      color: var(--blue-dark);
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.28;
+      font-weight: 900;
+    }
+    .form-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .form-section {
+      padding-top: 22px;
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+    .form-section:first-of-type {
+      padding-top: 0;
+      margin-top: 0;
+      border-top: 0;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      color: var(--blue-dark);
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .section-title span {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 50%;
+      font-size: 13px;
+      line-height: 1;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 18px;
+    }
+    .field { margin-bottom: 20px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #061a30;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+    .req { margin-left: 5px; color: var(--danger); font-size: 12px; font-weight: 900; }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 14px;
+      color: #0f2140;
+      background: #fff;
+      border: 1px solid var(--field);
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .field textarea {
+      min-height: 110px;
+      padding-top: 12px;
+      resize: vertical;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: #748293; }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 91, 172, 0.1);
+    }
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .check-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 12px;
+      color: var(--blue-dark);
+      background: #fff;
+      border: 1px solid var(--field);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .check-card input { accent-color: var(--blue); }
+    .check-card:has(input:checked) {
+      color: var(--blue);
+      background: #f4fbff;
+      border-color: #acd3f1;
+    }
+    .hint {
+      margin: 8px 0 0;
+      color: #58677b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 54px;
+      margin-top: 4px;
+      color: #fff;
+      background: linear-gradient(180deg, #0b6fc8, var(--blue));
+      border: 0;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0, 91, 172, 0.2);
+    }
+    .notice {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      color: #1e3a8a;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .notice.show { display: block; }
+
+    @media (max-width: 980px) {
+      .register-layout { grid-template-columns: 1fr; }
+      .intro-card { position: relative; top: auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+      .intro-photo { height: auto; min-height: 260px; }
+    }
+    @media (max-width: 760px) {
+      .header-inner { flex-wrap: wrap; width: calc(100% - 32px); padding: 12px 0; }
+      .site-nav { width: 100%; justify-content: flex-start; gap: 16px; overflow-x: auto; padding-bottom: 2px; font-size: 13px; }
+      .page { width: calc(100% - 32px); padding-top: 32px; }
+      .intro-card { display: block; }
+      .intro-photo { height: 260px; }
+      .form-card { padding: 24px 18px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field { grid-column: 1 / -1; }
+      .check-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 430px) {
+      .brand strong { font-size: 21px; }
+      .brand small { font-size: 9px; }
+      .brand-mark { transform: scale(.9); transform-origin: left center; }
+      .intro-body h1 { font-size: 25px; }
+      .check-grid { grid-template-columns: 1fr; }
+      .field input,
+      .field select { min-height: 48px; }
+      .submit-btn { min-height: 52px; font-size: 16px; }
+    }
+  </style>
+</head>
 <body>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="index.html" aria-label="MediSpot ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span><strong>MediSpot</strong><small>メディスポット</small></span></a><nav class="site-nav" aria-label="メインナビゲーション"><a href="index.html">サービス紹介</a><a class="active" href="register.html">新規会員登録</a><a href="login.html">ログイン</a></nav></div></header>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="MediSpot ホーム">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span><strong>MediSpot</strong><small>メディスポット</small></span>
+      </a>
+      <nav class="site-nav" aria-label="メインナビゲーション">
+        <a href="index.html">サービス紹介</a>
+        <a class="active" href="register.html">新規会員登録</a>
+        <a href="login.html">ログイン</a>
+      </nav>
+    </div>
+  </header>
+
   <main class="page">
     <a class="back-link" href="register.html">‹ 登録種別を選び直す</a>
-    <h1 class="page-title">求職者登録</h1>
-    <p class="page-lead">医療資格者向けの登録フォームです。資格・希望条件を入力してください。</p>
-    <form class="form-card" action="#" method="post" id="registerForm">
-      <input type="hidden" name="role" value="seeker">
-      <div class="form-grid">
-        <div class="field"><label for="name">お名前 <span class="req">必須</span></label><input id="name" name="name" type="text" placeholder="例）佐藤 花子" required></div>
-        <div class="field"><label for="kana">フリガナ</label><input id="kana" name="kana" type="text" placeholder="例）サトウ ハナコ"></div>
-        <div class="field"><label for="license">保有資格（職種） <span class="req">必須</span></label><select id="license" name="license" required><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
-        <div class="field"><label for="area">希望勤務地</label><input id="area" name="area" type="text" placeholder="例）東京都・神奈川県"></div>
-        <div class="field"><label for="email">メールアドレス <span class="req">必須</span></label><input id="email" name="email" type="email" placeholder="例）example@example.com" required></div>
-        <div class="field"><label for="password">パスワード <span class="req">必須</span></label><input id="password" name="password" type="password" placeholder="8文字以上" minlength="8" required></div>
-        <div class="field full"><label for="note">希望条件・自己紹介</label><textarea id="note" name="note" placeholder="例）週2日、午前のみ勤務希望。健診業務の経験があります。"></textarea><p class="hint">※ プロトタイプのため実際の個人情報やパスワードは入力しないでください。</p></div>
-      </div>
-      <button class="submit-btn" type="submit">この内容で登録する</button>
-      <p class="notice" id="notice">登録画面の見本です。実際の保存処理はまだ接続されていません。</p>
-    </form>
+    <div class="register-layout">
+      <aside class="intro-card">
+        <div class="intro-photo"><img src="assets/seeker-photo.png" alt="スマートフォンを見る医療スタッフ"></div>
+        <div class="intro-body">
+          <span class="role-label">For Medical Staff</span>
+          <h1>求職者登録</h1>
+          <p>採用担当者が確認しやすいように、資格・経験・スキル・希望条件をまとめて登録します。</p>
+          <ul class="profile-tips">
+            <li><span>1</span>資格と経験年数を正確に入力</li>
+            <li><span>2</span>対応できる業務スキルを選択</li>
+            <li><span>3</span>勤務可能エリアと曜日を登録</li>
+          </ul>
+        </div>
+      </aside>
+
+      <form class="form-card" action="#" method="post" id="registerForm">
+        <input type="hidden" name="role" value="seeker">
+        <div class="form-head">
+          <h2>医療資格者プロフィール</h2>
+          <p>スポット勤務・業務委託求人に応募するための基本情報を入力してください。</p>
+        </div>
+
+        <section class="form-section">
+          <h3 class="section-title"><span>01</span>基本情報</h3>
+          <div class="form-grid">
+            <div class="field"><label for="name">お名前 <span class="req">必須</span></label><input id="name" name="name" type="text" placeholder="例）佐藤 花子" required></div>
+            <div class="field"><label for="kana">フリガナ</label><input id="kana" name="kana" type="text" placeholder="例）サトウ ハナコ"></div>
+            <div class="field"><label for="phone">電話番号</label><input id="phone" name="phone" type="tel" placeholder="例）090-1234-5678"></div>
+            <div class="field"><label for="address">お住まいの地域</label><input id="address" name="address" type="text" placeholder="例）東京都世田谷区"></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-title"><span>02</span>資格・経験</h3>
+          <div class="form-grid">
+            <div class="field"><label for="license">保有資格（職種） <span class="req">必須</span></label><select id="license" name="license" required><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
+            <div class="field"><label for="experience">実務経験</label><select id="experience" name="experience"><option>未経験</option><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5年以上</option><option>10年以上</option></select></div>
+            <div class="field"><label for="licenseNumber">資格番号</label><input id="licenseNumber" name="licenseNumber" type="text" placeholder="任意"></div>
+            <div class="field"><label for="workHistory">主な勤務経験</label><input id="workHistory" name="workHistory" type="text" placeholder="例）健診、病棟、外来、採血"></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-title"><span>03</span>対応できるスキル</h3>
+          <div class="check-grid" aria-label="対応できるスキル">
+            <label class="check-card"><input type="checkbox" name="skills" value="採血">採血</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="心電図">心電図</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="健診補助">健診補助</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="問診">問診</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="検体検査">検体検査</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="画像検査補助">画像検査補助</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="リハビリ対応">リハビリ対応</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="介助業務">介助業務</label>
+            <label class="check-card"><input type="checkbox" name="skills" value="夜勤対応">夜勤対応</label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-title"><span>04</span>希望条件</h3>
+          <div class="form-grid">
+            <div class="field"><label for="area">希望勤務地 <span class="req">必須</span></label><input id="area" name="area" type="text" placeholder="例）東京都・神奈川県" required></div>
+            <div class="field"><label for="employmentType">希望勤務形態</label><select id="employmentType" name="employmentType"><option>スポット</option><option>業務委託</option><option>短期</option><option>長期</option><option>相談したい</option></select></div>
+            <div class="field"><label for="availableDays">勤務可能曜日</label><input id="availableDays" name="availableDays" type="text" placeholder="例）月・水・土、午前のみ"></div>
+            <div class="field"><label for="salary">希望報酬</label><input id="salary" name="salary" type="text" placeholder="例）日給18,000円以上"></div>
+            <div class="field full"><label for="note">自己紹介・希望条件</label><textarea id="note" name="note" placeholder="例）健診業務と採血経験があります。週2日、午前のみ勤務希望です。"></textarea><p class="hint">※ プロトタイプのため実際の個人情報やパスワードは入力しないでください。</p></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-title"><span>05</span>ログイン情報</h3>
+          <div class="form-grid">
+            <div class="field"><label for="email">メールアドレス <span class="req">必須</span></label><input id="email" name="email" type="email" placeholder="例）example@example.com" required></div>
+            <div class="field"><label for="password">パスワード <span class="req">必須</span></label><input id="password" name="password" type="password" placeholder="8文字以上" minlength="8" required></div>
+          </div>
+        </section>
+
+        <button class="submit-btn" type="submit">この内容で登録する</button>
+        <p class="notice" id="notice">登録画面の見本です。実際の保存処理はまだ接続されていません。</p>
+      </form>
+    </div>
   </main>
-  <script>document.querySelector('#registerForm').addEventListener('submit',e=>{e.preventDefault();document.querySelector('#notice').classList.add('show');});</script>
+
+  <script>
+    document.querySelector('#registerForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      document.querySelector('#notice').classList.add('show');
+    });
+  </script>
 </body>
 </html>
