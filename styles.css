@@ -1739,3 +1739,623 @@ body {
     object-position: center center;
   }
 }
+/* Client delivery responsive polish - Japan mobile/tablet/desktop */
+:root {
+  --page-max: 1180px;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.site-header {
+  width: 100%;
+}
+
+.brand-text,
+.nav-links a,
+.btn,
+.role-text,
+.role-copy,
+.job-card,
+.story-grid,
+.faq {
+  overflow-wrap: anywhere;
+}
+
+main {
+  overflow: hidden;
+}
+
+.hero {
+  min-height: clamp(460px, 46vw, 590px);
+}
+
+.hero-photo img {
+  object-position: right center;
+}
+
+.hero-inner {
+  width: min(var(--page-max), calc(100% - clamp(32px, 6vw, 96px)));
+  padding-block: clamp(46px, 6vw, 82px) clamp(30px, 4vw, 48px);
+}
+
+.hero-copy {
+  max-width: 640px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.hero-role-panel {
+  width: min(820px, 100%);
+  backdrop-filter: blur(10px);
+}
+
+.trust-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.section {
+  padding-inline: clamp(18px, 6vw, 96px);
+}
+
+.job-grid,
+.story-grid,
+.profession-grid {
+  width: min(var(--page-max), 100%);
+}
+
+.job-card,
+.story-grid article,
+.profession-grid article,
+.role-list li,
+.faq details,
+.hero-role-card {
+  border-color: #cfe3f2;
+}
+
+.job-card img {
+  background: #f7fcff;
+}
+
+.role-panel,
+.role-panel.role-seeker,
+.role-panel.role-employer {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, .88fr);
+  gap: clamp(28px, 5vw, 70px);
+  min-height: 0;
+  padding: clamp(48px, 7vw, 82px) clamp(18px, 6vw, 96px);
+}
+
+.role-panel.role-employer {
+  grid-template-columns: minmax(360px, .88fr) minmax(0, 1fr);
+}
+
+.role-copy h2,
+.role-seeker .role-copy h2,
+.role-employer .role-copy h2 {
+  font-size: clamp(34px, 4vw, 56px);
+}
+
+.role-copy p,
+.role-seeker .role-copy p,
+.role-employer .role-copy p {
+  font-size: clamp(15px, 1.45vw, 18px);
+}
+
+.role-visual,
+.seeker-showcase,
+.role-employer .role-visual {
+  min-height: auto;
+  align-self: center;
+}
+
+.seeker-showcase::before,
+.role-employer .employer-visual::before {
+  inset: 0;
+  border-radius: 18px;
+}
+
+.seeker-single-photo {
+  display: grid;
+  place-items: center;
+  width: min(560px, 100%);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  padding: clamp(14px, 2.2vw, 26px);
+  overflow: hidden;
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+}
+
+.seeker-single-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  background: transparent;
+}
+
+.seeker-single-photo figcaption {
+  left: clamp(14px, 2vw, 22px);
+  right: clamp(14px, 2vw, 22px);
+  bottom: clamp(14px, 2vw, 22px);
+}
+
+.role-employer .role-visual img {
+  width: min(560px, 100%);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  padding: clamp(14px, 2.2vw, 26px);
+  object-fit: contain;
+  object-position: center center;
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+}
+
+.role-employer .price-circle {
+  right: clamp(12px, 2vw, 24px);
+  bottom: clamp(12px, 2vw, 24px);
+}
+
+.site-footer {
+  grid-template-columns: minmax(220px, 1.45fr) repeat(3, minmax(130px, .8fr)) minmax(220px, 1.15fr);
+}
+
+@media (max-width: 1180px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    padding-inline: 24px;
+  }
+
+  .nav-links {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .job-grid,
+  .story-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profession-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .role-panel,
+  .role-panel.role-seeker,
+  .role-panel.role-employer {
+    grid-template-columns: 1fr;
+  }
+
+  .role-employer .role-visual {
+    order: 1;
+  }
+
+  .role-employer .role-copy {
+    order: 2;
+  }
+
+  .role-copy {
+    max-width: 780px;
+  }
+
+  .seeker-single-photo,
+  .role-employer .role-visual img {
+    width: min(640px, 100%);
+    aspect-ratio: 16 / 10;
+  }
+
+  .site-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .site-header {
+    position: static;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    flex: 1 1 0;
+  }
+
+  .hero {
+    min-height: auto;
+    background: #f7fcff;
+  }
+
+  .hero-photo img {
+    object-position: 68% center;
+  }
+
+  .hero-photo::after {
+    background: linear-gradient(90deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.94) 100%);
+  }
+
+  .hero-role-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-strip article {
+    border-right: 0;
+    border-bottom: 1px solid #c9deef;
+  }
+
+  .section-heading,
+  .section-heading.split {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .section-heading h2,
+  .flow-content h2,
+  .role-copy h2 {
+    text-align: left;
+  }
+
+  .section-heading h2::after,
+  .flow-content h2::after,
+  .role-copy h2::after {
+    margin-left: 0;
+  }
+
+  .section-heading a {
+    position: static;
+    margin-left: auto;
+  }
+
+  .job-grid,
+  .story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profession-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .seeker-single-photo,
+  .role-employer .role-visual img {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header {
+    padding: 10px 14px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand strong {
+    font-size: 20px;
+  }
+
+  .nav-links {
+    gap: 14px;
+    font-size: 12px;
+  }
+
+  .btn,
+  .btn-search,
+  .wide-cta,
+  .role-cta {
+    min-height: 44px;
+    padding-inline: 14px;
+    font-size: 13px;
+  }
+
+  .hero-inner {
+    width: calc(100% - 28px);
+    padding-block: 30px 22px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(29px, 9vw, 38px);
+  }
+
+  .hero-copy p {
+    font-size: 14px;
+  }
+
+  .hero-role-card {
+    grid-template-columns: 44px minmax(0, 1fr) 28px;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .role-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .role-text strong {
+    font-size: 16px;
+  }
+
+  .role-text small {
+    font-size: 11px;
+  }
+
+  .job-card {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  .job-card img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .role-panel,
+  .role-panel.role-seeker,
+  .role-panel.role-employer {
+    padding: 38px 14px;
+  }
+
+  .role-copy h2,
+  .role-seeker .role-copy h2,
+  .role-employer .role-copy h2 {
+    font-size: clamp(31px, 10vw, 40px);
+  }
+
+  .role-list li {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 10px 12px;
+  }
+
+  .role-list span {
+    font-size: 13px;
+  }
+
+  .seeker-single-photo,
+  .role-employer .role-visual img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 12px;
+  }
+
+  .seeker-single-photo figcaption {
+    position: static;
+    margin-top: 10px;
+    color: var(--blue-dark);
+    background: #fff;
+    border-color: var(--line);
+  }
+
+  .seeker-single-photo figcaption span {
+    color: var(--muted);
+  }
+
+  .role-employer .price-circle {
+    width: 104px;
+    height: 104px;
+  }
+
+  .role-employer .price-circle strong {
+    font-size: 19px;
+  }
+
+  .story-grid article {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Register page refreshed to match landing page */
+.register-page {
+  background: linear-gradient(180deg, #f7fbff 0%, #ffffff 42%, #f3fbff 100%);
+}
+
+.register-shell {
+  padding: clamp(34px, 6vw, 72px) clamp(16px, 6vw, 96px) clamp(52px, 7vw, 86px);
+}
+
+.register-wrap {
+  width: min(var(--page-max), 100%);
+  margin: 0 auto;
+}
+
+.register-title {
+  display: grid;
+  gap: 14px;
+  margin-bottom: clamp(26px, 4vw, 42px);
+}
+
+.register-title h1 {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1.18;
+  font-weight: 900;
+}
+
+.register-title h1::after {
+  content: "";
+  display: block;
+  width: 76px;
+  height: 5px;
+  margin-top: 14px;
+  background: var(--blue);
+  border-radius: 999px;
+}
+
+.register-title p {
+  width: min(720px, 100%);
+  margin: 0;
+  color: #334e66;
+  font-size: clamp(15px, 1.5vw, 18px);
+  font-weight: 800;
+}
+
+.register-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 32px);
+}
+
+.register-choice-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  min-height: 560px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #cfe3f2;
+  border-radius: 14px;
+  box-shadow: 0 18px 42px rgba(0,63,125,.11);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.register-choice-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 54px rgba(0,63,125,.15);
+}
+
+.register-choice-card.seeker {
+  border-color: #acd3f1;
+}
+
+.register-choice-card.employer {
+  border-color: #9adfb8;
+}
+
+.register-choice-photo {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  padding: clamp(14px, 2vw, 24px);
+  background: linear-gradient(135deg, #eaf7ff, #fff);
+  border-bottom: 1px solid var(--line);
+}
+
+.register-choice-card.employer .register-choice-photo {
+  background: linear-gradient(135deg, #effbf5, #fff);
+}
+
+.register-choice-photo img {
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
+  object-position: center center;
+}
+
+.register-choice-body {
+  display: grid;
+  align-content: start;
+  gap: 15px;
+  padding: clamp(22px, 3vw, 32px);
+}
+
+.register-choice-kicker {
+  width: fit-content;
+  padding: 4px 12px;
+  color: var(--blue);
+  background: #f4fbff;
+  border: 1px solid #acd3f1;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.register-choice-card.employer .register-choice-kicker {
+  color: var(--green-dark);
+  background: #f2fff7;
+  border-color: #86d9ab;
+}
+
+.register-choice-body h2 {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: clamp(25px, 3vw, 34px);
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.register-choice-body p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.register-choice-points {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.register-choice-points li {
+  display: flex;
+  gap: 8px;
+  color: #334e66;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.register-choice-points li::before {
+  content: "✓";
+  color: var(--green-dark);
+  font-weight: 900;
+}
+
+.register-choice-card .role-cta {
+  width: min(360px, 100%);
+  margin-top: 4px;
+}
+
+.register-login-note {
+  margin: 26px 0 0;
+  padding: 18px 20px;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(0,63,125,.06);
+}
+
+.register-login-note a {
+  color: var(--blue);
+  font-weight: 900;
+}
+
+@media (max-width: 900px) {
+  .register-choice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .register-choice-card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .register-choice-photo {
+    min-height: 260px;
+  }
+
+  .register-choice-photo img {
+    height: 240px;
+  }
+}

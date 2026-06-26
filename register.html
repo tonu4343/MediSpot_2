@@ -5,228 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>新規会員登録 | MediSpot</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body { background: #fff; }
-    .register-hero {
-      position: relative;
-      overflow: hidden;
-      min-height: 360px;
-      background: linear-gradient(90deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.92) 45%, rgba(234,247,255,.58) 100%);
-      border-bottom: 1px solid var(--line);
-    }
-    .register-hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 82% 18%, rgba(33,183,97,.13), transparent 30%), radial-gradient(circle at 14% 80%, rgba(0,91,172,.1), transparent 30%);
-    }
-    .register-hero-inner {
-      position: relative;
-      z-index: 1;
-      width: min(1180px, calc(100% - 48px));
-      margin: 0 auto;
-      padding: 68px 0 46px;
-    }
-    .register-hero h1 {
-      margin: 0 0 16px;
-      color: var(--blue);
-      font-size: clamp(40px, 5vw, 60px);
-      line-height: 1.2;
-      font-weight: 900;
-    }
-    .register-hero h1::after {
-      content: "";
-      display: block;
-      width: 78px;
-      height: 5px;
-      margin-top: 16px;
-      border-radius: 999px;
-      background: var(--blue);
-    }
-    .register-hero p {
-      width: min(680px, 100%);
-      margin: 0;
-      color: #334e66;
-      font-size: 18px;
-      font-weight: 800;
-    }
-    .register-main {
-      padding: 54px clamp(24px, 7vw, 96px) 70px;
-      background: linear-gradient(180deg, #f7fbff 0%, #fff 45%, #f4fbff 100%);
-    }
-    .role-choice-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px;
-      width: min(1180px, 100%);
-      margin: 0 auto;
-    }
-    .register-role-card {
-      position: relative;
-      display: grid;
-      grid-template-rows: 320px auto;
-      overflow: hidden;
-      min-height: 560px;
-      color: var(--ink);
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 18px 42px rgba(0, 63, 125, .12);
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    }
-    .register-role-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 24px 54px rgba(0, 63, 125, .16);
-    }
-    .register-role-card.seeker { border-color: #acd3f1; }
-    .register-role-card.employer { border-color: #9adfb8; }
-    .role-photo {
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      background: linear-gradient(135deg, #eaf7ff, #ffffff);
-      border-bottom: 1px solid var(--line);
-    }
-    .register-role-card.employer .role-photo { background: linear-gradient(135deg, #effbf5, #ffffff); }
-    .role-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center bottom;
-    }
-    .register-role-card.employer .role-photo img {
-      object-position: center center;
-      padding: 18px;
-    }
-    .role-body {
-      display: grid;
-      align-content: start;
-      gap: 16px;
-      padding: 30px;
-    }
-    .role-kicker {
-      display: inline-flex;
-      width: fit-content;
-      align-items: center;
-      min-height: 30px;
-      padding: 0 13px;
-      color: var(--blue);
-      background: #f4fbff;
-      border: 1px solid #acd3f1;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-    }
-    .register-role-card.employer .role-kicker {
-      color: var(--green-dark);
-      background: #f2fff7;
-      border-color: #86d9ab;
-    }
-    .role-body h2 {
-      margin: 0;
-      color: var(--blue-dark);
-      font-size: clamp(26px, 3vw, 34px);
-      line-height: 1.25;
-      font-weight: 900;
-    }
-    .role-body p {
-      margin: 0;
-      color: var(--muted);
-      font-weight: 800;
-      line-height: 1.7;
-    }
-    .role-points {
-      display: grid;
-      gap: 8px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .role-points li {
-      display: flex;
-      gap: 8px;
-      color: #334e66;
-      font-size: 14px;
-      font-weight: 900;
-    }
-    .role-points li::before { content: "✓"; color: var(--green-dark); }
-    .register-role-card .wide-cta {
-      width: min(100%, 360px);
-      margin-top: 4px;
-      gap: 24px;
-    }
-    .register-role-card.seeker .wide-cta { background: linear-gradient(180deg, #0b6fc8, var(--blue)); }
-    .register-note {
-      width: min(1180px, 100%);
-      margin: 28px auto 0;
-      padding: 18px 20px;
-      color: var(--muted);
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      font-weight: 800;
-      box-shadow: 0 8px 18px rgba(0,63,125,.06);
-    }
-    .register-note a { color: var(--blue); font-weight: 900; }
-    @media (max-width: 900px) {
-      .role-choice-grid { grid-template-columns: 1fr; }
-      .register-role-card { min-height: 0; }
-    }
-    @media (max-width: 640px) {
-      .register-hero-inner { width: calc(100% - 32px); padding: 46px 0 34px; }
-      .register-main { padding: 34px 16px 48px; }
-      .register-role-card { grid-template-rows: 260px auto; }
-      .role-body { padding: 24px; }
-      .register-role-card .wide-cta { width: 100%; }
-    }
-  </style>
 </head>
-<body>
+<body class="register-page">
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="MediSpot ホーム">
       <span class="brand-mark" aria-hidden="true"><span></span></span>
       <span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span>
     </a>
     <nav class="nav-links" aria-label="メインナビゲーション">
-      <a href="index.html">サービス紹介</a>
-      <a href="register.html">新規会員登録</a>
-      <a href="login.html">ログイン</a>
+      <a href="index.html#jobs">人気の求人</a>
+      <a href="index.html#professions">職種から探す</a>
+      <a href="index.html#flow">ご利用の流れ</a>
+      <a href="index.html#pricing">料金について</a>
+      <a href="index.html#faq">よくある質問</a>
     </nav>
+    <div class="header-actions">
+      <a class="btn btn-outline" href="login.html">ログイン</a>
+      <a class="btn btn-green" href="register.html">会員登録（無料）</a>
+    </div>
   </header>
 
   <main>
-    <section class="register-hero">
-      <div class="register-hero-inner">
-        <h1>新規会員登録</h1>
-        <p>利用者種別を選んでください。求職者は資格・希望条件の登録へ、求人者は医療機関情報の登録へ進みます。</p>
-      </div>
-    </section>
+    <section class="register-shell" aria-label="新規会員登録">
+      <div class="register-wrap">
+        <div class="register-title">
+          <h1>新規会員登録</h1>
+          <p>利用者種別を選んでください。医療資格者は求人検索へ、医療機関は求人掲載へ、それぞれ必要な登録画面に進みます。</p>
+        </div>
 
-    <section class="register-main" aria-label="登録種別">
-      <div class="role-choice-grid">
-        <a class="register-role-card seeker" href="register-seeker.html">
-          <span class="role-photo"><img src="assets/seeker-photo.png" alt="スマートフォンで求人を確認する医療スタッフ"></span>
-          <span class="role-body">
-            <span class="role-kicker">For Medical Staff</span>
-            <h2>求職者として登録</h2>
-            <p>看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務や業務委託の求人を探せます。</p>
-            <ul class="role-points"><li>登録・求人検索は無料</li><li>職種や勤務地で求人検索</li><li>成立後はチャットで条件確認</li></ul>
-            <span class="wide-cta">求職者登録へ<span>›</span></span>
-          </span>
-        </a>
-        <a class="register-role-card employer" href="register-employer.html">
-          <span class="role-photo"><img src="assets/employer-photo.png" alt="求人を確認する医療機関担当者"></span>
-          <span class="role-body">
-            <span class="role-kicker">For Hospitals & Clinics</span>
-            <h2>求人者として登録</h2>
-            <p>病院・クリニック・薬局など、医療資格者を募集したい医療機関向けの登録ページです。</p>
-            <ul class="role-points"><li>求人掲載は無料</li><li>応募者プロフィールを確認</li><li>採用決定時のみ成功報酬</li></ul>
-            <span class="wide-cta">求人者登録へ<span>›</span></span>
-          </span>
-        </a>
+        <div class="register-choice-grid">
+          <a class="register-choice-card seeker" href="register-seeker.html">
+            <span class="register-choice-photo">
+              <img src="assets/seeker-photo.png" alt="スマートフォンで求人を確認する医療スタッフ">
+            </span>
+            <span class="register-choice-body">
+              <span class="register-choice-kicker">For Medical Staff</span>
+              <h2>求職者として登録</h2>
+              <p>看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務や業務委託の求人を探せます。</p>
+              <ul class="register-choice-points">
+                <li>登録・求人検索は無料</li>
+                <li>職種・勤務地・働き方で探せる</li>
+                <li>成立後はチャットで勤務条件を確認</li>
+              </ul>
+              <span class="role-cta seeker-cta">求職者登録へ<span>›</span></span>
+            </span>
+          </a>
+
+          <a class="register-choice-card employer" href="register-employer.html">
+            <span class="register-choice-photo">
+              <img src="assets/employer-photo.png" alt="求人を確認する医療機関担当者">
+            </span>
+            <span class="register-choice-body">
+              <span class="register-choice-kicker">For Hospitals & Clinics</span>
+              <h2>求人者として登録</h2>
+              <p>病院・クリニック・薬局など、必要な時だけ医療資格者を募集したい医療機関向けの登録です。</p>
+              <ul class="register-choice-points">
+                <li>求人掲載は無料</li>
+                <li>応募者プロフィールを確認して選考</li>
+                <li>採用決定時のみ成功報酬</li>
+              </ul>
+              <span class="role-cta employer-cta">求人者登録へ<span>›</span></span>
+            </span>
+          </a>
+        </div>
+
+        <p class="register-login-note">すでに登録済みの方は <a href="login.html">ログイン</a> してください。</p>
       </div>
-      <p class="register-note">すでに登録済みの方は <a href="login.html">ログイン</a> してください。</p>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span></a>
+      <p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p>
+      <div class="socials"><a href="#">f</a><a href="#">X</a><a href="#">●</a><a href="#">✉</a></div>
+    </div>
+    <div><h3>求職者向け</h3><a href="index.html#jobs">人気の求人</a><a href="index.html#professions">職種から探す</a><a href="index.html#flow">ご利用の流れ</a><a href="index.html#faq">よくある質問</a></div>
+    <div><h3>求人者向け</h3><a href="index.html#pricing">求人掲載について</a><a href="index.html#pricing">ご利用の流れ</a><a href="index.html#pricing">料金について</a><a href="index.html#faq">よくある質問</a></div>
+    <div><h3>会社情報</h3><a href="#">運営会社</a><a href="#">プライバシーポリシー</a><a href="#">利用規約</a><a href="#">お問い合わせ</a></div>
+    <div class="footer-cta"><strong>まずは無料で会員登録</strong><span>あなたに合う登録ページへ進めます</span><a class="btn btn-green" href="register.html">新規会員登録（無料）›</a></div>
+    <p class="copyright">© 2024 MediSpot. All Rights Reserved.</p>
+  </footer>
 </body>
 </html>
