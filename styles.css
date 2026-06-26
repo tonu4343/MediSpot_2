@@ -2359,3 +2359,26 @@ main {
     height: 240px;
   }
 }
+/* Final hero face visibility fix */
+.hero-photo {
+  background: linear-gradient(90deg, #fff 0%, #eef8ff 100%);
+}
+
+.hero-photo img {
+  object-fit: contain;
+  object-position: right center;
+}
+
+@media (max-width: 820px) {
+  .hero-photo img {
+    object-fit: contain;
+    object-position: right top;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-photo img {
+    opacity: .38;
+    object-position: right top;
+  }
+}

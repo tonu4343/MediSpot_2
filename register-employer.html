@@ -14,7 +14,7 @@
       background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.95) 40%, rgba(242,255,247,.45) 74%, rgba(242,255,247,.1) 100%);
     }
     .employer-hero-photo { position: absolute; inset: 0; z-index: 0; }
-    .employer-hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 78% center; }
+    .employer-hero-photo img { width: 100%; height: 100%; object-fit: contain; object-position: right center; }
     .employer-hero-photo::after {
       content: "";
       position: absolute;
@@ -293,13 +293,14 @@
       .employer-summary, .metric-grid, .job-type-grid, .voice-grid { grid-template-columns: 1fr; }
       .employer-hero { min-height: auto; }
       .employer-hero-inner { padding: 52px 0 36px; }
-      .employer-hero-photo img { object-position: 67% center; }
-      .employer-hero-photo::after { background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.96) 56%, rgba(255,255,255,.55) 100%); }
+      .employer-hero-photo img { object-fit: contain; object-position: right center; }
+      .employer-hero-photo::after { background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.96) 56%, rgba(255,255,255,.48) 100%); }
       .photo-panel, .photo-panel img { min-height: 350px; }
       .form-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 620px) {
       .employer-hero-inner { width: min(100% - 32px, 1180px); }
+      .employer-hero-photo img { object-fit: contain; object-position: right top; opacity: .42; }
       .hero-actions .btn { width: 100%; }
       .flow-step { grid-template-columns: 1fr; }
       .submit-row .wide-cta { width: 100%; }
