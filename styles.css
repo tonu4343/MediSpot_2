@@ -1458,3 +1458,188 @@ body {
 }
 
 
+
+/* Larger seeker section image slider */
+.role-panel.role-seeker {
+  grid-template-columns: minmax(420px, 0.92fr) minmax(520px, 1.08fr);
+  min-height: 610px;
+  padding-top: 68px;
+  padding-bottom: 68px;
+}
+
+.role-seeker .role-copy {
+  max-width: 680px;
+}
+
+.role-seeker .role-copy h2 {
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.15;
+}
+
+.role-seeker .role-copy p {
+  width: min(680px, 100%);
+  margin-bottom: 26px;
+  font-size: 18px;
+}
+
+.seeker-showcase {
+  min-height: 500px;
+  align-self: stretch;
+  isolation: isolate;
+}
+
+.seeker-showcase::before {
+  inset: 0;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(234,247,255,0.7));
+  box-shadow: 0 22px 52px rgba(0,63,125,0.12);
+}
+
+.seeker-slider {
+  position: relative;
+  z-index: 1;
+  width: min(620px, 100%);
+  height: 500px;
+  justify-self: center;
+  align-self: center;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(172,211,241,0.9);
+  background: #fff;
+  box-shadow: 0 22px 42px rgba(0,63,125,0.13);
+}
+
+.seeker-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  transform: scale(1.035);
+  animation: seekerSlide 15s infinite;
+}
+
+.seeker-slide img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+  object-position: center top;
+  filter: none;
+}
+
+.seeker-slide.slide-one img {
+  object-position: center 18%;
+}
+
+.seeker-slide.slide-two img {
+  object-position: 68% top;
+}
+
+.seeker-slide.slide-three img {
+  object-position: center center;
+  image-rendering: auto;
+}
+
+.seeker-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,91,172,0) 48%, rgba(0,63,125,0.42) 100%);
+}
+
+.seeker-slide figcaption {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 22px;
+  z-index: 2;
+  display: grid;
+  gap: 3px;
+  padding: 16px 18px;
+  color: #fff;
+  background: rgba(0,91,172,0.78);
+  border: 1px solid rgba(255,255,255,0.36);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+.seeker-slide figcaption strong {
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.seeker-slide figcaption span {
+  color: rgba(255,255,255,0.9);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.seeker-slide.slide-two { animation-delay: 5s; }
+.seeker-slide.slide-three { animation-delay: 10s; }
+
+.seeker-slider-dots {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-self: end;
+  margin: 0 0 20px;
+}
+
+.seeker-slider-dots span {
+  width: 34px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(0,91,172,0.26);
+  animation: seekerDot 15s infinite;
+}
+
+.seeker-slider-dots span:nth-child(2) { animation-delay: 5s; }
+.seeker-slider-dots span:nth-child(3) { animation-delay: 10s; }
+
+@keyframes seekerSlide {
+  0%, 26% { opacity: 1; transform: scale(1); }
+  33%, 100% { opacity: 0; transform: scale(1.035); }
+}
+
+@keyframes seekerDot {
+  0%, 26% { background: var(--blue); }
+  33%, 100% { background: rgba(0,91,172,0.26); }
+}
+
+@media (max-width: 1024px) {
+  .role-panel.role-seeker {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .seeker-showcase {
+    min-height: 460px;
+  }
+
+  .seeker-slider {
+    height: 460px;
+  }
+}
+
+@media (max-width: 640px) {
+  .role-seeker .role-copy h2 {
+    font-size: clamp(34px, 11vw, 44px);
+  }
+
+  .seeker-showcase {
+    min-height: 390px;
+  }
+
+  .seeker-slider {
+    width: 100%;
+    height: 390px;
+  }
+
+  .seeker-slide figcaption {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+  }
+}
