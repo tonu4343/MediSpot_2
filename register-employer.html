@@ -274,6 +274,17 @@
     .final-cta h2 { margin: 0 0 10px; font-size: clamp(26px,3vw,38px); }
     .final-cta p { margin: 0 0 22px; font-weight: 800; }
     .back-top { position: fixed; right: 22px; bottom: 22px; z-index: 40; display: grid; place-items: center; width: 50px; height: 50px; color: #fff; background: var(--blue); border-radius: 50%; box-shadow: var(--shadow); font-weight: 900; }
+    .employer-page .site-footer {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, .72fr);
+      align-items: start;
+      overflow: hidden;
+    }
+    .employer-page .site-footer > div { min-width: 0; }
+    .employer-page .site-footer .footer-cta {
+      width: min(100%, 320px);
+      justify-self: end;
+    }
+    .employer-page .site-footer .copyright { grid-column: 1 / -1; }
     @media (max-width: 1100px) {
       .intro-grid, .pricing-wrap, .register-wrap { grid-template-columns: 1fr; }
       .form-intro { position: static; }
@@ -294,6 +305,16 @@
       .submit-row .wide-cta { width: 100%; }
       .price-circle { width: 122px; height: 122px; right: 16px; bottom: 16px; }
       .price-circle strong { font-size: 22px; }
+      .employer-page .site-footer {
+        grid-template-columns: 1fr;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+      .employer-page .site-footer .footer-cta {
+        width: 100%;
+        max-width: none;
+        justify-self: stretch;
+      }
       .back-top { right: 14px; bottom: 14px; }
     }
   </style>
@@ -465,3 +486,4 @@
   </script>
 </body>
 </html>
+
