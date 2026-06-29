@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求人者ダッシュボード | MediSpot</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="app-page" data-page="employer">
+  <header class="site-header app-header">
+    <a class="brand" href="index.html" aria-label="MediSpot ホーム">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span>
+    </a>
+    <nav class="nav-links" aria-label="求人者メニュー">
+      <a href="index.html">トップ</a>
+      <a href="#post">求人作成</a>
+      <a href="#posted">掲載求人</a>
+      <a href="#applicants">応募者</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-outline" href="seeker-dashboard.html">求職者画面</a>
+      <button class="btn btn-green" type="button" data-reset-demo>デモ初期化</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="app-hero employer-app-hero">
+      <div>
+        <span class="role-label">Employer Mock</span>
+        <h1>求人者ダッシュボード</h1>
+        <p>求人を作成し、応募者を確認して採用・見送りを選ぶ流れを学ぶためのモック画面です。</p>
+      </div>
+      <div class="app-stat-grid">
+        <article><strong id="employerJobCount">0</strong><span>掲載求人</span></article>
+        <article><strong id="employerApplicantCount">0</strong><span>応募者</span></article>
+        <article><strong id="employerAcceptedCount">0</strong><span>採用決定</span></article>
+      </div>
+    </section>
+
+    <section class="app-grid two-col">
+      <article class="app-card" id="post">
+        <div class="app-card-head">
+          <span class="step-dot green">01</span>
+          <div><h2>求人を作成</h2><p>作成した求人は求職者画面の求人一覧に追加されます。</p></div>
+        </div>
+        <form class="mock-form" id="jobPostForm">
+          <label>求人タイトル<input class="input" name="title" placeholder="例）健診スポット看護師" required></label>
+          <label>職種<select class="input" name="profession"><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>ヘルパー</option></select></label>
+          <label>勤務地<select class="input" name="location"><option>東京都</option><option>神奈川県</option><option>大阪府</option><option>福岡県</option></select></label>
+          <label>雇用形態<select class="input" name="workStyle"><option>スポット</option><option>業務委託</option><option>非常勤</option></select></label>
+          <label>報酬<input class="input" name="salary" placeholder="例）日給 20,000円" required></label>
+          <label>勤務日<input class="input" name="date" placeholder="例）7月10日 9:00〜17:00"></label>
+          <label class="full">仕事内容<textarea class="textarea" name="description" placeholder="業務内容、必要スキル、持ち物など"></textarea></label>
+          <button class="wide-cta" type="submit">求人を掲載する</button>
+        </form>
+      </article>
+
+      <article class="app-card status-card">
+        <div class="app-card-head">
+          <span class="step-dot green">02</span>
+          <div><h2>学習ポイント</h2><p>このページで確認する機能です。</p></div>
+        </div>
+        <ul class="learning-list">
+          <li>フォーム入力を受け取る</li>
+          <li>求人データを localStorage に保存</li>
+          <li>求職者画面へ求人を反映</li>
+          <li>応募者のステータスを変更</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="app-card" id="posted">
+      <div class="app-card-head">
+        <span class="step-dot green">03</span>
+        <div><h2>掲載中の求人</h2><p>求人者が作成した求人とサンプル求人が表示されます。</p></div>
+      </div>
+      <div class="mock-job-grid" id="employerJobList"></div>
+    </section>
+
+    <section class="app-card" id="applicants">
+      <div class="app-card-head">
+        <span class="step-dot green">04</span>
+        <div><h2>応募者一覧</h2><p>求職者画面で応募すると、ここに応募者が追加されます。</p></div>
+      </div>
+      <div class="mock-list" id="employerApplicantList"></div>
+    </section>
+  </main>
+</body>
+</html>
+

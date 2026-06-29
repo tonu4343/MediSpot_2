@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求職者ダッシュボード | MediSpot</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="app-page" data-page="seeker">
+  <header class="site-header app-header">
+    <a class="brand" href="index.html" aria-label="MediSpot ホーム">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span>
+    </a>
+    <nav class="nav-links" aria-label="求職者メニュー">
+      <a href="index.html">トップ</a>
+      <a href="#profile">プロフィール</a>
+      <a href="#jobs">求人検索</a>
+      <a href="#applications">応募済み</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-outline" href="employer-dashboard.html">求人者画面</a>
+      <button class="btn btn-green" type="button" data-reset-demo>デモ初期化</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="app-hero seeker-app-hero">
+      <div>
+        <span class="role-label">Job Seeker Mock</span>
+        <h1>求職者ダッシュボード</h1>
+        <p>プロフィールを登録し、条件に合うスポット求人へ応募する流れを学ぶためのモック画面です。</p>
+      </div>
+      <div class="app-stat-grid">
+        <article><strong id="seekerJobCount">0</strong><span>求人件数</span></article>
+        <article><strong id="seekerAppliedCount">0</strong><span>応募済み</span></article>
+        <article><strong id="seekerMatchedCount">0</strong><span>成立</span></article>
+      </div>
+    </section>
+
+    <section class="app-grid two-col">
+      <article class="app-card" id="profile">
+        <div class="app-card-head">
+          <span class="step-dot">01</span>
+          <div><h2>プロフィール登録</h2><p>求人応募時に求人者へ見せる基本情報です。</p></div>
+        </div>
+        <form class="mock-form" id="seekerProfileForm">
+          <label>お名前<input class="input" name="name" placeholder="例）佐藤 花子" required></label>
+          <label>保有資格<select class="input" name="license"><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>ヘルパー</option></select></label>
+          <label>希望勤務地<input class="input" name="location" placeholder="例）東京都"></label>
+          <label>経験年数<select class="input" name="experience"><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5年以上</option></select></label>
+          <label class="full">自己PR<textarea class="textarea" name="message" placeholder="得意な業務、勤務可能日、希望条件など"></textarea></label>
+          <button class="wide-cta" type="submit">プロフィールを保存</button>
+        </form>
+      </article>
+
+      <article class="app-card status-card">
+        <div class="app-card-head">
+          <span class="step-dot">02</span>
+          <div><h2>現在のプロフィール</h2><p>保存するとここに表示されます。</p></div>
+        </div>
+        <div id="seekerProfilePreview" class="profile-preview"></div>
+      </article>
+    </section>
+
+    <section class="app-card" id="jobs">
+      <div class="app-card-head spread">
+        <div class="inline-title"><span class="step-dot">03</span><div><h2>求人検索・応募</h2><p>職種、勤務地、雇用形態で絞り込みできます。</p></div></div>
+      </div>
+      <div class="mock-filter-bar">
+        <label>職種<select class="input" id="filterProfession"><option value="">すべて</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>ヘルパー</option></select></label>
+        <label>勤務地<select class="input" id="filterLocation"><option value="">すべて</option><option>東京都</option><option>神奈川県</option><option>大阪府</option><option>福岡県</option></select></label>
+        <label>雇用形態<select class="input" id="filterWorkStyle"><option value="">すべて</option><option>スポット</option><option>業務委託</option><option>非常勤</option></select></label>
+      </div>
+      <div class="mock-job-grid" id="seekerJobList"></div>
+    </section>
+
+    <section class="app-card" id="applications">
+      <div class="app-card-head">
+        <span class="step-dot">04</span>
+        <div><h2>応募済み求人</h2><p>応募すると求人者側の応募者一覧にも表示されます。</p></div>
+      </div>
+      <div class="mock-list" id="seekerApplicationList"></div>
+    </section>
+  </main>
+</body>
+</html>
+
