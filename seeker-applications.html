@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>応募済み求人 | MediSpot</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="app-page" data-page="seeker-applications">
+  <header class="site-header app-header">
+    <a class="brand" href="index.html" aria-label="MediSpot ホーム">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span>
+    </a>
+    <nav class="nav-links" aria-label="求職者メニュー">
+      <a href="seeker-dashboard.html">ダッシュボード</a>
+      <a href="seeker-profile.html">プロフィール</a>
+      <a href="seeker-jobs.html">求人検索</a>
+      <a href="seeker-applications.html">応募済み</a>
+      <a href="chat.html">チャット</a>
+    </nav>    <div class="header-actions">
+      <a class="btn btn-outline" href="employer-dashboard.html">求人者画面</a>
+      <button class="btn btn-green" type="button" data-reset-demo>デモ初期化</button>
+    </div>
+  </header>  <main class="app-shell">
+    <section class="app-hero seeker-app-hero compact">
+      <div><span class="role-label">Step 04</span><h1>応募済み求人</h1><p>応募した求人と、求人者が変更した採用ステータスを確認します。</p></div>
+      <div class="app-stat-grid"><article><strong id="seekerJobCount">0</strong><span>求人件数</span></article><article><strong id="seekerAppliedCount">0</strong><span>応募済み</span></article><article><strong id="seekerMatchedCount">0</strong><span>成立</span></article></div>
+    </section>
+    <section class="app-card"><div class="app-card-head"><span class="step-dot">01</span><div><h2>応募履歴</h2><p>採用決定になった応募はチャットで確認できます。</p></div></div><div class="mock-list" id="seekerApplicationList"></div></section>
+  </main></body>
+</html>
