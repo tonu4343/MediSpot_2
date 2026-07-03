@@ -141,6 +141,37 @@
     }
     .ms-option input { accent-color: var(--green); margin: 0; }
     .ms-option:has(input:checked) { background: #f2fff7; border-color: #9adfb8; color: var(--green-dark); }
+    .ms-panel-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .ms-clear {
+      padding: 0;
+      background: none;
+      border: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .ms-clear:hover { color: var(--blue-dark); }
+    .ms-apply {
+      padding: 8px 18px;
+      background: linear-gradient(180deg, #28c975, var(--green));
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
     .section-soft { background: linear-gradient(180deg, #f5fbff 0%, #fff 100%); }
     .intro-grid {
       display: grid;
@@ -434,7 +465,7 @@
       <form class="search-panel" aria-label="求人検索">
         <div class="ms-field">
           <span>職種</span>
-          <details class="ms-dropdown">
+          <details class="ms-dropdown" data-placeholder="職種を選択（複数可）">
             <summary><span class="ms-summary-text">職種を選択（複数可）</span><span class="ms-caret" aria-hidden="true">▾</span></summary>
             <div class="ms-panel" role="group" aria-label="職種（複数選択可）">
               <label class="ms-option"><input type="checkbox" name="jobType" value="看護師"><span>看護師</span></label>
@@ -444,12 +475,16 @@
               <label class="ms-option"><input type="checkbox" name="jobType" value="作業療法士"><span>作業療法士</span></label>
               <label class="ms-option"><input type="checkbox" name="jobType" value="言語聴覚士"><span>言語聴覚士</span></label>
               <label class="ms-option"><input type="checkbox" name="jobType" value="ヘルパー"><span>ヘルパー</span></label>
+              <div class="ms-panel-footer">
+                <button type="button" class="ms-clear">すべて解除</button>
+                <button type="button" class="ms-apply">適用する</button>
+              </div>
             </div>
           </details>
         </div>
         <div class="ms-field">
           <span>勤務地</span>
-          <details class="ms-dropdown">
+          <details class="ms-dropdown" data-placeholder="勤務地を選択（複数可）">
             <summary><span class="ms-summary-text">勤務地を選択（複数可）</span><span class="ms-caret" aria-hidden="true">▾</span></summary>
             <div class="ms-panel" role="group" aria-label="勤務地（複数選択可）">
               <label class="ms-option"><input type="checkbox" name="location" value="首都圏"><span>首都圏</span></label>
@@ -457,6 +492,10 @@
               <label class="ms-option"><input type="checkbox" name="location" value="神奈川県"><span>神奈川県</span></label>
               <label class="ms-option"><input type="checkbox" name="location" value="千葉県"><span>千葉県</span></label>
               <label class="ms-option"><input type="checkbox" name="location" value="埼玉県"><span>埼玉県</span></label>
+              <div class="ms-panel-footer">
+                <button type="button" class="ms-clear">すべて解除</button>
+                <button type="button" class="ms-apply">適用する</button>
+              </div>
             </div>
           </details>
         </div>
@@ -574,6 +613,54 @@
     document.getElementById('profileForm').addEventListener('submit', function(event) {
       event.preventDefault();
       document.getElementById('formMessage').style.display = 'inline';
+    });
+
+    document.querySelectorAll('.ms-dropdown').forEach(function (dropdown) {
+      var summaryText = dropdown.querySelector('.ms-summary-text');
+      var placeholder = dropdown.dataset.placeholder;
+      var checkboxes = dropdown.querySelectorAll('.ms-option input[type="checkbox"]');
+      var clearBtn = dropdown.querySelector('.ms-clear');
+      var applyBtn = dropdown.querySelector('.ms-apply');
+
+      function updateSummary() {
+        var checked = Array.prototype.filter.call(checkboxes, function (cb) { return cb.checked; });
+        if (checked.length === 0) {
+          summaryText.textContent = placeholder;
+        } else if (checked.length === 1) {
+          summaryText.textContent = checked[0].value;
+        } else {
+          summaryText.textContent = checked[0].value + ' 他' + (checked.length - 1) + '件';
+        }
+      }
+
+      checkboxes.forEach(function (cb) {
+        cb.addEventListener('change', updateSummary);
+      });
+
+      clearBtn.addEventListener('click', function () {
+        checkboxes.forEach(function (cb) { cb.checked = false; });
+        updateSummary();
+      });
+
+      applyBtn.addEventListener('click', function () {
+        dropdown.removeAttribute('open');
+      });
+
+      dropdown.addEventListener('toggle', function () {
+        if (dropdown.open) {
+          document.querySelectorAll('.ms-dropdown').forEach(function (other) {
+            if (other !== dropdown) other.removeAttribute('open');
+          });
+        }
+      });
+    });
+
+    document.addEventListener('click', function (event) {
+      document.querySelectorAll('.ms-dropdown[open]').forEach(function (dropdown) {
+        if (!dropdown.contains(event.target)) {
+          dropdown.removeAttribute('open');
+        }
+      });
     });
   </script>
 </body>
