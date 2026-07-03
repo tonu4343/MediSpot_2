@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MediSpot | 医療スポット求人マッチング</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .hero-tagline { margin: 0 0 6px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
+    .spotwork-detail, .spotwork-time { margin: 0 0 6px; color: #314d65; font-size: 13px; font-weight: 800; }
+    .spotwork-pay { margin: 6px 0 0; color: var(--green-dark); font-size: 16px; font-weight: 900; }
+    .free-badge {
+      position: absolute;
+      left: 8px;
+      top: 12px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 14px;
+      color: var(--green-dark);
+      background: #f2fff7;
+      border: 1px solid #86d9ab;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -32,8 +54,10 @@
       </div>
       <div class="hero-inner">
         <div class="hero-copy">
+          <span class="role-label">医療系スポットワーク Branch</span>
           <h1>医療のスポット求人を、<br>もっと身近に。</h1>
-          <p>看護師・検査技師・リハビリ職など、医療資格者と医療機関を成功報酬型でつなぐマッチングサービス。</p>
+          <p class="hero-tagline">医療資格と臨床経験を有効活用しませんか？</p>
+          <p>医療スタッフと急な人材不足の医療機関をつなぐマッチングサービス。</p>
         </div>
         <div class="hero-role-panel" aria-label="利用者別メニュー">
           <a class="hero-role-card seeker" href="register-seeker.html">
@@ -60,6 +84,42 @@
       <article><span>¥0</span><div><strong>掲載無料</strong><p>医療機関は無料で求人掲載が可能</p></div></article>
       <article><span>✓</span><div><strong>安心の本人確認</strong><p>資格・身分証で安心のマッチング</p></div></article>
       <article><span>✓</span><div><strong>成功報酬型（1スポット1名 3,300円 税込）</strong><p>採用決定時のみ費用が発生</p></div></article>
+    </section>
+
+    <section class="section spotwork-section" id="spotwork">
+      <div class="section-heading centered"><h2>スポットワークの例</h2></div>
+      <div class="job-grid">
+        <article class="job-card">
+          <img src="assets/job-radiology.png" alt="放射線技師">
+          <div>
+            <h3>放射線技師</h3>
+            <p class="location">横浜市西区</p>
+            <p class="spotwork-detail"><strong>内容：</strong>健康診断での胃部撮影</p>
+            <p class="spotwork-time"><strong>時間：</strong>8:30〜12:30</p>
+            <p class="spotwork-pay">25,000円（交通費別途実費）</p>
+          </div>
+        </article>
+        <article class="job-card">
+          <img src="assets/job-nurse.png" alt="看護師スポット">
+          <div>
+            <h3>看護師スポット</h3>
+            <p class="location">東京都世田谷区</p>
+            <p class="spotwork-detail"><strong>内容：</strong>大学健診での問診</p>
+            <p class="spotwork-time"><strong>時間：</strong>9:00〜15:00</p>
+            <p class="spotwork-pay">15,000円（交通費別途実費）</p>
+          </div>
+        </article>
+        <article class="job-card">
+          <img src="assets/job-lab.png" alt="臨床検査技師スポット">
+          <div>
+            <h3>臨床検査技師スポット</h3>
+            <p class="location">東京都中央区</p>
+            <p class="spotwork-detail"><strong>内容：</strong>施設内での腹部エコー</p>
+            <p class="spotwork-time"><strong>時間：</strong>9:00〜12:30</p>
+            <p class="spotwork-pay">20,000円（交通費別途）</p>
+          </div>
+        </article>
+      </div>
     </section>
 
     <section class="section jobs-section" id="jobs">
@@ -137,11 +197,12 @@
 
       <article class="role-panel role-employer" id="pricing">
         <div class="role-visual employer-visual">
+          <span class="free-badge">募集掲載無料</span>
           <img src="assets/employer-photo.png" alt="求人を確認する医師">
           <div class="price-circle">成功報酬<br><strong>3,300円</strong><small>／1名・税込</small></div>
         </div>
         <div class="role-copy">
-          <span class="role-label">For Hospitals & Clinics</span>
+          <span class="role-label">事業者の方へ</span>
           <h2>求人者の方へ</h2>
           <p>求人掲載は無料。必要な時だけ医療資格者を募集し、採用決定時のみ費用が発生します。</p>
           <ul class="role-list employer-list">
