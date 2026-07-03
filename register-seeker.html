@@ -346,6 +346,7 @@
       font-weight: 900;
     }
     .check-pill input:checked + span { color: var(--green-dark); border-color: #86d9ab; background: #f2fff7; }
+    .check-grid-placeholder { color: var(--muted); font-size: 13px; font-weight: 800; }
     .submit-row { margin-top: 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .form-message { display: none; color: var(--green-dark); font-weight: 900; }
     .voice-card { padding: 24px; }
@@ -573,7 +574,7 @@
             <div class="field"><label for="years">実務経験</label><select class="input" id="years"><option>選択してください</option><option>未経験</option><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5年以上</option><option>10年以上</option></select></div>
             <div class="field"><label for="area">希望勤務地</label><input class="input" id="area" placeholder="例）東京都・神奈川県"></div>
             <div class="field"><label for="style">希望雇用形態</label><select class="input" id="style"><option>選択してください</option><option>スポット</option><option>業務委託</option><option>非常勤</option><option>常勤も相談したい</option></select></div>
-            <div class="field full"><label>対応できる業務・スキル</label><div class="check-grid"><label class="check-pill"><input type="checkbox"><span>採血</span></label><label class="check-pill"><input type="checkbox"><span>健診</span></label><label class="check-pill"><input type="checkbox"><span>問診</span></label><label class="check-pill"><input type="checkbox"><span>検体検査</span></label><label class="check-pill"><input type="checkbox"><span>リハビリ</span></label><label class="check-pill"><input type="checkbox"><span>訪問対応</span></label></div></div>
+            <div class="field full"><label>対応できる業務・スキル</label><div class="check-grid" id="skillGrid"><span class="check-grid-placeholder">保有資格を選択すると対応スキルが表示されます</span></div></div>
             <div class="field full"><label for="pr">自己PR・希望条件</label><textarea class="textarea" id="pr" placeholder="得意な業務、勤務できる曜日、ブランクの有無、希望条件などを入力してください。"></textarea></div>
           </div>
           <div class="submit-row"><button class="wide-cta" type="submit">プロフィールを登録する</button><span class="form-message" id="formMessage">登録内容を受け付けました。</span></div>
@@ -613,6 +614,47 @@
     document.getElementById('profileForm').addEventListener('submit', function(event) {
       event.preventDefault();
       document.getElementById('formMessage').style.display = 'inline';
+    });
+
+    var skillsByLicense = {
+      '看護師': ['採血', '点滴', '健診', '問診', 'バイタルチェック', '服薬管理'],
+      '准看護師': ['採血', '点滴', '健診', '問診', 'バイタルチェック', '服薬管理'],
+      '臨床検査技師': ['採血', '検体検査', '心電図', '超音波検査（エコー）', '生理検査'],
+      '放射線技師': ['X線撮影', 'CT撮影', 'MRI補助', '胃部撮影', 'マンモグラフィ'],
+      '理学療法士': ['リハビリ', '運動機能訓練', '訪問リハビリ', '歩行訓練'],
+      '作業療法士': ['リハビリ', '作業訓練', '訪問リハビリ', '日常生活動作訓練'],
+      '言語聴覚士': ['言語訓練', '嚥下訓練', '聴覚検査', '訪問対応'],
+      'ヘルパー': ['身体介護', '生活援助', '訪問対応', '見守り']
+    };
+
+    var licenseSelect = document.getElementById('license');
+    var skillGrid = document.getElementById('skillGrid');
+
+    function renderSkillGrid(license) {
+      var skills = skillsByLicense[license];
+      skillGrid.innerHTML = '';
+      if (!skills) {
+        var placeholder = document.createElement('span');
+        placeholder.className = 'check-grid-placeholder';
+        placeholder.textContent = '保有資格を選択すると対応スキルが表示されます';
+        skillGrid.appendChild(placeholder);
+        return;
+      }
+      skills.forEach(function (skill) {
+        var label = document.createElement('label');
+        label.className = 'check-pill';
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        var span = document.createElement('span');
+        span.textContent = skill;
+        label.appendChild(input);
+        label.appendChild(span);
+        skillGrid.appendChild(label);
+      });
+    }
+
+    licenseSelect.addEventListener('change', function () {
+      renderSkillGrid(licenseSelect.value);
     });
 
     document.querySelectorAll('.ms-dropdown').forEach(function (dropdown) {
