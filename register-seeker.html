@@ -87,6 +87,60 @@
       border-bottom: 1px solid var(--line);
     }
     .seeker-search .search-panel { width: min(1040px, 100%); margin: 0 auto; grid-template-columns: repeat(4, minmax(0, 1fr)) 170px; }
+    .search-panel .ms-field { display: grid; gap: 5px; position: relative; }
+    .search-panel .ms-field > span { color: var(--blue-dark); font-size: 12px; font-weight: 900; }
+    .ms-dropdown { position: relative; }
+    .ms-dropdown summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      height: 48px;
+      padding: 0 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: #223f59;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      list-style: none;
+    }
+    .ms-dropdown summary::-webkit-details-marker { display: none; }
+    .ms-dropdown[open] summary { border-color: var(--blue); }
+    .ms-caret { color: var(--muted); transition: transform .15s ease; }
+    .ms-dropdown[open] .ms-caret { transform: rotate(180deg); }
+    .ms-panel {
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 260px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+    .ms-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+    }
+    .ms-option input { accent-color: var(--green); margin: 0; }
+    .ms-option:has(input:checked) { background: #f2fff7; border-color: #9adfb8; color: var(--green-dark); }
     .section-soft { background: linear-gradient(180deg, #f5fbff 0%, #fff 100%); }
     .intro-grid {
       display: grid;
@@ -378,9 +432,35 @@
 
     <section class="seeker-search" id="jobs">
       <form class="search-panel" aria-label="求人検索">
-        <label><span>職種</span><select><option>職種を選択</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>ヘルパー</option></select></label>
-        <label><span>勤務地</span><select><option>勤務地を選択</option><option>東京都</option><option>神奈川県</option><option>大阪府</option><option>福岡県</option></select></label>
-        <label><span>雇用形態</span><select><option>雇用形態を選択</option><option>スポット</option><option>業務委託</option><option>非常勤</option></select></label>
+        <div class="ms-field">
+          <span>職種</span>
+          <details class="ms-dropdown">
+            <summary><span class="ms-summary-text">職種を選択（複数可）</span><span class="ms-caret" aria-hidden="true">▾</span></summary>
+            <div class="ms-panel" role="group" aria-label="職種（複数選択可）">
+              <label class="ms-option"><input type="checkbox" name="jobType" value="看護師"><span>看護師</span></label>
+              <label class="ms-option"><input type="checkbox" name="jobType" value="臨床検査技師"><span>臨床検査技師</span></label>
+              <label class="ms-option"><input type="checkbox" name="jobType" value="放射線技師"><span>放射線技師</span></label>
+              <label class="ms-option"><input type="checkbox" name="jobType" value="理学療法士"><span>理学療法士</span></label>
+              <label class="ms-option"><input type="checkbox" name="jobType" value="作業療法士"><span>作業療法士</span></label>
+              <label class="ms-option"><input type="checkbox" name="jobType" value="言語聴覚士"><span>言語聴覚士</span></label>
+              <label class="ms-option"><input type="checkbox" name="jobType" value="ヘルパー"><span>ヘルパー</span></label>
+            </div>
+          </details>
+        </div>
+        <div class="ms-field">
+          <span>勤務地</span>
+          <details class="ms-dropdown">
+            <summary><span class="ms-summary-text">勤務地を選択（複数可）</span><span class="ms-caret" aria-hidden="true">▾</span></summary>
+            <div class="ms-panel" role="group" aria-label="勤務地（複数選択可）">
+              <label class="ms-option"><input type="checkbox" name="location" value="首都圏"><span>首都圏</span></label>
+              <label class="ms-option"><input type="checkbox" name="location" value="東京都"><span>東京都</span></label>
+              <label class="ms-option"><input type="checkbox" name="location" value="神奈川県"><span>神奈川県</span></label>
+              <label class="ms-option"><input type="checkbox" name="location" value="千葉県"><span>千葉県</span></label>
+              <label class="ms-option"><input type="checkbox" name="location" value="埼玉県"><span>埼玉県</span></label>
+            </div>
+          </details>
+        </div>
+        <label><span>雇用形態</span><select><option>雇用形態を選択</option><option>スポット</option><option>業務委託</option><option>非常勤</option><option>パート</option></select></label>
         <label><span>勤務日</span><select><option>希望日を選択</option><option>明日</option><option>今週末</option><option>平日のみ</option><option>相談したい</option></select></label>
         <button class="btn-search" type="button"><span>⌕</span>求人を探す</button>
         <div class="chips"><a href="#jobs">スポット</a><a href="#jobs">業務委託</a><a href="#jobs">看護師</a><a href="#jobs">検査技師</a></div>
