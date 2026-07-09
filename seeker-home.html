@@ -18,9 +18,48 @@
 
     .page { max-width: 1180px; margin: 0 auto; padding: 32px; }
 
-    .welcome-banner { background: linear-gradient(135deg, #1FAD6A, #00BCD4); border-radius: 16px; padding: 32px; color: white; margin-bottom: 32px; }
-    .welcome-banner h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-    .welcome-banner p { opacity: 0.9; font-size: 15px; }
+    .welcome-banner {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      margin-bottom: 32px;
+      min-height: 240px;
+      display: flex;
+      align-items: center;
+      background: #0D9E5C;
+    }
+    .welcome-photo { position: absolute; inset: 0; z-index: 1; }
+    .welcome-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 78% center; transform: scale(1.08); }
+    .welcome-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(90deg, #0D9E5C 0%, #1FAD6A 34%, rgba(0,151,148,.82) 58%, rgba(0,188,212,.18) 84%, rgba(0,188,212,0) 100%);
+    }
+    .welcome-content { position: relative; z-index: 3; padding: 36px 40px; color: white; max-width: 560px; }
+    .welcome-badge {
+      display: inline-flex; align-items: center; min-height: 28px; padding: 0 14px; margin-bottom: 16px;
+      background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.45); border-radius: 999px;
+      font-size: 12px; font-weight: 800;
+    }
+    .welcome-content h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .welcome-content p { opacity: 0.92; font-size: 15px; margin-bottom: 22px; }
+    .welcome-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .welcome-actions .btn-banner {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px;
+      border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; border: 1.5px solid transparent;
+    }
+    .welcome-actions .btn-banner.solid { background: white; color: #0D9E5C; }
+    .welcome-actions .btn-banner.solid:hover { background: #f0fdf4; }
+    .welcome-actions .btn-banner.outline { background: rgba(255,255,255,.12); color: white; border-color: rgba(255,255,255,.65); }
+    .welcome-actions .btn-banner.outline:hover { background: rgba(255,255,255,.22); }
+    @media (max-width: 640px) {
+      .welcome-banner { min-height: 0; }
+      .welcome-banner::before { background: linear-gradient(180deg, #0D9E5C 0%, #1FAD6A 40%, rgba(0,151,148,.86) 68%, rgba(0,188,212,.2) 100%); }
+      .welcome-photo img { object-position: 70% 20%; }
+      .welcome-content { padding: 28px 22px; max-width: none; }
+    }
 
     .success-banner { background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #166534; font-weight: 600; }
 
@@ -85,8 +124,16 @@
   </div>
 
   <div class="welcome-banner">
-    <h1 id="welcome-text">ようこそ、MediSpotへ！</h1>
-    <p>あなたの資格と希望条件にマッチした求人をご確認ください。</p>
+    <div class="welcome-photo" aria-hidden="true"><img src="assets/seeker-photo.png" alt=""></div>
+    <div class="welcome-content">
+      <span class="welcome-badge">求職者マイページ</span>
+      <h1 id="welcome-text">ようこそ、MediSpotへ！</h1>
+      <p>今日のおすすめ求人を確認しましょう。</p>
+      <div class="welcome-actions">
+        <a class="btn-banner solid" href="#jobs-grid">求人を確認する</a>
+        <a class="btn-banner outline" href="seeker-profile.html">プロフィール</a>
+      </div>
+    </div>
   </div>
 
   <div class="stats-row">
@@ -245,7 +292,7 @@
   var user = JSON.parse(userRaw);
 
   if (user.fullName) {
-    document.getElementById('welcome-text').textContent = 'ようこそ、' + user.fullName + 'さん！';
+    document.getElementById('welcome-text').textContent = user.fullName + 'さん、';
     document.getElementById('user-name').textContent = user.fullName;
   }
 
