@@ -63,9 +63,9 @@
       return;
     }
 
-    showNotice("\u30ed\u30b0\u30a4\u30f3\u3057\u307e\u3057\u305f\u3002\u30e1\u30a4\u30f3\u30da\u30fc\u30b8\u3078\u79fb\u52d5\u3057\u307e\u3059\u3002", false);
+    showNotice("ログインしました。マイページへ移動します。", false);
     setTimeout(function () {
-      window.location.href = "index.html";
+      window.location.href = roleInput.value === "seeker" ? "seeker-dashboard.html" : "index.html";
     }, 600);
   });
 
