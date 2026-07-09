@@ -41,20 +41,58 @@
     button.style.cursor = busy ? "wait" : "";
   }
 
+  function requireClient() {
+    if (supabaseClient) return true;
+    showMessage("formMessage", "Supabase URL \u3068 anon key \u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+    return false;
+  }
+
   async function saveSeeker(event) {
     event.preventDefault();
 
-    if (!supabaseClient) {
-      showMessage("formMessage", "Supabase URL と anon key を設定してください。", true);
+    if (!requireClient()) return;
+
+    const password = value("password") || "";
+    const passwordConfirm = value("passwordConfirm") || "";
+
+    if (password.length < 8) {
+      showMessage("formMessage", "\u30d1\u30b9\u30ef\u30fc\u30c9\u306f8\u6587\u5b57\u4ee5\u4e0a\u3067\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      showMessage("formMessage", "\u30d1\u30b9\u30ef\u30fc\u30c9\u3068\u78ba\u8a8d\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u304c\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002", true);
       return;
     }
 
     const form = event.currentTarget;
     setBusy(form, true);
 
+    const email = value("email");
+    const name = value("name");
+
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          role: "seeker",
+          name
+        }
+      }
+    });
+
+    if (authError) {
+      setBusy(form, false);
+      console.error(authError);
+      showMessage("formMessage", authError.message || "\u30a2\u30ab\u30a6\u30f3\u30c8\u767b\u9332\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002", true);
+      return;
+    }
+
     const payload = {
-      name: value("name"),
-      email: value("email"),
+      user_id: authData.user?.id || null,
+      name,
+      email,
       birth_date: value("birth"),
       phone: value("phone"),
       license: value("license"),
@@ -66,26 +104,25 @@
       source_path: window.location.pathname
     };
 
-    const { error } = await supabaseClient.from("seeker_profiles").insert(payload);
+    const { error: profileError } = await supabaseClient.from("seeker_profiles").insert(payload);
     setBusy(form, false);
 
-    if (error) {
-      console.error(error);
-      showMessage("formMessage", "登録できませんでした。Supabase設定とテーブルを確認してください。", true);
+    if (profileError) {
+      console.error(profileError);
+      showMessage("formMessage", "\u30a2\u30ab\u30a6\u30f3\u30c8\u306f\u4f5c\u6210\u3055\u308c\u307e\u3057\u305f\u304c\u3001\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u4fdd\u5b58\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002", true);
       return;
     }
 
-    showMessage("formMessage", "登録内容をSupabaseに保存しました。", false);
-    form.reset();
+    showMessage("formMessage", "\u767b\u9332\u304c\u5b8c\u4e86\u3057\u307e\u3057\u305f\u3002\u30ed\u30b0\u30a4\u30f3\u753b\u9762\u3078\u79fb\u52d5\u3057\u307e\u3059\u3002", false);
+    setTimeout(function () {
+      window.location.href = "login.html?role=seeker&registered=1";
+    }, 900);
   }
 
   async function saveEmployer(event) {
     event.preventDefault();
 
-    if (!supabaseClient) {
-      showMessage("formMessage", "Supabase URL と anon key を設定してください。", true);
-      return;
-    }
+    if (!requireClient()) return;
 
     const form = event.currentTarget;
     setBusy(form, true);
@@ -109,11 +146,11 @@
 
     if (error) {
       console.error(error);
-      showMessage("formMessage", "登録できませんでした。Supabase設定とテーブルを確認してください。", true);
+      showMessage("formMessage", "\u767b\u9332\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002Supabase\u8a2d\u5b9a\u3068\u30c6\u30fc\u30d6\u30eb\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
       return;
     }
 
-    showMessage("formMessage", "登録内容をSupabaseに保存しました。", false);
+    showMessage("formMessage", "\u767b\u9332\u5185\u5bb9\u3092Supabase\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f\u3002", false);
     form.reset();
   }
 

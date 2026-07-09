@@ -79,3 +79,6 @@ on public.employer_profiles
 for insert
 to anon
 with check (true);
+
+
+alter table public.seeker_profiles add column if not exists user_id uuid;
