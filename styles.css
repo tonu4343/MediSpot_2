@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --blue: #005bac;
   --blue-2: #0b6fc8;
   --blue-dark: #003f7d;
@@ -2380,5 +2380,31 @@ main {
   .hero-photo img {
     opacity: .38;
     object-position: right top;
+  }
+}
+/* Final employer landing visual: keep employer-photo.png fully visible, including the head. */
+.role-panel.role-employer .role-visual {
+  overflow: visible;
+}
+
+.role-panel.role-employer .role-visual img[src="assets/employer-photo.png"] {
+  display: block;
+  width: min(600px, 100%);
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: 4 / 3;
+  padding: clamp(12px, 2vw, 24px);
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: linear-gradient(135deg, #f7fcff, #ffffff);
+  border: 1px solid rgba(172,211,241,0.85);
+  border-radius: 16px;
+}
+
+@media (max-width: 560px) {
+  .role-panel.role-employer .role-visual img[src="assets/employer-photo.png"] {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 10px;
   }
 }
