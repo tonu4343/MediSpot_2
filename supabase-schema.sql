@@ -82,3 +82,53 @@ with check (true);
 
 
 alter table public.seeker_profiles add column if not exists user_id uuid;
+
+-- Seeker registration + post-registration job matching (register-seeker.html / seeker-home.html)
+create table if not exists public.seekers (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade unique,
+  full_name text,
+  email text,
+  phone text,
+  birthdate date,
+  job_type text,
+  experience text,
+  location text,
+  work_type text,
+  skills text,
+  pr_text text,
+  role text default 'seeker',
+  created_at timestamptz not null default now()
+);
+
+alter table public.seekers enable row level security;
+
+create policy "Seekers manage own row"
+on public.seekers
+for all
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create table if not exists public.jobs (
+  id uuid primary key default gen_random_uuid(),
+  employer_id uuid,
+  title text not null,
+  category text,
+  type text,
+  salary text,
+  location text,
+  work_date text,
+  description text,
+  requirements text,
+  status text default 'open',
+  created_at timestamptz not null default now()
+);
+
+alter table public.jobs enable row level security;
+
+create policy "Jobs public read"
+on public.jobs
+for select
+to anon, authenticated
+using (status = 'open');

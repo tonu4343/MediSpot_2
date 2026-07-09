@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マイページ | MediSpot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: #F7F9FC; color: #1B2430; }
+
+    header { background: white; border-bottom: 1px solid #E3E8EE; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+    .header-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; color: #1B2430; text-decoration: none; }
+    .logo-icon { width: 32px; height: 32px; background: #1FAD6A; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 800; }
+    .btn-logout { padding: 8px 18px; border-radius: 8px; border: 1.5px solid #E3E8EE; background: white; color: #5C6B7A; font-size: 14px; cursor: pointer; }
+    .btn-logout:hover { border-color: #1FAD6A; color: #1FAD6A; }
+
+    .page { max-width: 1180px; margin: 0 auto; padding: 32px; }
+
+    .welcome-banner { background: linear-gradient(135deg, #1FAD6A, #00BCD4); border-radius: 16px; padding: 32px; color: white; margin-bottom: 32px; }
+    .welcome-banner h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .welcome-banner p { opacity: 0.9; font-size: 15px; }
+
+    .success-banner { background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #166534; font-weight: 600; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: white; border: 1px solid #E3E8EE; border-radius: 12px; padding: 20px 24px; }
+    .stat-card .num { font-size: 28px; font-weight: 700; color: #1FAD6A; }
+    .stat-card .label { font-size: 13px; color: #5C6B7A; margin-top: 4px; }
+
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .badge { background: #E8F5EE; color: #1FAD6A; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+
+    .jobs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+    .job-card { background: white; border: 1.5px solid #E3E8EE; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px; transition: border-color .15s, transform .15s; }
+    .job-card:hover { border-color: #1FAD6A; transform: translateY(-2px); }
+    .job-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #E8F5EE; color: #1FAD6A; }
+    .job-tag.spot { background: #E8F5EE; color: #1FAD6A; }
+    .job-tag.contract { background: #EAF2FC; color: #1565D8; }
+    .job-title { font-size: 15px; font-weight: 700; color: #1B2430; }
+    .job-meta { font-size: 13px; color: #5C6B7A; line-height: 1.6; }
+    .job-salary { font-size: 15px; font-weight: 700; color: #1FAD6A; }
+    .btn-apply { display: block; text-align: center; background: #1FAD6A; color: white; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: none; margin-top: auto; }
+    .btn-apply:hover { background: #0D9E5C; }
+    .no-jobs { background: white; border: 1px solid #E3E8EE; border-radius: 12px; padding: 40px; text-align: center; color: #5C6B7A; }
+
+    .actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 32px; }
+    .action-btn { display: flex; align-items: center; gap: 14px; background: white; border: 1.5px solid #E3E8EE; border-radius: 12px; padding: 18px 20px; text-decoration: none; color: #1B2430; transition: border-color .15s; }
+    .action-btn:hover { border-color: #1FAD6A; }
+    .action-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .action-btn .text h4 { font-size: 14px; font-weight: 700; }
+    .action-btn .text p { font-size: 12px; color: #5C6B7A; margin-top: 2px; }
+
+    .btn-more { display: block; text-align: center; border: 1.5px solid #1FAD6A; color: #1FAD6A; border-radius: 10px; padding: 13px; font-weight: 700; font-size: 14px; text-decoration: none; margin-bottom: 32px; }
+    .btn-more:hover { background: #F0FDF4; }
+
+    @media (max-width: 768px) {
+      .page { padding: 20px 16px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .jobs-grid { grid-template-columns: 1fr; }
+      .actions-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">+</div>
+      MediSpot
+    </a>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="user-name" style="font-size:14px;color:#5C6B7A;"></span>
+      <button class="btn-logout" onclick="logout()">ログアウト</button>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="success-banner" id="success-banner" style="display:none;">
+    ✅ 登録が完了しました！あなたの職種・希望条件にマッチした求人を表示しています。
+  </div>
+
+  <div class="welcome-banner">
+    <h1 id="welcome-text">ようこそ、MediSpotへ！</h1>
+    <p>あなたの資格と希望条件にマッチした求人をご確認ください。</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num" id="match-count">-</div>
+      <div class="label">マッチした求人</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">0</div>
+      <div class="label">応募中</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">0</div>
+      <div class="label">スカウト</div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    🎯 あなたにマッチした求人
+    <span class="badge" id="job-type-badge"></span>
+  </div>
+
+  <div class="jobs-grid" id="jobs-grid">
+    <div class="no-jobs" style="grid-column:1/-1;">求人を読み込み中...</div>
+  </div>
+
+  <a href="seeker-jobs.html" class="btn-more">すべての求人を見る →</a>
+
+  <div class="section-title">クイックアクション</div>
+  <div class="actions-grid">
+    <a href="seeker-profile.html" class="action-btn">
+      <div class="action-icon" style="background:#EAF2FC;">👤</div>
+      <div class="text"><h4>プロフィールを編集</h4><p>資格・経験・希望条件を更新</p></div>
+    </a>
+    <a href="seeker-jobs.html" class="action-btn">
+      <div class="action-icon" style="background:#E8F5EE;">🔍</div>
+      <div class="text"><h4>求人を検索</h4><p>職種・勤務地・日付で絞り込み</p></div>
+    </a>
+    <a href="seeker-apply-complete.html" class="action-btn">
+      <div class="action-icon" style="background:#FFF0EB;">📋</div>
+      <div class="text"><h4>応募履歴</h4><p>応募した求人のステータス確認</p></div>
+    </a>
+    <a href="chat.html" class="action-btn">
+      <div class="action-icon" style="background:#F3EEFF;">💬</div>
+      <div class="text"><h4>メッセージ</h4><p>医療機関とのやり取りを確認</p></div>
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+(function () {
+  var config = window.MEDISPOT_SUPABASE || {};
+  var configured = config.url && config.anonKey &&
+    config.url.indexOf("YOUR_PROJECT_ID") === -1 &&
+    config.anonKey.indexOf("YOUR_SUPABASE_ANON_KEY") === -1;
+  var supabaseClient = configured && window.supabase
+    ? window.supabase.createClient(config.url, config.anonKey)
+    : null;
+
+  function escHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderJobs(jobs, grid) {
+    grid.innerHTML = jobs.map(function (job) {
+      return (
+        '<div class="job-card">' +
+          '<span class="job-tag ' + (job.type === 'スポット' ? 'spot' : 'contract') + '">' + escHtml(job.type || 'スポット') + '</span>' +
+          '<div class="job-title">' + escHtml(job.title || '') + '</div>' +
+          '<div class="job-meta">📍 ' + escHtml(job.location || '') +
+            (job.work_date ? '<br>📅 ' + escHtml(job.work_date) : '') +
+          '</div>' +
+          '<div class="job-salary">' + escHtml(job.salary || '') + '</div>' +
+          '<a href="seeker-job-detail.html?id=' + encodeURIComponent(job.id) + '" class="btn-apply">応募する →</a>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function renderDemoJobs(grid) {
+    var demos = [
+      { tag: 'スポット', tagClass: 'spot', title: '健診センター 看護師業務', loc: '東京都 新宿区', date: '今週金曜 8:30〜13:00', salary: '日給 12,000円〜' },
+      { tag: '業務委託', tagClass: 'contract', title: 'クリニック 臨床検査技師', loc: '神奈川県 横浜市', date: '週1日から相談可', salary: '時給 2,000円〜' },
+      { tag: 'スポット', tagClass: 'spot', title: '訪問リハビリ 理学療法士', loc: '大阪府 大阪市', date: '土曜 9:00〜16:00', salary: '日給 20,000円〜' }
+    ];
+    grid.innerHTML = demos.map(function (d) {
+      return (
+        '<div class="job-card">' +
+          '<span class="job-tag ' + d.tagClass + '">' + d.tag + '</span>' +
+          '<div class="job-title">' + d.title + '</div>' +
+          '<div class="job-meta">📍 ' + d.loc + '<br>📅 ' + d.date + '</div>' +
+          '<div class="job-salary">' + d.salary + '</div>' +
+          '<a href="register-seeker.html" class="btn-apply">応募する →</a>' +
+        '</div>'
+      );
+    }).join('');
+    document.getElementById('match-count').textContent = demos.length;
+  }
+
+  function loadMatchedJobs(user) {
+    var grid = document.getElementById('jobs-grid');
+
+    if (!supabaseClient) {
+      renderDemoJobs(grid);
+      return;
+    }
+
+    var query = supabaseClient.from('jobs').select('*').eq('status', 'open');
+    if (user.jobType) query = query.eq('category', user.jobType);
+    if (user.workType) query = query.eq('type', user.workType);
+    query = query.order('created_at', { ascending: false }).limit(6);
+
+    query.then(function (result) {
+      if (result.error) throw result.error;
+      var jobs = result.data;
+      document.getElementById('match-count').textContent = jobs ? jobs.length : 0;
+
+      if (!jobs || jobs.length === 0) {
+        return supabaseClient.from('jobs').select('*').eq('status', 'open').limit(3).then(function (fallbackResult) {
+          var allJobs = fallbackResult.data;
+          if (!allJobs || allJobs.length === 0) {
+            grid.innerHTML =
+              '<div class="no-jobs" style="grid-column:1/-1;">' +
+                '<p style="font-size:32px;margin-bottom:12px;">🔍</p>' +
+                '<p style="font-weight:600;margin-bottom:8px;">現在マッチする求人はありません</p>' +
+                '<p style="font-size:13px;">新しい求人が掲載され次第、メールでお知らせします。</p>' +
+              '</div>';
+          } else {
+            renderJobs(allJobs, grid);
+            document.getElementById('match-count').textContent = allJobs.length;
+          }
+        });
+      }
+
+      renderJobs(jobs, grid);
+    }).catch(function (err) {
+      console.error('Job fetch error:', err);
+      renderDemoJobs(grid);
+    });
+  }
+
+  window.logout = function () {
+    if (supabaseClient) supabaseClient.auth.signOut();
+    localStorage.removeItem('medispot_user');
+    window.location.href = 'login.html';
+  };
+
+  var userRaw = localStorage.getItem('medispot_user');
+  if (!userRaw) {
+    window.location.href = 'login.html';
+    return;
+  }
+  var user = JSON.parse(userRaw);
+
+  if (user.fullName) {
+    document.getElementById('welcome-text').textContent = 'ようこそ、' + user.fullName + 'さん！';
+    document.getElementById('user-name').textContent = user.fullName;
+  }
+
+  if (user.jobType) {
+    document.getElementById('job-type-badge').textContent = user.jobType;
+  }
+
+  if (new URLSearchParams(location.search).get('new') === '1') {
+    document.getElementById('success-banner').style.display = 'flex';
+  }
+
+  loadMatchedJobs(user);
+})();
+</script>
+
+</body>
+</html>
