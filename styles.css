@@ -2458,3 +2458,17 @@ main {
   }
 }
 
+
+/* Keep larger hero icons separated from text */
+.hero-role-card {
+  grid-template-columns: 64px minmax(0, 1fr) 28px;
+  gap: 18px;
+}
+
+@media (max-width: 560px) {
+  .hero-role-card {
+    grid-template-columns: 56px minmax(0, 1fr) 28px;
+    gap: 14px;
+  }
+}
+
