@@ -69,7 +69,7 @@
     setBusy(form, true);
 
     const email = value("email");
-    const name = value("name");
+    const name = [value("lastName"), value("firstName")].filter(Boolean).join(" ") || value("name");
 
     const { data: authData, error: authError } = await supabaseClient.auth.signUp({
       email,

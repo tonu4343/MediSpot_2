@@ -3,637 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>求職者の方へ | MediSpot</title>
+  <title>&#27714;&#32887;&#32773;&#30331;&#37682; | MediSpot</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .seeker-page { background: #fff; }
-    .seeker-hero {
-      position: relative;
-      min-height: 560px;
-      overflow: hidden;
-      background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.94) 39%, rgba(234,247,255,.36) 70%, rgba(234,247,255,.08) 100%);
-    }
-    .seeker-hero-photo { position: absolute; inset: 0; z-index: 0; }
-    .seeker-hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 76% top; }
-    .seeker-hero-photo::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.96) 34%, rgba(255,255,255,.58) 59%, rgba(255,255,255,.08) 100%);
-    }
-    .seeker-hero-inner {
-      position: relative;
-      z-index: 1;
-      width: min(1180px, calc(100% - 48px));
-      margin: 0 auto;
-      padding: 70px 0 44px;
-    }
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 30px;
-      padding: 0 14px;
-      color: var(--green-dark);
-      background: #f2fff7;
-      border: 1px solid #9adfb8;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 900;
-      margin-bottom: 18px;
-    }
-    .seeker-hero h1 {
-      margin: 0 0 18px;
-      color: var(--blue);
-      font-size: clamp(38px, 5vw, 58px);
-      line-height: 1.32;
-      font-weight: 900;
-      letter-spacing: 0;
-    }
-    .seeker-hero p {
-      width: min(590px, 100%);
-      margin: 0 0 26px;
-      color: #223f59;
-      font-size: 17px;
-      font-weight: 800;
-    }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
-    .btn-blue {
-      color: var(--blue);
-      background: #fff;
-      border-color: var(--blue);
-      box-shadow: 0 8px 16px rgba(0, 91, 172, .08);
-    }
-    .seeker-summary {
+    :root { --seeker-teal: #16a394; --soft-bg: #f3fafb; }
+    body.seeker-register-page { background: linear-gradient(180deg, #f6fbff 0%, #ffffff 48%, #f4fafb 100%); color: var(--blue-dark); }
+    .register-shell { padding: 72px clamp(20px, 5vw, 64px) 74px; }
+    .register-layout {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      width: min(760px, 100%);
-    }
-    .seeker-summary article {
-      min-height: 104px;
-      padding: 18px;
-      background: rgba(255,255,255,.94);
-      border: 1px solid #d7e8f5;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-    .seeker-summary strong { display: block; color: var(--blue); font-size: 18px; margin-bottom: 4px; }
-    .seeker-summary span { color: var(--muted); font-size: 13px; font-weight: 800; }
-    .seeker-search {
-      padding: 34px clamp(24px, 7vw, 96px);
-      background: #eef8ff;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-    }
-    .seeker-search .search-panel { width: min(1040px, 100%); margin: 0 auto; grid-template-columns: repeat(4, minmax(0, 1fr)) 170px; }
-    .search-panel .ms-field { display: grid; gap: 5px; position: relative; }
-    .search-panel .ms-field > span { color: var(--blue-dark); font-size: 12px; font-weight: 900; }
-    .ms-dropdown { position: relative; }
-    .ms-dropdown summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      height: 48px;
-      padding: 0 14px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      color: #223f59;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      list-style: none;
-    }
-    .ms-dropdown summary::-webkit-details-marker { display: none; }
-    .ms-dropdown[open] summary { border-color: var(--blue); }
-    .ms-caret { color: var(--muted); transition: transform .15s ease; }
-    .ms-dropdown[open] .ms-caret { transform: rotate(180deg); }
-    .ms-panel {
-      position: absolute;
-      z-index: 20;
-      top: calc(100% + 6px);
-      left: 0;
-      right: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      min-width: 260px;
-      padding: 12px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      box-shadow: var(--shadow);
-    }
-    .ms-option {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--blue-dark);
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      user-select: none;
-    }
-    .ms-option input { accent-color: var(--green); margin: 0; }
-    .ms-option:has(input:checked) { background: #f2fff7; border-color: #9adfb8; color: var(--green-dark); }
-    .ms-panel-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      width: 100%;
-      margin-top: 6px;
-      padding-top: 10px;
-      border-top: 1px solid var(--line);
-    }
-    .ms-clear {
-      padding: 0;
-      background: none;
-      border: 0;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .ms-clear:hover { color: var(--blue-dark); }
-    .ms-apply {
-      padding: 8px 18px;
-      background: linear-gradient(180deg, #28c975, var(--green));
-      border: 0;
-      border-radius: 999px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-    .section-soft { background: linear-gradient(180deg, #f5fbff 0%, #fff 100%); }
-    .intro-grid {
-      display: grid;
-      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-      gap: 34px;
-      align-items: center;
-      width: min(1180px, 100%);
-      margin: 0 auto;
-    }
-    .intro-card {
-      padding: 30px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-    .intro-card h2, .form-intro h2 {
-      margin: 0 0 14px;
-      color: var(--blue-dark);
-      font-size: clamp(27px, 3vw, 38px);
-      line-height: 1.35;
-      font-weight: 900;
-    }
-    .intro-card p, .form-intro p { margin: 0; color: var(--muted); font-weight: 800; }
-    .skill-list { display: grid; gap: 12px; margin: 24px 0 0; padding: 0; list-style: none; }
-    .skill-list li {
-      display: grid;
-      grid-template-columns: 42px 1fr;
-      gap: 12px;
-      align-items: center;
-      padding: 14px;
-      background: #f8fcff;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-    }
-    .skill-list b {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      color: var(--green-dark);
-      background: #f2fff7;
-      border: 1px solid #9adfb8;
-      border-radius: 50%;
-      font-size: 14px;
-    }
-    .skill-list strong { display: block; color: var(--blue); font-size: 16px; }
-    .skill-list span { color: var(--muted); font-size: 13px; font-weight: 800; }
-    .photo-panel { position: relative; min-height: 440px; overflow: hidden; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow); }
-    .photo-panel img { width: 100%; height: 100%; min-height: 440px; object-fit: cover; object-position: center top; }
-    .photo-note {
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      bottom: 22px;
-      display: grid;
-      grid-template-columns: 52px 1fr;
-      gap: 14px;
-      align-items: center;
-      padding: 16px;
-      background: rgba(255,255,255,.94);
-      border: 1px solid #d7e8f5;
-      border-radius: 10px;
-    }
-    .photo-note span { display: grid; place-items: center; width: 48px; height: 48px; color: #fff; background: var(--blue); border-radius: 50%; font-weight: 900; }
-    .photo-note strong { display: block; color: var(--blue-dark); }
-    .photo-note small { color: var(--muted); font-weight: 800; }
-    .feature-grid, .job-list, .voice-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      width: min(1180px, 100%);
-      margin: 0 auto;
-    }
-    .feature-card, .seeker-job, .voice-card, .register-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-    .feature-card { padding: 24px; }
-    .feature-card .icon {
-      display: grid;
-      place-items: center;
-      width: 54px;
-      height: 54px;
-      color: var(--blue);
-      border: 2px solid var(--blue);
-      border-radius: 50%;
-      font-size: 24px;
-      margin-bottom: 14px;
-    }
-    .feature-card h3, .seeker-job h3 { margin: 0 0 8px; color: var(--blue-dark); font-size: 20px; }
-    .feature-card p, .seeker-job p, .voice-card p { margin: 0; color: var(--muted); font-weight: 800; }
-    .seeker-job { position: relative; padding: 24px; }
-    .job-badge {
-      display: inline-flex;
-      min-height: 28px;
-      align-items: center;
-      padding: 0 12px;
-      color: var(--green-dark);
-      background: #f2fff7;
-      border: 1px solid #86d9ab;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-    .job-meta { display: grid; gap: 6px; margin: 14px 0; color: #49657d; font-size: 14px; font-weight: 800; }
-    .job-pay { color: var(--green-dark); font-size: 22px; font-weight: 900; margin-bottom: 16px; }
-    .flow-line { width: min(900px, 100%); margin: 0 auto; display: grid; gap: 16px; }
-    .flow-step {
-      display: grid;
-      grid-template-columns: 64px 1fr;
-      gap: 18px;
-      align-items: center;
-      padding: 20px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      box-shadow: 0 8px 18px rgba(0,63,125,.08);
-    }
-    .flow-step b { display: grid; place-items: center; width: 52px; height: 52px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 18px; }
-    .flow-step h3 { margin: 0 0 4px; color: var(--blue-dark); }
-    .flow-step p { margin: 0; color: var(--muted); font-weight: 800; }
-    .register-wrap {
-      display: grid;
-      grid-template-columns: minmax(260px, .52fr) minmax(0, 1fr);
-      gap: 24px;
-      width: min(1180px, 100%);
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 28px;
+      width: min(1240px, 100%);
       margin: 0 auto;
       align-items: start;
     }
-    .form-intro {
-      position: sticky;
-      top: 92px;
-      padding: 28px;
-      background: linear-gradient(180deg, #eef8ff, #fff);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
+    .register-card-main, .side-card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid #d6e8f4;
+      border-radius: 10px;
+      box-shadow: 0 22px 54px rgba(0, 63, 125, .10);
     }
-    .form-intro .wide-cta { width: 100%; margin-top: 22px; }
-    .register-card { padding: 28px; }
-    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .register-card-main { padding: clamp(28px, 4vw, 42px); }
+    .register-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 32px; }
+    .register-title-row h1 { margin: 0 0 12px; color: #0f172a; font-size: clamp(38px, 5vw, 60px); line-height: 1.12; font-weight: 900; letter-spacing: 0; }
+    .register-title-row p { margin: 0; color: #526172; font-size: 17px; font-weight: 800; line-height: 1.8; }
+    .role-pill { display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; color: #007a6c; background: #dcf7f0; border-radius: 999px; font-size: 16px; font-weight: 900; white-space: nowrap; }
+    .form-section-title { margin: 34px 0 18px; padding-bottom: 16px; border-bottom: 1px solid #dce8f0; color: #0f172a; font-size: 25px; font-weight: 900; }
+    .form-section-title:first-of-type { margin-top: 0; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 22px; }
     .field.full { grid-column: 1 / -1; }
-    .field label { display: block; margin-bottom: 7px; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
+    .field label { display: block; margin-bottom: 8px; color: #102338; font-size: 16px; font-weight: 900; }
     .required { color: #d92735; margin-left: 4px; }
     .input, .textarea {
-      width: 100%;
-      min-height: 50px;
-      padding: 0 14px;
-      color: #233f59;
-      background: #fff;
-      border: 1px solid #caddeb;
-      border-radius: 8px;
-      outline: none;
+      width: 100%; min-height: 56px; padding: 0 16px; color: #102338; background: #fff;
+      border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; font-size: 16px; outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
     }
-    .textarea { min-height: 112px; padding-top: 12px; resize: vertical; }
-    .check-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .textarea { min-height: 156px; padding-top: 14px; resize: vertical; line-height: 1.7; }
+    .input:focus, .textarea:focus { border-color: var(--seeker-teal); box-shadow: 0 0 0 4px rgba(22, 163, 148, .13); }
+    .check-grid { display: flex; flex-wrap: wrap; gap: 10px; min-height: 38px; align-items: center; }
+    .check-pill { position: relative; cursor: pointer; }
     .check-pill input { position: absolute; opacity: 0; }
-    .check-pill span {
-      display: inline-flex;
-      align-items: center;
-      min-height: 34px;
-      padding: 0 14px;
-      border: 1px solid #acd3f1;
-      border-radius: 999px;
-      color: var(--blue);
-      background: #f4fbff;
-      font-size: 13px;
-      font-weight: 900;
-    }
-    .check-pill input:checked + span { color: var(--green-dark); border-color: #86d9ab; background: #f2fff7; }
-    .check-grid-placeholder { color: var(--muted); font-size: 13px; font-weight: 800; }
-    .submit-row { margin-top: 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .form-message { display: none; color: var(--green-dark); font-weight: 900; }
-    .voice-card { padding: 24px; }
-    .stars { color: var(--green-dark); font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; }
-    .voice-person { display: flex; gap: 12px; align-items: center; margin-top: 18px; }
-    .voice-person img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid #d7e8f5; }
-    .voice-person strong { display: block; color: var(--blue-dark); }
-    .voice-person span { color: var(--muted); font-size: 12px; font-weight: 800; }
-    .final-cta {
-      padding: 52px clamp(24px, 7vw, 96px);
-      color: #fff;
-      text-align: center;
-      background: linear-gradient(100deg, var(--blue), var(--green));
-    }
-    .final-cta h2 { margin: 0 0 10px; font-size: clamp(26px, 3vw, 38px); }
-    .final-cta p { margin: 0 0 22px; font-weight: 800; }
-    .back-top {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 40;
-      display: grid;
-      place-items: center;
-      width: 50px;
-      height: 50px;
-      color: #fff;
-      background: var(--blue);
-      border-radius: 50%;
-      box-shadow: var(--shadow);
-      font-weight: 900;
-    }
-    .seeker-page .site-footer {
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, .72fr);
-      align-items: start;
-      overflow: hidden;
-    }
-    .seeker-page .site-footer > div { min-width: 0; }
-    .seeker-page .site-footer .footer-cta {
-      width: min(100%, 320px);
-      justify-self: end;
-    }
-    .seeker-page .site-footer .copyright { grid-column: 1 / -1; }
-    @media (max-width: 1100px) {
-      .seeker-search .search-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .seeker-search .btn-search { grid-column: 1 / -1; }
-      .intro-grid, .register-wrap { grid-template-columns: 1fr; }
-      .form-intro { position: static; }
-    }
-    @media (max-width: 860px) {
-      .seeker-summary, .feature-grid, .job-list, .voice-grid { grid-template-columns: 1fr; }
-      .seeker-hero { min-height: auto; }
-      .seeker-hero-inner { padding: 52px 0 36px; }
-      .seeker-hero-photo img { object-position: 64% top; }
-      .seeker-hero-photo::after { background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.96) 56%, rgba(255,255,255,.55) 100%); }
-      .photo-panel, .photo-panel img { min-height: 360px; }
-      .form-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 620px) {
-      .seeker-hero-inner { width: min(100% - 32px, 1180px); }
-      .hero-actions .btn { width: 100%; }
-      .seeker-search { padding: 24px 16px; }
-      .seeker-search .search-panel { grid-template-columns: 1fr; padding: 18px; }
-      .flow-step { grid-template-columns: 1fr; }
-      .submit-row .wide-cta { width: 100%; }
-      .seeker-page .site-footer {
-        grid-template-columns: 1fr;
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-      .seeker-page .site-footer .footer-cta {
-        width: 100%;
-        max-width: none;
-        justify-self: stretch;
-      }
-      .back-top { right: 14px; bottom: 14px; }
-    }
+    .check-pill span { display: inline-flex; align-items: center; min-height: 38px; padding: 0 15px; color: var(--blue); background: #f4fbff; border: 1px solid #acd3f1; border-radius: 999px; font-size: 14px; font-weight: 900; }
+    .check-pill input:checked + span { color: #007a52; border-color: #7ed5a0; background: #effdf6; }
+    .check-grid-placeholder { color: #697a8b; font-size: 14px; font-weight: 800; }
+    .terms-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 28px; color: #243b53; font-size: 15px; font-weight: 900; line-height: 1.6; }
+    .terms-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--seeker-teal); }
+    .submit-row { margin-top: 28px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .submit-row .wide-cta { min-width: 260px; min-height: 58px; margin: 0; border: 0; border-radius: 8px; background: linear-gradient(180deg, #1ab79f, #119f91); box-shadow: 0 15px 28px rgba(22, 163, 148, .24); font-size: 18px; cursor: pointer; }
+    .back-button { min-height: 58px; padding: 0 28px; color: #007a6c; background: #fff; border: 1px solid #a9ddd8; border-radius: 8px; font-size: 18px; font-weight: 900; }
+    .form-message { display: none; color: #007a52; font-weight: 900; }
+    .side-stack { display: grid; gap: 18px; position: sticky; top: 96px; }
+    .side-card { padding: 28px; }
+    .side-card h2 { margin: 0 0 20px; color: #0f172a; font-size: 26px; font-weight: 900; }
+    .side-card p { margin: 0; color: #526172; font-size: 17px; font-weight: 800; line-height: 1.7; }
+    .steps-list { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+    .steps-list li { display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: center; color: #0f172a; font-size: 18px; font-weight: 900; }
+    .steps-list b { display: grid; place-items: center; width: 46px; height: 46px; color: #007a6c; background: #dcf7f0; border-radius: 10px; }
+    .mock-actions { display: grid; gap: 12px; margin-top: 22px; }
+    .mock-actions a { display: flex; align-items: center; justify-content: center; min-height: 54px; border-radius: 8px; border: 1px solid #a9ddd8; color: #007a6c; font-size: 17px; font-weight: 900; }
+    .mock-actions a:first-child { color: #fff; border-color: transparent; background: #16a394; box-shadow: 0 12px 22px rgba(22, 163, 148, .18); }
+    .free-card strong { display: block; margin-bottom: 12px; color: #0f172a; font-size: 25px; font-weight: 900; }
+    .free-card span { color: #526172; font-size: 17px; font-weight: 800; line-height: 1.7; }
+    @media (max-width: 980px) { .register-layout { grid-template-columns: 1fr; } .side-stack { position: static; } }
+    @media (max-width: 720px) { .register-shell { padding: 34px 16px 50px; } .register-card-main, .side-card { padding: 22px; } .register-title-row { display: block; } .role-pill { margin-top: 18px; } .form-grid { grid-template-columns: 1fr; } .submit-row .wide-cta, .back-button { width: 100%; } }
   </style>
 </head>
-<body class="seeker-page" id="top">
+<body class="seeker-register-page" id="top">
   <header class="site-header">
-    <a class="brand" href="index.html" aria-label="MediSpot ホーム">
+    <a class="brand" href="index.html" aria-label="MediSpot home">
       <span class="brand-mark" aria-hidden="true"><span></span></span>
-      <span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span>
+      <span class="brand-text"><strong>MediSpot</strong><small>&#12513;&#12487;&#12451;&#12473;&#12509;&#12483;&#12488;</small></span>
     </a>
-    <nav class="nav-links" aria-label="求職者ページナビゲーション">
-      <a href="#jobs">求人を探す</a>
-      <a href="#features">できること</a>
-      <a href="#flow">利用の流れ</a>
-      <a href="#register">登録フォーム</a>
+    <nav class="nav-links" aria-label="registration navigation">
+      <a href="register.html">&#30331;&#37682;&#12479;&#12452;&#12503;&#12434;&#36984;&#12406;</a>
+      <a href="register-employer.html">&#27714;&#20154;&#32773;&#12399;&#12371;&#12385;&#12425;</a>
     </nav>
     <div class="header-actions">
-      <a class="btn btn-outline" href="login.html">ログイン</a>
-      <a class="btn btn-green" href="#register">無料登録</a>
+      <a class="btn btn-outline" href="login.html">&#12525;&#12464;&#12452;&#12531;</a>
+      <a class="btn btn-green" href="index.html">&#12488;&#12483;&#12503;&#12408;</a>
     </div>
   </header>
 
-  <main>
-    <section class="seeker-hero">
-      <div class="seeker-hero-photo" aria-hidden="true"><img src="assets/seeker-photo.png" alt=""></div>
-      <div class="seeker-hero-inner">
-        <span class="eyebrow">医療資格者向けスポット求人</span>
-        <h1>あなたのスキルを、<br>必要としている場所があります。</h1>
-        <p>看護師・検査技師・リハビリ職など、あなたのスキルを活かしてスポット勤務や業務委託の求人に出会える登録無料のマッチングサービスです。</p>
-        <div class="hero-actions">
-          <a class="btn btn-green" href="#register">求職者として無料登録</a>
-          <a class="btn btn-blue" href="#jobs">求人を見てみる</a>
+  <main class="register-shell">
+    <div class="register-layout">
+      <section class="register-card-main" aria-labelledby="registerTitle">
+        <div class="register-title-row">
+          <div>
+            <h1 id="registerTitle">&#27714;&#32887;&#32773;&#30331;&#37682;</h1>
+            <p>&#21307;&#30274;&#36039;&#26684;&#12392;&#24076;&#26395;&#26465;&#20214;&#12434;&#30331;&#37682;&#12375;&#12390;&#12289;&#12473;&#12509;&#12483;&#12488;&#27714;&#20154;&#12420;&#24120;&#21220;&#27714;&#20154;&#12434;&#25506;&#12375;&#12420;&#12377;&#12367;&#12375;&#12414;&#12377;&#12290;</p>
+          </div>
+          <span class="role-pill">&#27714;&#32887;&#32773;</span>
         </div>
-        <div class="seeker-summary" aria-label="求職者向け特徴">
-          <article><strong>登録無料</strong><span>プロフィール登録から応募まで費用はかかりません</span></article>
-          <article><strong>資格で探せる</strong><span>職種・勤務地・働き方から希望に合う求人を確認</span></article>
-          <article><strong>チャット確認</strong><span>成立後は勤務条件を医療機関とスムーズに確認</span></article>
-        </div>
-      </div>
-    </section>
 
-    <section class="seeker-search" id="jobs">
-      <form class="search-panel" aria-label="求人検索">
-        <div class="ms-field">
-          <span>職種</span>
-          <details class="ms-dropdown" data-placeholder="職種を選択（複数可）">
-            <summary><span class="ms-summary-text">職種を選択（複数可）</span><span class="ms-caret" aria-hidden="true">▾</span></summary>
-            <div class="ms-panel" role="group" aria-label="職種（複数選択可）">
-              <label class="ms-option"><input type="checkbox" name="jobType" value="看護師"><span>看護師</span></label>
-              <label class="ms-option"><input type="checkbox" name="jobType" value="臨床検査技師"><span>臨床検査技師</span></label>
-              <label class="ms-option"><input type="checkbox" name="jobType" value="放射線技師"><span>放射線技師</span></label>
-              <label class="ms-option"><input type="checkbox" name="jobType" value="理学療法士"><span>理学療法士</span></label>
-              <label class="ms-option"><input type="checkbox" name="jobType" value="作業療法士"><span>作業療法士</span></label>
-              <label class="ms-option"><input type="checkbox" name="jobType" value="言語聴覚士"><span>言語聴覚士</span></label>
-              <label class="ms-option"><input type="checkbox" name="jobType" value="ヘルパー"><span>ヘルパー</span></label>
-              <div class="ms-panel-footer">
-                <button type="button" class="ms-clear">すべて解除</button>
-                <button type="button" class="ms-apply">適用する</button>
-              </div>
-            </div>
-          </details>
-        </div>
-        <div class="ms-field">
-          <span>勤務地</span>
-          <details class="ms-dropdown" data-placeholder="勤務地を選択（複数可）">
-            <summary><span class="ms-summary-text">勤務地を選択（複数可）</span><span class="ms-caret" aria-hidden="true">▾</span></summary>
-            <div class="ms-panel" role="group" aria-label="勤務地（複数選択可）">
-              <label class="ms-option"><input type="checkbox" name="location" value="首都圏"><span>首都圏</span></label>
-              <label class="ms-option"><input type="checkbox" name="location" value="東京都"><span>東京都</span></label>
-              <label class="ms-option"><input type="checkbox" name="location" value="神奈川県"><span>神奈川県</span></label>
-              <label class="ms-option"><input type="checkbox" name="location" value="千葉県"><span>千葉県</span></label>
-              <label class="ms-option"><input type="checkbox" name="location" value="埼玉県"><span>埼玉県</span></label>
-              <div class="ms-panel-footer">
-                <button type="button" class="ms-clear">すべて解除</button>
-                <button type="button" class="ms-apply">適用する</button>
-              </div>
-            </div>
-          </details>
-        </div>
-        <label><span>雇用形態</span><select><option>雇用形態を選択</option><option>スポット</option><option>業務委託</option><option>非常勤</option><option>パート</option></select></label>
-        <label><span>勤務日</span><select><option>希望日を選択</option><option>明日</option><option>今週末</option><option>平日のみ</option><option>相談したい</option></select></label>
-        <button class="btn-search" type="button"><span>⌕</span>求人を探す</button>
-        <div class="chips"><a href="#jobs">スポット</a><a href="#jobs">業務委託</a><a href="#jobs">看護師</a><a href="#jobs">検査技師</a></div>
-      </form>
-    </section>
-
-    <section class="section section-soft" id="features">
-      <div class="intro-grid">
-        <div class="intro-card">
-          <span class="eyebrow">MediSpotでできること</span>
-          <h2>空き時間を活かして、無理なくスキルが活きる現場とつながる。</h2>
-          <p>登録時に資格・経験・希望条件を入力しておくことで、あなたに合う求人を見つけやすくなります。応募後のやり取りもシンプルです。</p>
-          <ul class="skill-list">
-            <li><b>01</b><div><strong>資格と経験を登録</strong><span>保有資格、経験年数、対応できる業務を整理します。</span></div></li>
-            <li><b>02</b><div><strong>希望条件を保存</strong><span>勤務地、勤務日、スポット・業務委託などの働き方を登録。</span></div></li>
-            <li><b>03</b><div><strong>医療機関とマッチング</strong><span>応募後は条件を確認し、成立後に勤務詳細を調整します。</span></div></li>
-          </ul>
-        </div>
-        <div class="photo-panel">
-          <img src="assets/seeker-photo.png" alt="スマートフォンで求人を確認する医療スタッフ">
-          <div class="photo-note"><span>✓</span><div><strong>本人確認・資格確認に対応</strong><small>安心して応募できるプロフィール作成をサポートします</small></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-heading centered"><h2>求職者に選ばれる理由</h2></div>
-      <div class="feature-grid">
-        <article class="feature-card"><span class="icon">¥</span><h3>費用は無料</h3><p>求職者は登録・求人検索・応募まで無料。まずはプロフィールだけでも登録できます。</p></article>
-        <article class="feature-card"><span class="icon">○</span><h3>医療職に特化</h3><p>看護師、検査技師、リハビリ職など医療資格者向けの求人に絞って探せます。</p></article>
-        <article class="feature-card"><span class="icon">✓</span><h3>条件確認が簡単</h3><p>応募後は勤務内容、時間、報酬、持ち物などをチャットで確認できます。</p></article>
-      </div>
-    </section>
-
-    <section class="section profession-section">
-      <div class="section-heading centered"><h2>注目のスポット求人</h2></div>
-      <div class="job-list">
-        <article class="seeker-job"><span class="job-badge">スポット</span><h3>健診センター 看護師業務</h3><p>採血・問診・測定補助など、午前のみの勤務。</p><div class="job-meta"><span>勤務地：東京都 新宿区</span><span>勤務日：今週金曜 8:30〜13:00</span></div><div class="job-pay">日給 12,000円〜</div><a class="btn btn-outline" href="#register">応募準備をする</a></article>
-        <article class="seeker-job"><span class="job-badge">業務委託</span><h3>クリニック 臨床検査技師</h3><p>心電図・採血・検体検査補助。経験者歓迎。</p><div class="job-meta"><span>勤務地：神奈川県 横浜市</span><span>勤務日：週1日から相談可</span></div><div class="job-pay">時給 2,000円〜</div><a class="btn btn-outline" href="#register">応募準備をする</a></article>
-        <article class="seeker-job"><span class="job-badge">スポット</span><h3>訪問リハビリ 理学療法士</h3><p>短時間訪問リハビリ業務。移動エリア相談可。</p><div class="job-meta"><span>勤務地：大阪府 大阪市</span><span>勤務日：土曜 9:00〜16:00</span></div><div class="job-pay">日給 20,000円〜</div><a class="btn btn-outline" href="#register">応募準備をする</a></article>
-      </div>
-    </section>
-
-    <section class="section section-soft" id="flow">
-      <div class="section-heading centered"><h2>登録から勤務までの流れ</h2></div>
-      <div class="flow-line">
-        <article class="flow-step"><b>1</b><div><h3>プロフィール登録</h3><p>氏名、資格、経験、希望条件、連絡先を入力します。</p></div></article>
-        <article class="flow-step"><b>2</b><div><h3>職種、勤務地が一致した時にメールでお知らせ</h3><p>希望条件に合う求人が出たタイミングでメールでお知らせします。</p></div></article>
-        <article class="flow-step"><b>3</b><div><h3>求人検索・応募</h3><p>職種・勤務地・勤務日で求人を探し、気になる求人へ応募します。</p></div></article>
-        <article class="flow-step"><b>4</b><div><h3>求人元からスカウトメール</h3><p>プロフィールを見た医療機関からスカウトメールが届くこともあります。</p></div></article>
-        <article class="flow-step"><b>5</b><div><h3>条件確認</h3><p>医療機関と勤務内容、報酬、時間、持ち物などを確認します。</p></div></article>
-        <article class="flow-step"><b>6</b><div><h3>勤務・報酬受取</h3><p>合意した条件で勤務。終了後は報酬を受け取り、次の求人も探せます。</p></div></article>
-      </div>
-    </section>
-
-    <section class="section" id="register">
-      <div class="register-wrap">
-        <aside class="form-intro">
-          <span class="eyebrow">Seeker Register</span>
-          <h2>求職者プロフィール登録</h2>
-          <p>医療機関が知りたい資格・経験・希望条件をまとめて登録します。入力内容は応募時のプロフィールとして使えます。</p>
-          <a class="wide-cta" href="#top">ページ上部へ戻る</a>
-        </aside>
-        <form class="register-card" id="profileForm">
+        <form id="profileForm">
+          <h2 class="form-section-title">&#12450;&#12459;&#12454;&#12531;&#12488;&#24773;&#22577;</h2>
           <div class="form-grid">
-            <div class="field"><label for="name">お名前 <span class="required">必須</span></label><input class="input" id="name" required placeholder="例）佐藤 花子"></div>
+            <div class="field"><label for="lastName">&#22995; <span class="required">&#24517;&#38920;</span></label><input class="input" id="lastName" autocomplete="family-name" required></div>
+            <div class="field"><label for="firstName">&#21517; <span class="required">&#24517;&#38920;</span></label><input class="input" id="firstName" autocomplete="given-name" required></div>
             <div class="field full"><label for="email">&#12513;&#12540;&#12523;&#12450;&#12489;&#12524;&#12473; <span class="required">&#24517;&#38920;</span></label><input class="input" id="email" type="email" autocomplete="email" required placeholder="example@example.com"></div>
             <div class="field"><label for="password">&#12497;&#12473;&#12527;&#12540;&#12489; <span class="required">&#24517;&#38920;</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8&#25991;&#23383;&#20197;&#19978;"></div>
-            <div class="field"><label for="passwordConfirm">&#12497;&#12473;&#12527;&#12540;&#12489;&#30906;&#35469; <span class="required">&#24517;&#38920;</span></label><input class="input" id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="&#12418;&#12358;&#19968;&#24230;&#20837;&#21147;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;"></div>
-            <div class="field"><label for="birth">生年月日</label><input class="input" id="birth" type="date"></div>
-            <div class="field"><label for="phone">電話番号</label><input class="input" id="phone" inputmode="tel" placeholder="090-0000-0000"></div>
-            <div class="field"><label for="license">保有資格 <span class="required">必須</span></label><select class="input" id="license" required><option value="">選択してください</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
-            <div class="field"><label for="years">実務経験</label><select class="input" id="years"><option>選択してください</option><option>未経験</option><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5年以上</option><option>10年以上</option></select></div>
-            <div class="field"><label for="area">希望勤務地</label><input class="input" id="area" placeholder="例）東京都・神奈川県"></div>
-            <div class="field"><label for="style">希望雇用形態</label><select class="input" id="style"><option>選択してください</option><option>スポット</option><option>業務委託</option><option>非常勤</option><option>常勤も相談したい</option></select></div>
-            <div class="field full"><label>対応できる業務・スキル</label><div class="check-grid" id="skillGrid"><span class="check-grid-placeholder">保有資格を選択すると対応スキルが表示されます</span></div></div>
-            <div class="field full"><label for="pr">自己PR・希望条件</label><textarea class="textarea" id="pr" placeholder="得意な業務、勤務できる曜日、ブランクの有無、希望条件などを入力してください。"></textarea></div>
+            <div class="field"><label for="passwordConfirm">&#12497;&#12473;&#12527;&#12540;&#12489;&#30906;&#35469; <span class="required">&#24517;&#38920;</span></label><input class="input" id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="&#12418;&#12358;&#19968;&#24230;&#20837;&#21147;"></div>
+            <div class="field"><label for="phone">&#38651;&#35441;&#30058;&#21495;</label><input class="input" id="phone" inputmode="tel" autocomplete="tel" placeholder="090-0000-0000"></div>
+            <div class="field"><label for="birth">&#29983;&#24180;&#26376;&#26085;</label><input class="input" id="birth" type="date"></div>
           </div>
-          <div class="submit-row"><button class="wide-cta" type="submit">&#28961;&#26009;&#12391;&#30331;&#37682;&#12377;&#12427;</button><span class="form-message" id="formMessage">&#30331;&#37682;&#24460;&#12289;&#12525;&#12464;&#12452;&#12531;&#30011;&#38754;&#12408;&#31227;&#21205;&#12375;&#12414;&#12377;&#12290;</span></div>
+
+          <h2 class="form-section-title">&#36039;&#26684;&#12539;&#24076;&#26395;&#26465;&#20214;</h2>
+          <div class="form-grid">
+            <div class="field"><label for="license">&#32887;&#31278; <span class="required">&#24517;&#38920;</span></label><select class="input" id="license" required><option value="">&#36984;&#25246;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;</option><option>&#30475;&#35703;&#24107;</option><option>&#20934;&#30475;&#35703;&#24107;</option><option>&#33256;&#24202;&#26908;&#26619;&#25216;&#24107;</option><option>&#25918;&#23556;&#32218;&#25216;&#24107;</option><option>&#29702;&#23398;&#30274;&#27861;&#22763;</option><option>&#20316;&#26989;&#30274;&#27861;&#22763;</option><option>&#35328;&#35486;&#32884;&#35226;&#22763;</option><option>&#12504;&#12523;&#12497;&#12540;</option></select></div>
+            <div class="field"><label for="licenseNumber">&#36039;&#26684;&#30058;&#21495;</label><input class="input" id="licenseNumber" placeholder="&#24460;&#12363;&#12425;&#30331;&#37682;&#12418;&#21487;&#33021;"></div>
+            <div class="field"><label for="years">&#23455;&#21209;&#32076;&#39443;</label><select class="input" id="years"><option>&#36984;&#25246;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;</option><option>&#26410;&#32076;&#39443;</option><option>1&#24180;&#26410;&#28288;</option><option>1&#12316;3&#24180;</option><option>3&#12316;5&#24180;</option><option>5&#24180;&#20197;&#19978;</option><option>10&#24180;&#20197;&#19978;</option></select></div>
+            <div class="field"><label for="style">&#24076;&#26395;&#21220;&#21209;&#24418;&#24907;</label><select class="input" id="style"><option>&#12473;&#12509;&#12483;&#12488;&#21220;&#21209;</option><option>&#26989;&#21209;&#22996;&#35351;</option><option>&#38750;&#24120;&#21220;</option><option>&#24120;&#21220;&#12418;&#30456;&#35527;&#12375;&#12383;&#12356;</option></select></div>
+            <div class="field full"><label for="area">&#24076;&#26395;&#21220;&#21209;&#22320;</label><input class="input" id="area" placeholder="&#20363;&#65306;&#26481;&#20140;&#37117;&#12289;&#31070;&#22856;&#24029;&#30476;"></div>
+            <div class="field full"><label>&#23550;&#24540;&#12391;&#12365;&#12427;&#26989;&#21209;&#12539;&#12473;&#12461;&#12523;</label><div class="check-grid" id="skillGrid"><span class="check-grid-placeholder">&#32887;&#31278;&#12434;&#36984;&#25246;&#12377;&#12427;&#12392;&#23550;&#24540;&#12473;&#12461;&#12523;&#12364;&#34920;&#31034;&#12373;&#12428;&#12414;&#12377;</span></div></div>
+            <div class="field full"><label for="pr">&#24076;&#26395;&#26465;&#20214;&#12539;&#33258;&#24049;&#32057;&#20171;</label><textarea class="textarea" id="pr" placeholder="&#21220;&#21209;&#21487;&#33021;&#12394;&#26332;&#26085;&#12289;&#32076;&#39443;&#38936;&#22495;&#12289;&#24076;&#26395;&#26178;&#32102;&#12394;&#12393;"></textarea></div>
+          </div>
+
+          <label class="terms-row"><input type="checkbox" required><span>&#21033;&#29992;&#35215;&#32004;&#12392;&#12503;&#12521;&#12452;&#12496;&#12471;&#12540;&#12509;&#12522;&#12471;&#12540;&#12395;&#21516;&#24847;&#12375;&#12414;&#12377;&#12290;</span></label>
+          <div class="submit-row"><button class="wide-cta" type="submit">&#28961;&#26009;&#12391;&#30331;&#37682;&#12377;&#12427;</button><a class="back-button" href="register.html">&#25147;&#12427;</a><span class="form-message" id="formMessage">&#30331;&#37682;&#24460;&#12289;&#12525;&#12464;&#12452;&#12531;&#30011;&#38754;&#12408;&#31227;&#21205;&#12375;&#12414;&#12377;&#12290;</span></div>
         </form>
-      </div>
-    </section>
+      </section>
 
-    <section class="section section-soft">
-      <div class="section-heading centered"><h2>利用者の声</h2></div>
-      <div class="voice-grid">
-        <article class="voice-card"><div class="stars">★★★★★</div><p>短時間の健診求人を探しやすく、家庭の予定に合わせて働けました。</p><div class="voice-person"><img src="assets/story-nurse.png" alt="看護師"><div><strong>看護師 30代</strong><span>東京都</span></div></div></article>
-        <article class="voice-card"><div class="stars">★★★★★</div><p>資格や経験を登録しておくと応募がスムーズで、条件確認も簡単でした。</p><div class="voice-person"><img src="assets/story-lab.png" alt="臨床検査技師"><div><strong>臨床検査技師 20代</strong><span>神奈川県</span></div></div></article>
-        <article class="voice-card"><div class="stars">★★★★☆</div><p>業務委託の求人を比較しやすく、自分のペースで仕事を増やせました。</p><div class="voice-person"><img src="assets/story-pt.png" alt="理学療法士"><div><strong>理学療法士 30代</strong><span>大阪府</span></div></div></article>
-      </div>
-    </section>
-
-    <section class="final-cta">
-      <h2>まずは無料でプロフィール登録</h2>
-      <p>資格・経験・希望条件を登録して、あなたに合う医療スポット求人を見つけましょう。</p>
-      <a class="btn btn-green" href="#register">求職者として無料登録</a>
-    </section>
+      <aside class="side-stack" aria-label="registration help">
+        <section class="side-card">
+          <h2>&#30331;&#37682;&#24460;&#12398;&#27969;&#12428;</h2>
+          <ol class="steps-list"><li><b>1</b><span>&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#20837;&#21147;</span></li><li><b>2</b><span>&#27714;&#20154;&#26908;&#32034;&#12539;&#20445;&#23384;</span></li><li><b>3</b><span>&#24540;&#21215;&#12539;&#38754;&#35527;</span></li><li><b>4</b><span>&#21220;&#21209;&#38283;&#22987;</span></li></ol>
+        </section>
+        <section class="side-card">
+          <h2>&#12514;&#12483;&#12463;&#30011;&#38754;&#12434;&#30906;&#35469;</h2>
+          <p>&#30331;&#37682;&#12434;&#12375;&#12394;&#12367;&#12390;&#12418;&#12289;&#27714;&#32887;&#32773;&#20596;&#12398;&#12514;&#12483;&#12463;&#30011;&#38754;&#12434;&#30906;&#35469;&#12391;&#12365;&#12414;&#12377;&#12290;</p>
+          <div class="mock-actions"><a href="index.html">&#12510;&#12452;&#12506;&#12540;&#12472;&#12434;&#35211;&#12427;</a><a href="#register">&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#12434;&#35211;&#12427;</a><a href="index.html#jobs">&#27714;&#20154;&#26908;&#32034;&#12434;&#35211;&#12427;</a></div>
+        </section>
+        <section class="side-card free-card"><strong>&#30331;&#37682;&#12399;&#28961;&#26009;</strong><span>&#27714;&#20154;&#26908;&#32034;&#12289;&#24540;&#21215;&#12289;&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#20316;&#25104;&#12399;&#28961;&#26009;&#12391;&#21033;&#29992;&#12391;&#12365;&#12414;&#12377;&#12290;</span></section>
+      </aside>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span></a>
-      <p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p>
-    </div>
-    <div><h3>求職者向け</h3><a href="#jobs">求人を探す</a><a href="#features">できること</a><a href="#flow">ご利用の流れ</a></div>
-    <div><h3>登録</h3><a href="#register">プロフィール登録</a><a href="login.html">ログイン</a><a href="index.html">トップへ戻る</a></div>
-    <div class="footer-cta"><strong>無料で会員登録</strong><span>すぐに求人検索・応募ができます</span><a class="btn btn-green" href="#register">新規会員登録（無料）›</a></div>
-    <p class="copyright">© 2024 MediSpot. All Rights Reserved.</p>
-  </footer>
-
-  <a class="back-top" href="#top" aria-label="ページ上部へ戻る">↑</a>
   <script>
     var skillsByLicense = {
-      '看護師': ['採血', '点滴', '健診', '問診', 'バイタルチェック', '服薬管理'],
-      '准看護師': ['採血', '点滴', '健診', '問診', 'バイタルチェック', '服薬管理'],
-      '臨床検査技師': ['採血', '検体検査', '心電図', '超音波検査（エコー）', '生理検査'],
-      '放射線技師': ['X線撮影', 'CT撮影', 'MRI補助', '胃部撮影', 'マンモグラフィ'],
-      '理学療法士': ['リハビリ', '運動機能訓練', '訪問リハビリ', '歩行訓練'],
-      '作業療法士': ['リハビリ', '作業訓練', '訪問リハビリ', '日常生活動作訓練'],
-      '言語聴覚士': ['言語訓練', '嚥下訓練', '聴覚検査', '訪問対応'],
-      'ヘルパー': ['身体介護', '生活援助', '訪問対応', '見守り']
+      '\u770b\u8b77\u5e2b': ['\u63a1\u8840', '\u70b9\u6ef4', '\u5065\u8a3a', '\u554f\u8a3a', '\u30d0\u30a4\u30bf\u30eb\u30c1\u30a7\u30c3\u30af', '\u670d\u85ac\u7ba1\u7406'],
+      '\u51c6\u770b\u8b77\u5e2b': ['\u63a1\u8840', '\u70b9\u6ef4', '\u5065\u8a3a', '\u554f\u8a3a', '\u30d0\u30a4\u30bf\u30eb\u30c1\u30a7\u30c3\u30af', '\u670d\u85ac\u7ba1\u7406'],
+      '\u81e8\u5e8a\u691c\u67fb\u6280\u5e2b': ['\u63a1\u8840', '\u691c\u4f53\u691c\u67fb', '\u5fc3\u96fb\u56f3', '\u8d85\u97f3\u6ce2\u691c\u67fb\uff08\u30a8\u30b3\u30fc\uff09', '\u751f\u7406\u691c\u67fb'],
+      '\u653e\u5c04\u7dda\u6280\u5e2b': ['X\u7dda\u64ae\u5f71', 'CT\u64ae\u5f71', 'MRI\u88dc\u52a9', '\u80c3\u90e8\u64ae\u5f71', '\u30de\u30f3\u30e2\u30b0\u30e9\u30d5\u30a3'],
+      '\u7406\u5b66\u7642\u6cd5\u58eb': ['\u30ea\u30cf\u30d3\u30ea', '\u904b\u52d5\u6a5f\u80fd\u8a13\u7df4', '\u8a2a\u554f\u30ea\u30cf\u30d3\u30ea', '\u6b69\u884c\u8a13\u7df4'],
+      '\u4f5c\u696d\u7642\u6cd5\u58eb': ['\u30ea\u30cf\u30d3\u30ea', '\u4f5c\u696d\u8a13\u7df4', '\u8a2a\u554f\u30ea\u30cf\u30d3\u30ea', '\u65e5\u5e38\u751f\u6d3b\u52d5\u4f5c\u8a13\u7df4'],
+      '\u8a00\u8a9e\u8074\u899a\u58eb': ['\u8a00\u8a9e\u8a13\u7df4', '\u56a5\u4e0b\u8a13\u7df4', '\u8074\u899a\u691c\u67fb', '\u8a2a\u554f\u5bfe\u5fdc'],
+      '\u30d8\u30eb\u30d1\u30fc': ['\u8eab\u4f53\u4ecb\u8b77', '\u751f\u6d3b\u63f4\u52a9', '\u8a2a\u554f\u5bfe\u5fdc', '\u898b\u5b88\u308a']
     };
-
     var licenseSelect = document.getElementById('license');
     var skillGrid = document.getElementById('skillGrid');
-
     function renderSkillGrid(license) {
       var skills = skillsByLicense[license];
       skillGrid.innerHTML = '';
       if (!skills) {
         var placeholder = document.createElement('span');
         placeholder.className = 'check-grid-placeholder';
-        placeholder.textContent = '保有資格を選択すると対応スキルが表示されます';
+        placeholder.textContent = '\u8077\u7a2e\u3092\u9078\u629e\u3059\u308b\u3068\u5bfe\u5fdc\u30b9\u30ad\u30eb\u304c\u8868\u793a\u3055\u308c\u307e\u3059';
         skillGrid.appendChild(placeholder);
         return;
       }
@@ -649,63 +174,11 @@
         skillGrid.appendChild(label);
       });
     }
-
-    licenseSelect.addEventListener('change', function () {
-      renderSkillGrid(licenseSelect.value);
-    });
-
-    document.querySelectorAll('.ms-dropdown').forEach(function (dropdown) {
-      var summaryText = dropdown.querySelector('.ms-summary-text');
-      var placeholder = dropdown.dataset.placeholder;
-      var checkboxes = dropdown.querySelectorAll('.ms-option input[type="checkbox"]');
-      var clearBtn = dropdown.querySelector('.ms-clear');
-      var applyBtn = dropdown.querySelector('.ms-apply');
-
-      function updateSummary() {
-        var checked = Array.prototype.filter.call(checkboxes, function (cb) { return cb.checked; });
-        if (checked.length === 0) {
-          summaryText.textContent = placeholder;
-        } else if (checked.length === 1) {
-          summaryText.textContent = checked[0].value;
-        } else {
-          summaryText.textContent = checked[0].value + ' 他' + (checked.length - 1) + '件';
-        }
-      }
-
-      checkboxes.forEach(function (cb) {
-        cb.addEventListener('change', updateSummary);
-      });
-
-      clearBtn.addEventListener('click', function () {
-        checkboxes.forEach(function (cb) { cb.checked = false; });
-        updateSummary();
-      });
-
-      applyBtn.addEventListener('click', function () {
-        dropdown.removeAttribute('open');
-      });
-
-      dropdown.addEventListener('toggle', function () {
-        if (dropdown.open) {
-          document.querySelectorAll('.ms-dropdown').forEach(function (other) {
-            if (other !== dropdown) other.removeAttribute('open');
-          });
-        }
-      });
-    });
-
-    document.addEventListener('click', function (event) {
-      document.querySelectorAll('.ms-dropdown[open]').forEach(function (dropdown) {
-        if (!dropdown.contains(event.target)) {
-          dropdown.removeAttribute('open');
-        }
-      });
-    });
+    licenseSelect.addEventListener('change', function () { renderSkillGrid(licenseSelect.value); });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="assets/js/register-seeker.js"></script>
+  <script src="supabase-forms.js"></script>
 </body>
 </html>
-
 
