@@ -124,36 +124,74 @@
 
     if (!requireClient()) return;
 
+    const password = value("password") || "";
+    const passwordConfirm = value("passwordConfirm") || "";
+
+    if (password.length < 8) {
+      showMessage("formMessage", "パスワードは8文字以上で入力してください。", true);
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      showMessage("formMessage", "パスワードと確認用パスワードが一致しません。", true);
+      return;
+    }
+
     const form = event.currentTarget;
     setBusy(form, true);
 
+    const email = value("email");
+    const contactName = value("name");
+    const facilityName = value("facilityName");
+
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          role: "employer",
+          name: contactName,
+          facility_name: facilityName
+        }
+      }
+    });
+
+    if (authError) {
+      setBusy(form, false);
+      console.error(authError);
+      showMessage("formMessage", authError.message || "アカウント登録に失敗しました。", true);
+      return;
+    }
+
     const payload = {
-      contact_name: value("name"),
+      user_id: authData.user?.id || null,
+      contact_name: contactName,
       position: value("position"),
-      facility_name: value("facilityName"),
+      facility_name: facilityName,
       facility_type: value("facilityType"),
       staff_need: value("staffNeed"),
       phone: value("phone"),
-      email: value("email"),
+      email,
       address: value("address"),
       recruit_styles: selectedCheckText(form),
       note: value("note"),
       source_path: window.location.pathname
     };
 
-    const { error } = await supabaseClient.from("employer_profiles").insert(payload);
+    const { error: profileError } = await supabaseClient.from("employer_profiles").insert(payload);
     setBusy(form, false);
 
-    if (error) {
-      console.error(error);
-      showMessage("formMessage", "\u767b\u9332\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002Supabase\u8a2d\u5b9a\u3068\u30c6\u30fc\u30d6\u30eb\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+    if (profileError) {
+      console.error(profileError);
+      showMessage("formMessage", "アカウントは作成されましたが、施設プロフィール保存に失敗しました。" + (profileError.message ? "（" + profileError.message + "）" : ""), true);
       return;
     }
 
-    showMessage("formMessage", "\u767b\u9332\u5185\u5bb9\u3092Supabase\u306b\u4fdd\u5b58\u3057\u307e\u3057\u305f\u3002", false);
-    form.reset();
+    showMessage("formMessage", "登録が完了しました。ログイン画面へ移動します。", false);
+    setTimeout(function () {
+      window.location.href = "login.html?role=employer&registered=1";
+    }, 900);
   }
-
   async function saveSearch(form) {
     if (!supabaseClient || !form) return;
 

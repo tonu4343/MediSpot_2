@@ -82,7 +82,7 @@
 
     showNotice("ログインしました。マイページへ移動します。", false);
     setTimeout(function () {
-      window.location.href = roleInput.value === "seeker" ? "seeker-dashboard.html" : "index.html";
+      window.location.href = roleInput.value === "seeker" ? "seeker-dashboard.html" : "employer-dashboard.html";
     }, 600);
   });
 

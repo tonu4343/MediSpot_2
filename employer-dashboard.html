@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求人者ダッシュボード | MediSpot</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.employer-dashboard-page { background: linear-gradient(180deg, #f4faff 0%, #ffffff 46%, #f2faf8 100%); color: var(--ink); }
+    .dashboard-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 34px 0 62px; }
+    .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
+    .dashboard-nav a { padding: 8px 0; }
+    .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0,1fr) 330px; gap: 22px; align-items: stretch; margin-bottom: 24px; }
+    .hero-card, .side-card, .panel-card, .stat-card, .job-card { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
+    .hero-card { position: relative; overflow: hidden; padding: clamp(28px,4vw,42px); }
+    .hero-card::after { content: ""; position: absolute; right: -90px; top: -110px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(33,183,97,.18), rgba(0,91,172,.07) 62%, transparent 63%); }
+    .eyebrow { display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px; border-radius: 999px; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; font-size: 13px; font-weight: 900; }
+    .hero-card h1 { margin: 18px 0 12px; color: var(--blue-dark); font-size: clamp(32px,4vw,48px); line-height: 1.22; font-weight: 900; letter-spacing: 0; }
+    .hero-card p { width: min(650px,100%); margin: 0; color: #4e6578; font-size: 16px; font-weight: 800; line-height: 1.8; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .side-card, .panel-card { padding: 24px; }
+    .side-card h2, .panel-card h2 { margin: 0 0 16px; color: var(--blue-dark); font-size: 21px; font-weight: 900; }
+    .facility-name { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .avatar { display: grid; place-items: center; width: 58px; height: 58px; color: var(--green-dark); background: #edfff5; border: 2px solid #b8ebcf; border-radius: 50%; font-size: 24px; font-weight: 900; }
+    .facility-name strong { display: block; color: #102338; font-size: 18px; font-weight: 900; }
+    .facility-name span { display: block; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .profile-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .profile-list li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid #e5f0f7; color: #173c5e; font-size: 13px; font-weight: 800; }
+    .profile-list b { color: var(--muted); font-weight: 900; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { min-height: 118px; padding: 22px; }
+    .stat-card span { color: var(--muted); font-size: 13px; font-weight: 900; }
+    .stat-card strong { display: block; margin-top: 6px; color: var(--blue); font-size: 34px; line-height: 1; font-weight: 900; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 22px; align-items: start; }
+    .section-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .section-title-row h2 { margin: 0; }
+    .job-list { display: grid; gap: 14px; }
+    .job-card { padding: 18px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 18px; align-items: center; }
+    .job-card h3 { margin: 8px 0 5px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
+    .job-tag { display: inline-flex; align-items: center; min-height: 26px; padding: 0 11px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .job-meta { margin: 0; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .candidate-row { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 14px; background: #f7fbff; border: 1px solid #d9ecf8; border-radius: 10px; }
+    .candidate-avatar { display: grid; place-items: center; width: 40px; height: 40px; color: var(--blue); background: #fff; border: 1px solid #b9dbf5; border-radius: 50%; font-weight: 900; }
+    .candidate-row strong { display: block; color: var(--blue-dark); font-size: 14px; font-weight: 900; }
+    .candidate-row span { display: block; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .mini-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .mini-list li { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; padding: 14px; background: #f7fbff; border: 1px solid #d9ecf8; border-radius: 10px; }
+    .mini-icon { display: grid; place-items: center; width: 38px; height: 38px; color: var(--blue); background: #fff; border: 1px solid #b9dbf5; border-radius: 50%; font-weight: 900; }
+    .mini-list strong { display: block; color: var(--blue-dark); font-size: 14px; font-weight: 900; }
+    .mini-list span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    @media (max-width: 960px) { .hero-grid, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card, .candidate-row { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } }
+  </style>
+</head>
+<body class="employer-dashboard-page">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="MediSpot ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span></a>
+    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="#jobs">求人管理</a><a href="#candidates">応募者</a><a href="#profile">施設情報</a></nav>
+    <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="hero-grid">
+      <article class="hero-card">
+        <span class="eyebrow">求人者マイページ</span>
+        <h1><span id="facilityTitle">医療機関</span>の求人管理を始めましょう。</h1>
+        <p>スポット勤務・業務委託・非常勤の募集を整理し、応募者の資格や希望条件を確認できます。まずは募集内容を作成して、必要な人材とつながりましょう。</p>
+        <div class="hero-actions"><a class="btn btn-green" href="#jobs">求人を作成する</a><a class="btn btn-outline" href="#profile">施設情報を確認</a></div>
+      </article>
+      <aside class="side-card" id="profile">
+        <h2>施設プロフィール</h2>
+        <div class="facility-name"><span class="avatar" id="facilityInitial">M</span><div><strong id="facilityName">読み込み中</strong><span id="contactEmail">ログイン確認中</span></div></div>
+        <ul class="profile-list"><li><b>担当者</b><span id="contactName">-</span></li><li><b>施設区分</b><span id="facilityType">-</span></li><li><b>募集職種</b><span id="staffNeed">-</span></li><li><b>所在地</b><span id="address">-</span></li></ul>
+      </aside>
+    </section>
+
+    <section class="stats-grid" aria-label="求人状況"><article class="stat-card"><span>掲載中求人</span><strong id="openJobs">0</strong></article><article class="stat-card"><span>新着応募</span><strong>0</strong></article><article class="stat-card"><span>選考中</span><strong>0</strong></article><article class="stat-card"><span>採用成立</span><strong>0</strong></article></section>
+
+    <section class="dashboard-grid">
+      <article class="panel-card" id="jobs"><div class="section-title-row"><h2>求人管理</h2><a class="section-link" href="register-employer.html#register">登録内容を編集 ›</a></div><div class="job-list" id="jobList"></div></article>
+      <aside class="panel-card" id="candidates"><h2>おすすめ応募者</h2><div class="candidate-row"><span class="candidate-avatar">看</span><div><strong>看護師 / スポット希望</strong><span>東京都・健診業務の経験あり</span></div><a class="btn btn-outline" href="#">確認</a></div><div style="height:12px"></div><div class="candidate-row"><span class="candidate-avatar">検</span><div><strong>臨床検査技師</strong><span>横浜市・週1日から相談可能</span></div><a class="btn btn-outline" href="#">確認</a></div></aside>
+    </section>
+
+    <section class="panel-card" style="margin-top:22px"><h2>次にできること</h2><ul class="mini-list"><li><span class="mini-icon">1</span><div><strong>募集条件を整理する</strong><span>職種、勤務日、報酬、業務内容を登録します。</span></div></li><li><span class="mini-icon">2</span><div><strong>応募者を確認する</strong><span>資格・経験・希望条件を確認して選考できます。</span></div></li><li><span class="mini-icon">3</span><div><strong>採用成立後に調整する</strong><span>勤務条件を確認し、採用決定時のみ費用が発生します。</span></div></li></ul></section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      const demoJobs = [
+        { title: "スポット看護師募集", type: "スポット", location: "東京都 新宿区", work_date: "来週金曜 9:00-17:00", salary: "日給 18,000円〜22,000円" },
+        { title: "臨床検査技師 業務委託", type: "業務委託", location: "神奈川県 横浜市", work_date: "週1日から相談", salary: "日給 16,000円〜20,000円" }
+      ];
+      function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
+      function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
+      function initial(name) { return (name || "M").trim().charAt(0).toUpperCase() || "M"; }
+      function applyProfile(profile, email) {
+        const facility = profile?.facility_name || "医療機関";
+        text("facilityTitle", facility); text("facilityName", facility); text("facilityInitial", initial(facility)); text("contactEmail", profile?.email || email || "-"); text("contactName", profile?.contact_name || "未設定"); text("facilityType", profile?.facility_type || "未設定"); text("staffNeed", profile?.staff_need || "未設定"); text("address", profile?.address || "未設定");
+      }
+      function renderJobs(jobs) {
+        const items = jobs && jobs.length ? jobs : demoJobs;
+        text("openJobs", String(items.length));
+        document.getElementById("jobList").innerHTML = items.map(function (job) { return '<article class="job-card"><div><span class="job-tag">' + esc(job.type || "掲載中") + '</span><h3>' + esc(job.title || "医療求人") + '</h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><a class="btn btn-outline" href="#">詳細</a></article>'; }).join("");
+      }
+      async function loadDashboard() {
+        if (!supabaseClient) { applyProfile(null, null); renderJobs(demoJobs); return; }
+        const sessionResult = await supabaseClient.auth.getSession();
+        const user = sessionResult.data.session?.user;
+        if (!user) { window.location.href = "login.html?role=employer"; return; }
+        let profile = null;
+        const profileResult = await supabaseClient.from("employer_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+        if (!profileResult.error) profile = profileResult.data;
+        applyProfile(profile, user.email);
+        const jobsResult = await supabaseClient.from("jobs").select("*").eq("status", "open").order("created_at", { ascending: false }).limit(6);
+        renderJobs(jobsResult.error ? demoJobs : jobsResult.data);
+      }
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs(demoJobs); });
+    })();
+  </script>
+</body>
+</html>

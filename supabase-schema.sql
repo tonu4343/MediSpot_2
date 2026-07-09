@@ -101,11 +101,38 @@ to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
-create policy "Allow anonymous employer profile inserts"
+alter table public.employer_profiles add column if not exists user_id uuid;
+
+drop policy if exists "Allow anonymous employer profile inserts" on public.employer_profiles;
+drop policy if exists "Allow employer profile anonymous inserts" on public.employer_profiles;
+drop policy if exists "Allow employer profile own inserts" on public.employer_profiles;
+drop policy if exists "Allow employer profile own reads" on public.employer_profiles;
+drop policy if exists "Allow employer profile own updates" on public.employer_profiles;
+
+create policy "Allow employer profile anonymous inserts"
 on public.employer_profiles
 for insert
 to anon
 with check (true);
+
+create policy "Allow employer profile own inserts"
+on public.employer_profiles
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Allow employer profile own reads"
+on public.employer_profiles
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Allow employer profile own updates"
+on public.employer_profiles
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
 
 
 
