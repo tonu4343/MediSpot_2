@@ -2408,3 +2408,30 @@ main {
     padding: 10px;
   }
 }
+
+/* Final hero role icons: use uploaded PNG assets */
+.hero-role-card .role-icon::before {
+  inset: 8px;
+  z-index: 2;
+  border-radius: 0;
+  border: 0;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.hero-role-card .role-icon::after,
+.hero-role-card .role-icon span,
+.hero-role-card .role-icon span::before,
+.hero-role-card .role-icon span::after {
+  display: none !important;
+}
+
+.hero-role-card.seeker .role-icon::before {
+  background-image: url("assets/01_doctor_icon_512.png");
+}
+
+.hero-role-card.employer .role-icon::before {
+  background-image: url("assets/03_hospital_icon_512.png");
+}
