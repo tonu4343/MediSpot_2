@@ -27,12 +27,29 @@
     notice.style.borderColor = isError ? "#fed7aa" : "#bbf7d0";
   }
 
+  function loginErrorMessage(error) {
+    const rawMessage = error?.message || "";
+    const message = rawMessage.toLowerCase();
+
+    if (message.includes("email not confirmed") || message.includes("not confirmed")) {
+      return "メール認証がまだ完了していません。Supabaseから届いた確認メールを開いてから、もう一度ログインしてください。";
+    }
+
+    if (message.includes("invalid login credentials") || message.includes("invalid credentials")) {
+      return "メールアドレスまたはパスワードが違います。Supabase Authentication > Users にこのメールが登録されているか確認してください。";
+    }
+
+    return rawMessage
+      ? "ログインできませんでした。（" + rawMessage + "）"
+      : "ログインできませんでした。メールアドレスとパスワードを確認してください。";
+  }
+
   function setRole(role) {
     tabs.forEach((tab) => {
       tab.classList.toggle("active", tab.dataset.role === role);
     });
-    roleInput.value = role;
-    submitBtn.classList.toggle("employer", role === "employer");
+    if (roleInput) roleInput.value = role;
+    if (submitBtn) submitBtn.classList.toggle("employer", role === "employer");
   }
 
   tabs.forEach((tab) => tab.addEventListener("click", () => setRole(tab.dataset.role)));
@@ -41,7 +58,7 @@
     event.preventDefault();
 
     if (!supabaseClient) {
-      showNotice("Supabase URL \u3068 anon key \u3092\u8a2d\u5b9a\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+      showNotice("Supabase URL と anon key を設定してください。", true);
       return;
     }
 
@@ -59,7 +76,7 @@
 
     if (error) {
       console.error(error);
-      showNotice("\u30ed\u30b0\u30a4\u30f3\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u3068\u30d1\u30b9\u30ef\u30fc\u30c9\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+      showNotice(loginErrorMessage(error), true);
       return;
     }
 
@@ -71,6 +88,6 @@
 
   setRole(params.get("role") === "employer" ? "employer" : "seeker");
   if (params.get("registered") === "1") {
-    showNotice("\u767b\u9332\u304c\u5b8c\u4e86\u3057\u307e\u3057\u305f\u3002\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002", false);
+    showNotice("登録が完了しました。メール認証が必要な場合は、確認メールを開いてからログインしてください。", false);
   }
 })();
