@@ -68,11 +68,38 @@ for insert
 to anon
 with check (true);
 
-create policy "Allow anonymous seeker profile inserts"
+alter table public.seeker_profiles add column if not exists user_id uuid;
+
+drop policy if exists "Allow anonymous seeker profile inserts" on public.seeker_profiles;
+drop policy if exists "Allow seeker profile anonymous inserts" on public.seeker_profiles;
+drop policy if exists "Allow seeker profile own inserts" on public.seeker_profiles;
+drop policy if exists "Allow seeker profile own reads" on public.seeker_profiles;
+drop policy if exists "Allow seeker profile own updates" on public.seeker_profiles;
+
+create policy "Allow seeker profile anonymous inserts"
 on public.seeker_profiles
 for insert
 to anon
 with check (true);
+
+create policy "Allow seeker profile own inserts"
+on public.seeker_profiles
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Allow seeker profile own reads"
+on public.seeker_profiles
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Allow seeker profile own updates"
+on public.seeker_profiles
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
 
 create policy "Allow anonymous employer profile inserts"
 on public.employer_profiles
@@ -81,7 +108,6 @@ to anon
 with check (true);
 
 
-alter table public.seeker_profiles add column if not exists user_id uuid;
 
 -- Seeker registration + post-registration job matching (register-seeker.html / seeker-home.html)
 create table if not exists public.seekers (

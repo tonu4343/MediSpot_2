@@ -109,7 +109,7 @@
 
     if (profileError) {
       console.error(profileError);
-      showMessage("formMessage", "\u30a2\u30ab\u30a6\u30f3\u30c8\u306f\u4f5c\u6210\u3055\u308c\u307e\u3057\u305f\u304c\u3001\u30d7\u30ed\u30d5\u30a3\u30fc\u30eb\u4fdd\u5b58\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002", true);
+      showMessage("formMessage", "アカウントは作成されましたが、プロフィール保存に失敗しました。" + (profileError.message ? "（" + profileError.message + "）" : ""), true);
       return;
     }
 
