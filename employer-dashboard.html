@@ -117,7 +117,12 @@
         if (!user) { window.location.href = "login.html?role=employer"; return; }
         let profile = null;
         const profileResult = await supabaseClient.from("employer_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
-        if (!profileResult.error) profile = profileResult.data;
+        if (profileResult.error || !profileResult.data) {
+          await supabaseClient.auth.signOut();
+          window.location.href = "login.html?role=employer&roleError=1";
+          return;
+        }
+        profile = profileResult.data;
         applyProfile(profile, user.email);
         const jobsResult = await supabaseClient.from("jobs").select("*").eq("status", "open").order("created_at", { ascending: false }).limit(6);
         renderJobs(jobsResult.error ? demoJobs : jobsResult.data);

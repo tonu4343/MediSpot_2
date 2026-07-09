@@ -181,7 +181,12 @@
 
         let profile = null;
         const profileResult = await supabaseClient.from("seeker_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
-        if (!profileResult.error) profile = profileResult.data;
+        if (profileResult.error || !profileResult.data) {
+          await supabaseClient.auth.signOut();
+          window.location.href = "login.html?role=seeker&roleError=1";
+          return;
+        }
+        profile = profileResult.data;
         applyProfile(profile, user.email);
 
         let query = supabaseClient.from("jobs").select("*").eq("status", "open").order("created_at", { ascending: false }).limit(6);
