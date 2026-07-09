@@ -11,7 +11,7 @@
     .dashboard-hero { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: stretch; margin-bottom: 24px; }
     .welcome-card, .profile-card, .panel-card, .job-match-card { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
     .welcome-card { position: relative; overflow: hidden; min-height: 420px; padding: clamp(28px, 4vw, 42px); background: linear-gradient(90deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.94) 50%, rgba(238,250,255,.76) 100%); }
-    .welcome-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.95) 48%, rgba(255,255,255,.56) 72%, rgba(255,255,255,.18) 100%), url("assets/seeker-photo.png") right center / auto 112% no-repeat; opacity: .9; pointer-events: none; }
+    .welcome-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.96) 48%, rgba(255,255,255,.62) 70%, rgba(255,255,255,.26) 100%), url("assets/seeker-photo.png") right 18% top 18% / auto 158% no-repeat; opacity: .9; pointer-events: none; }
     .welcome-card::after { content: ""; position: absolute; right: -80px; top: -120px; width: 310px; height: 310px; background: radial-gradient(circle, rgba(33,183,97,.18), rgba(0,91,172,.06) 62%, transparent 63%); pointer-events: none; }
     .welcome-card > * { position: relative; z-index: 1; }
     .eyebrow { display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px; border-radius: 999px; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; font-size: 13px; font-weight: 900; }
@@ -56,7 +56,7 @@
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
     .loading { opacity: .72; }
     @media (max-width: 960px) { .dashboard-hero, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } }
-    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .welcome-card { min-height: 0; } .welcome-card::before { background: linear-gradient(180deg, rgba(255,255,255,.97) 0%, rgba(255,255,255,.92) 100%), url("assets/seeker-photo.png") right bottom / 72% auto no-repeat; opacity: .55; } .stats-grid { grid-template-columns: 1fr; } .job-match-card { grid-template-columns: 72px minmax(0,1fr); } .job-thumb { width: 72px; height: 72px; } .job-cta { grid-column: 1 / -1; width: 100%; } .hero-actions .btn { width: 100%; } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .welcome-card { min-height: 0; } .welcome-card::before { background: linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.93) 100%), url("assets/seeker-photo.png") right top / 92% auto no-repeat; opacity: .48; } .stats-grid { grid-template-columns: 1fr; } .job-match-card { grid-template-columns: 72px minmax(0,1fr); } .job-thumb { width: 72px; height: 72px; } .job-cta { grid-column: 1 / -1; width: 100%; } .hero-actions .btn { width: 100%; } }
   </style>
 </head>
 <body class="dashboard-page">
