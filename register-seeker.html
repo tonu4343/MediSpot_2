@@ -30,6 +30,7 @@
     .role-pill { display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; color: #007a6c; background: #dcf7f0; border-radius: 999px; font-size: 16px; font-weight: 900; white-space: nowrap; }
     .form-section-title { margin: 34px 0 18px; padding-bottom: 16px; border-bottom: 1px solid #dce8f0; color: #0f172a; font-size: 25px; font-weight: 900; }
     .form-section-title:first-of-type { margin-top: 0; }
+    .form-note { margin: 20px 0 0; padding: 18px 20px; color: #496171; background: #f3fbff; border: 1px solid #d7e9f5; border-radius: 8px; font-size: 15px; font-weight: 800; line-height: 1.8; }
     .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 22px; }
     .field.full { grid-column: 1 / -1; }
     .field label { display: block; margin-bottom: 8px; color: #102338; font-size: 16px; font-weight: 900; }
@@ -91,7 +92,7 @@
         <div class="register-title-row">
           <div>
             <h1 id="registerTitle">&#27714;&#32887;&#32773;&#30331;&#37682;</h1>
-            <p>&#21307;&#30274;&#36039;&#26684;&#12392;&#24076;&#26395;&#26465;&#20214;&#12434;&#30331;&#37682;&#12375;&#12390;&#12289;&#12473;&#12509;&#12483;&#12488;&#27714;&#20154;&#12420;&#24120;&#21220;&#27714;&#20154;&#12434;&#25506;&#12375;&#12420;&#12377;&#12367;&#12375;&#12414;&#12377;&#12290;</p>
+            <p>まずは基本情報だけで無料登録できます。スキル・履歴書・希望条件はログイン後に登録できます。</p>
           </div>
           <span class="role-pill">&#27714;&#32887;&#32773;</span>
         </div>
@@ -108,16 +109,7 @@
             <div class="field"><label for="birth">&#29983;&#24180;&#26376;&#26085;</label><input class="input" id="birth" type="date"></div>
           </div>
 
-          <h2 class="form-section-title">&#36039;&#26684;&#12539;&#24076;&#26395;&#26465;&#20214;</h2>
-          <div class="form-grid">
-            <div class="field"><label for="license">&#32887;&#31278; <span class="required">&#24517;&#38920;</span></label><select class="input" id="license" required><option value="">&#36984;&#25246;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;</option><option>&#30475;&#35703;&#24107;</option><option>&#20934;&#30475;&#35703;&#24107;</option><option>&#33256;&#24202;&#26908;&#26619;&#25216;&#24107;</option><option>&#25918;&#23556;&#32218;&#25216;&#24107;</option><option>&#29702;&#23398;&#30274;&#27861;&#22763;</option><option>&#20316;&#26989;&#30274;&#27861;&#22763;</option><option>&#35328;&#35486;&#32884;&#35226;&#22763;</option><option>&#12504;&#12523;&#12497;&#12540;</option></select></div>
-            <div class="field"><label for="licenseNumber">&#36039;&#26684;&#30058;&#21495;</label><input class="input" id="licenseNumber" placeholder="&#24460;&#12363;&#12425;&#30331;&#37682;&#12418;&#21487;&#33021;"></div>
-            <div class="field"><label for="years">&#23455;&#21209;&#32076;&#39443;</label><select class="input" id="years"><option>&#36984;&#25246;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;</option><option>&#26410;&#32076;&#39443;</option><option>1&#24180;&#26410;&#28288;</option><option>1&#12316;3&#24180;</option><option>3&#12316;5&#24180;</option><option>5&#24180;&#20197;&#19978;</option><option>10&#24180;&#20197;&#19978;</option></select></div>
-            <div class="field"><label for="style">&#24076;&#26395;&#21220;&#21209;&#24418;&#24907;</label><select class="input" id="style"><option>&#12473;&#12509;&#12483;&#12488;&#21220;&#21209;</option><option>&#26989;&#21209;&#22996;&#35351;</option><option>&#38750;&#24120;&#21220;</option><option>&#24120;&#21220;&#12418;&#30456;&#35527;&#12375;&#12383;&#12356;</option></select></div>
-            <div class="field full"><label for="area">&#24076;&#26395;&#21220;&#21209;&#22320;</label><input class="input" id="area" placeholder="&#20363;&#65306;&#26481;&#20140;&#37117;&#12289;&#31070;&#22856;&#24029;&#30476;"></div>
-            <div class="field full"><label>&#23550;&#24540;&#12391;&#12365;&#12427;&#26989;&#21209;&#12539;&#12473;&#12461;&#12523;</label><div class="check-grid" id="skillGrid"><span class="check-grid-placeholder">&#32887;&#31278;&#12434;&#36984;&#25246;&#12377;&#12427;&#12392;&#23550;&#24540;&#12473;&#12461;&#12523;&#12364;&#34920;&#31034;&#12373;&#12428;&#12414;&#12377;</span></div></div>
-            <div class="field full"><label for="pr">&#24076;&#26395;&#26465;&#20214;&#12539;&#33258;&#24049;&#32057;&#20171;</label><textarea class="textarea" id="pr" placeholder="&#21220;&#21209;&#21487;&#33021;&#12394;&#26332;&#26085;&#12289;&#32076;&#39443;&#38936;&#22495;&#12289;&#24076;&#26395;&#26178;&#32102;&#12394;&#12393;"></textarea></div>
-          </div>
+          <p class="form-note">登録後にマイページで職種、スキル、履歴書、希望勤務地を追加できます。</p>
 
           <label class="terms-row"><input type="checkbox" required><span>&#21033;&#29992;&#35215;&#32004;&#12392;&#12503;&#12521;&#12452;&#12496;&#12471;&#12540;&#12509;&#12522;&#12471;&#12540;&#12395;&#21516;&#24847;&#12375;&#12414;&#12377;&#12290;</span></label>
           <div class="submit-row"><button class="wide-cta" type="submit">&#28961;&#26009;&#12391;&#30331;&#37682;&#12377;&#12427;</button><a class="back-button" href="register.html">&#25147;&#12427;</a><span class="form-message" id="formMessage">&#30331;&#37682;&#24460;&#12289;&#12525;&#12464;&#12452;&#12531;&#30011;&#38754;&#12408;&#31227;&#21205;&#12375;&#12414;&#12377;&#12290;</span></div>
@@ -127,55 +119,18 @@
       <aside class="side-stack" aria-label="registration help">
         <section class="side-card">
           <h2>&#30331;&#37682;&#24460;&#12398;&#27969;&#12428;</h2>
-          <ol class="steps-list"><li><b>1</b><span>&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#20837;&#21147;</span></li><li><b>2</b><span>&#27714;&#20154;&#26908;&#32034;&#12539;&#20445;&#23384;</span></li><li><b>3</b><span>&#24540;&#21215;&#12539;&#38754;&#35527;</span></li><li><b>4</b><span>&#21220;&#21209;&#38283;&#22987;</span></li></ol>
+          <ol class="steps-list"><li><b>1</b><span>基本情報で登録</span></li><li><b>2</b><span>スキル・履歴書を追加</span></li><li><b>3</b><span>求人検索・応募</span></li><li><b>4</b><span>求人者とメッセージ</span></li></ol>
         </section>
         <section class="side-card">
           <h2>&#12514;&#12483;&#12463;&#30011;&#38754;&#12434;&#30906;&#35469;</h2>
-          <p>&#30331;&#37682;&#12434;&#12375;&#12394;&#12367;&#12390;&#12418;&#12289;&#27714;&#32887;&#32773;&#20596;&#12398;&#12514;&#12483;&#12463;&#30011;&#38754;&#12434;&#30906;&#35469;&#12391;&#12365;&#12414;&#12377;&#12290;</p>
-          <div class="mock-actions"><a href="index.html">&#12510;&#12452;&#12506;&#12540;&#12472;&#12434;&#35211;&#12427;</a><a href="#register">&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#12434;&#35211;&#12427;</a><a href="index.html#jobs">&#27714;&#20154;&#26908;&#32034;&#12434;&#35211;&#12427;</a></div>
+          <p>登録後はマイページでプロフィール、履歴書、おすすめ求人を確認できます。</p>
+          <div class="mock-actions"><a href="seeker-dashboard.html">マイページを見る</a><a href="seeker-dashboard.html#profileSummary">プロフィールを見る</a><a href="seeker-dashboard.html#matchedJobs">求人検索を見る</a></div>
         </section>
-        <section class="side-card free-card"><strong>&#30331;&#37682;&#12399;&#28961;&#26009;</strong><span>&#27714;&#20154;&#26908;&#32034;&#12289;&#24540;&#21215;&#12289;&#12503;&#12525;&#12501;&#12451;&#12540;&#12523;&#20316;&#25104;&#12399;&#28961;&#26009;&#12391;&#21033;&#29992;&#12391;&#12365;&#12414;&#12377;&#12290;</span></section>
+        <section class="side-card free-card"><strong>登録は無料</strong><span>求人検索、応募、プロフィール作成、求人者とのメッセージを無料で利用できます。</span></section>
       </aside>
     </div>
   </main>
 
-  <script>
-    var skillsByLicense = {
-      '\u770b\u8b77\u5e2b': ['\u63a1\u8840', '\u70b9\u6ef4', '\u5065\u8a3a', '\u554f\u8a3a', '\u30d0\u30a4\u30bf\u30eb\u30c1\u30a7\u30c3\u30af', '\u670d\u85ac\u7ba1\u7406'],
-      '\u51c6\u770b\u8b77\u5e2b': ['\u63a1\u8840', '\u70b9\u6ef4', '\u5065\u8a3a', '\u554f\u8a3a', '\u30d0\u30a4\u30bf\u30eb\u30c1\u30a7\u30c3\u30af', '\u670d\u85ac\u7ba1\u7406'],
-      '\u81e8\u5e8a\u691c\u67fb\u6280\u5e2b': ['\u63a1\u8840', '\u691c\u4f53\u691c\u67fb', '\u5fc3\u96fb\u56f3', '\u8d85\u97f3\u6ce2\u691c\u67fb\uff08\u30a8\u30b3\u30fc\uff09', '\u751f\u7406\u691c\u67fb'],
-      '\u653e\u5c04\u7dda\u6280\u5e2b': ['X\u7dda\u64ae\u5f71', 'CT\u64ae\u5f71', 'MRI\u88dc\u52a9', '\u80c3\u90e8\u64ae\u5f71', '\u30de\u30f3\u30e2\u30b0\u30e9\u30d5\u30a3'],
-      '\u7406\u5b66\u7642\u6cd5\u58eb': ['\u30ea\u30cf\u30d3\u30ea', '\u904b\u52d5\u6a5f\u80fd\u8a13\u7df4', '\u8a2a\u554f\u30ea\u30cf\u30d3\u30ea', '\u6b69\u884c\u8a13\u7df4'],
-      '\u4f5c\u696d\u7642\u6cd5\u58eb': ['\u30ea\u30cf\u30d3\u30ea', '\u4f5c\u696d\u8a13\u7df4', '\u8a2a\u554f\u30ea\u30cf\u30d3\u30ea', '\u65e5\u5e38\u751f\u6d3b\u52d5\u4f5c\u8a13\u7df4'],
-      '\u8a00\u8a9e\u8074\u899a\u58eb': ['\u8a00\u8a9e\u8a13\u7df4', '\u56a5\u4e0b\u8a13\u7df4', '\u8074\u899a\u691c\u67fb', '\u8a2a\u554f\u5bfe\u5fdc'],
-      '\u30d8\u30eb\u30d1\u30fc': ['\u8eab\u4f53\u4ecb\u8b77', '\u751f\u6d3b\u63f4\u52a9', '\u8a2a\u554f\u5bfe\u5fdc', '\u898b\u5b88\u308a']
-    };
-    var licenseSelect = document.getElementById('license');
-    var skillGrid = document.getElementById('skillGrid');
-    function renderSkillGrid(license) {
-      var skills = skillsByLicense[license];
-      skillGrid.innerHTML = '';
-      if (!skills) {
-        var placeholder = document.createElement('span');
-        placeholder.className = 'check-grid-placeholder';
-        placeholder.textContent = '\u8077\u7a2e\u3092\u9078\u629e\u3059\u308b\u3068\u5bfe\u5fdc\u30b9\u30ad\u30eb\u304c\u8868\u793a\u3055\u308c\u307e\u3059';
-        skillGrid.appendChild(placeholder);
-        return;
-      }
-      skills.forEach(function (skill) {
-        var label = document.createElement('label');
-        label.className = 'check-pill';
-        var input = document.createElement('input');
-        input.type = 'checkbox';
-        var span = document.createElement('span');
-        span.textContent = skill;
-        label.appendChild(input);
-        label.appendChild(span);
-        skillGrid.appendChild(label);
-      });
-    }
-    licenseSelect.addEventListener('change', function () { renderSkillGrid(licenseSelect.value); });
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="supabase-forms.js"></script>
