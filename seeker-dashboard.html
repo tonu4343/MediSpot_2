@@ -101,23 +101,36 @@
     .dashboard-flow .flow-number { display: grid; place-items: center; width: 42px; height: 42px; color: #fff; background: var(--blue); border-radius: 50%; font-weight: 900; }
     .dashboard-flow strong { display: block; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
     .dashboard-flow span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.7; font-weight: 800; }
-    .dashboard-footer { margin-top: 34px; background: var(--blue); color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 42px rgba(0,63,125,.12); }
-    .voice-section { padding: clamp(28px, 4vw, 42px); background: linear-gradient(180deg, #f4faff 0%, #fff 100%); color: var(--ink); }
-    .voice-section h2, .footer-cta h2 { margin: 0 0 18px; text-align: center; color: var(--blue-dark); font-size: 24px; font-weight: 900; }
-    .voice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .voice-card { padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 28px rgba(0,63,125,.07); }
+
+    .dashboard-footer { margin-top: 34px; background: #fff; border: 1px solid #cfe4f4; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 42px rgba(0,63,125,.12); }
+    .voice-section { position: relative; padding: clamp(34px, 5vw, 56px) clamp(22px, 5vw, 56px); background: linear-gradient(180deg, #f3fbff 0%, #fff 62%, #f8fcff 100%); color: var(--ink); }
+    .voice-section::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 15% 20%, rgba(34,197,94,.10), transparent 28%), radial-gradient(circle at 88% 8%, rgba(18,104,179,.10), transparent 30%); }
+    .voice-section h2, .footer-cta h2 { position: relative; margin: 0; text-align: center; color: var(--blue-dark); font-size: clamp(24px, 3vw, 30px); font-weight: 900; }
+    .voice-section h2::after { content: ""; display: block; width: 64px; height: 4px; margin: 12px auto 0; background: linear-gradient(90deg, var(--blue), var(--green)); border-radius: 999px; }
+    .voice-intro { position: relative; max-width: 720px; margin: 14px auto 24px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.8; font-weight: 800; }
+    .voice-grid { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .voice-card { min-height: 180px; padding: 20px; background: rgba(255,255,255,.96); border: 1px solid #cfe4f4; border-radius: 8px; box-shadow: 0 14px 34px rgba(0,63,125,.08); }
     .stars { color: #0aa064; font-weight: 900; letter-spacing: 2px; }
-    .voice-card p { margin: 10px 0 14px; color: #41576a; font-size: 13px; line-height: 1.8; font-weight: 800; }
-    .voice-card strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
-    .footer-cta { padding: 34px 28px; text-align: center; background: linear-gradient(90deg, var(--blue), var(--green)); }
+    .voice-card p { margin: 10px 0 18px; color: #36536b; font-size: 13px; line-height: 1.8; font-weight: 800; }
+    .voice-user { display: flex; align-items: center; gap: 12px; }
+    .voice-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #e4f4ff; box-shadow: 0 8px 18px rgba(0,63,125,.12); flex: 0 0 auto; }
+    .voice-user strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
+    .voice-user span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .footer-cta { position: relative; padding: clamp(34px, 5vw, 54px) 28px; text-align: center; background: linear-gradient(100deg, #0b64ad 0%, #0c8f90 52%, #22c55e 100%); overflow: hidden; }
+    .footer-cta::before { content: ""; position: absolute; width: 260px; height: 260px; right: -72px; top: -98px; background: rgba(255,255,255,.16); border-radius: 50%; }
+    .footer-cta::after { content: ""; position: absolute; width: 180px; height: 180px; left: -62px; bottom: -88px; background: rgba(255,255,255,.10); border-radius: 50%; }
     .footer-cta h2 { color: #fff; }
-    .footer-cta p { margin: 0 auto 18px; max-width: 680px; color: rgba(255,255,255,.92); font-weight: 800; line-height: 1.8; }
-    .dashboard-footer-bottom { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; padding: 28px clamp(24px, 5vw, 56px); background: #075aa3; }
-    .footer-brand strong { display: block; font-size: 22px; font-weight: 900; }
-    .footer-brand small { display: block; margin-top: 6px; color: rgba(255,255,255,.82); font-weight: 800; }
-    .footer-links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; font-weight: 900; }
-    .footer-links a { color: #fff; }
-    @media (max-width: 860px) { .voice-grid, .dashboard-footer-bottom { grid-template-columns: 1fr; } .footer-links { justify-content: flex-start; } }
+    .footer-cta p { position: relative; margin: 14px auto 22px; max-width: 720px; color: rgba(255,255,255,.94); font-weight: 800; line-height: 1.8; }
+    .footer-cta .btn { position: relative; min-width: min(420px, 100%); box-shadow: 0 16px 34px rgba(0,55,105,.22); }
+    .dashboard-footer-bottom { display: grid; grid-template-columns: minmax(240px, 1fr) repeat(3, minmax(130px, auto)); gap: 26px; padding: 34px clamp(24px, 5vw, 58px) 28px; background: linear-gradient(135deg, #075aa3 0%, #0064b4 100%); color: #fff; }
+    .footer-brand strong { display: block; font-size: 24px; font-weight: 900; }
+    .footer-brand small { display: block; max-width: 320px; margin-top: 8px; color: rgba(255,255,255,.84); font-size: 12px; line-height: 1.8; font-weight: 800; }
+    .footer-column strong { display: block; margin-bottom: 10px; font-size: 13px; font-weight: 900; }
+    .footer-column a { display: block; margin: 8px 0; color: rgba(255,255,255,.9); font-size: 12px; font-weight: 800; }
+    .footer-copy { grid-column: 1 / -1; margin-top: 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.72); text-align: center; font-size: 11px; font-weight: 800; }
+    @media (max-width: 920px) { .voice-grid { grid-template-columns: 1fr; } .dashboard-footer-bottom { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
+    @media (max-width: 620px) { .dashboard-footer-bottom { grid-template-columns: 1fr; } .footer-brand { grid-column: auto; } .voice-card { min-height: 0; } }
+
   </style>
 </head>
 <body class="dashboard-page">
@@ -213,23 +226,40 @@
       </aside>
     </section>
 
+
     <footer class="dashboard-footer">
       <section class="voice-section" aria-label="user voices">
-        <h2>利用者の声</h2>
+        <h2>?????</h2>
+        <p class="voice-intro">MediSpot???????????????????????????????????????</p>
         <div class="voice-grid">
-          <article class="voice-card"><div class="stars">★★★★★</div><p>短時間の健診求人を探しやすく、家庭の予定に合わせて働けました。</p><strong>看護師 30代 / 東京都</strong></article>
-          <article class="voice-card"><div class="stars">★★★★★</div><p>資格や経験を登録しておくと応募がスムーズで、条件確認も簡単でした。</p><strong>臨床検査技師 20代 / 神奈川県</strong></article>
-          <article class="voice-card"><div class="stars">★★★★☆</div><p>業務委託の求人を比較しやすく、自分のペースで仕事を増やせました。</p><strong>理学療法士 30代 / 大阪府</strong></article>
+          <article class="voice-card">
+            <div class="stars">?????</div>
+            <p>???????????????????????????????</p>
+            <div class="voice-user"><img class="voice-avatar" src="assets/story-nurse.png" alt="???"><div><strong>??? 30?</strong><span>???</span></div></div>
+          </article>
+          <article class="voice-card">
+            <div class="stars">?????</div>
+            <p>?????????????????????????????????</p>
+            <div class="voice-user"><img class="voice-avatar" src="assets/story-lab.png" alt="??????"><div><strong>?????? 20?</strong><span>????</span></div></div>
+          </article>
+          <article class="voice-card">
+            <div class="stars">?????</div>
+            <p>????????????????????????????????</p>
+            <div class="voice-user"><img class="voice-avatar" src="assets/story-pt.png" alt="?????"><div><strong>????? 30?</strong><span>???</span></div></div>
+          </article>
         </div>
       </section>
       <section class="footer-cta">
-        <h2>プロフィールを整えて、より良い求人に出会いましょう</h2>
-        <p>資格・経験・希望条件を更新すると、あなたに合う医療スポット求人を見つけやすくなります。</p>
-        <a class="btn btn-green" href="seeker-profile.html">プロフィールを更新する</a>
+        <h2>?????????????????????????</h2>
+        <p>???????????????????????????????????????????</p>
+        <a class="btn btn-green" href="seeker-profile.html">???????????</a>
       </section>
       <section class="dashboard-footer-bottom">
-        <div class="footer-brand"><strong>MediSpot</strong><small>医療資格者と医療機関をつなぐスポット求人マッチング</small></div>
-        <nav class="footer-links" aria-label="dashboard footer"><a href="seeker-jobs.html">求人を探す</a><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a><a href="seeker-applications.html">応募管理</a></nav>
+        <div class="footer-brand"><strong>MediSpot</strong><small>??????????????????????????????</small></div>
+        <nav class="footer-column" aria-label="job seeker footer"><strong>?????</strong><a href="seeker-jobs.html">?????</a><a href="seeker-applications.html">????</a></nav>
+        <nav class="footer-column" aria-label="profile footer"><strong>????</strong><a href="seeker-profile.html">??????</a><a href="seeker-resume.html">???</a></nav>
+        <nav class="footer-column" aria-label="service footer"><strong>????</strong><a href="index.html#flow">??????</a><a href="index.html#faq">??????</a></nav>
+        <div class="footer-copy">? 2024 MediSpot. All Rights Reserved.</div>
       </section>
     </footer>
   </main>
