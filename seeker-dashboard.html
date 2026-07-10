@@ -102,10 +102,11 @@
     .dashboard-flow strong { display: block; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
     .dashboard-flow span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.7; font-weight: 800; }
 
+    @media (min-width: 1101px) { .dashboard-page .site-footer { grid-template-columns: 1.6fr repeat(2, 1fr) 1.35fr; } }
     .dashboard-footer { margin-top: 34px; background: #fff; border: 1px solid #cfe4f4; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 42px rgba(0,63,125,.12); }
     .voice-section { position: relative; padding: clamp(34px, 5vw, 56px) clamp(22px, 5vw, 56px); background: linear-gradient(180deg, #f3fbff 0%, #fff 62%, #f8fcff 100%); color: var(--ink); }
     .voice-section::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 15% 20%, rgba(34,197,94,.10), transparent 28%), radial-gradient(circle at 88% 8%, rgba(18,104,179,.10), transparent 30%); }
-    .voice-section h2, .footer-cta h2 { position: relative; margin: 0; text-align: center; color: var(--blue-dark); font-size: clamp(24px, 3vw, 30px); font-weight: 900; }
+    .voice-section h2 { position: relative; margin: 0; text-align: center; color: var(--blue-dark); font-size: clamp(24px, 3vw, 30px); font-weight: 900; }
     .voice-section h2::after { content: ""; display: block; width: 64px; height: 4px; margin: 12px auto 0; background: linear-gradient(90deg, var(--blue), var(--green)); border-radius: 999px; }
     .voice-intro { position: relative; max-width: 720px; margin: 14px auto 24px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.8; font-weight: 800; }
     .voice-grid { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
@@ -116,20 +117,8 @@
     .voice-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #e4f4ff; box-shadow: 0 8px 18px rgba(0,63,125,.12); flex: 0 0 auto; }
     .voice-user strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
     .voice-user span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 800; }
-    .footer-cta { position: relative; padding: clamp(34px, 5vw, 54px) 28px; text-align: center; background: linear-gradient(100deg, #0b64ad 0%, #0c8f90 52%, #22c55e 100%); overflow: hidden; }
-    .footer-cta::before { content: ""; position: absolute; width: 260px; height: 260px; right: -72px; top: -98px; background: rgba(255,255,255,.16); border-radius: 50%; }
-    .footer-cta::after { content: ""; position: absolute; width: 180px; height: 180px; left: -62px; bottom: -88px; background: rgba(255,255,255,.10); border-radius: 50%; }
-    .footer-cta h2 { color: #fff; }
-    .footer-cta p { position: relative; margin: 14px auto 22px; max-width: 720px; color: rgba(255,255,255,.94); font-weight: 800; line-height: 1.8; }
-    .footer-cta .btn { position: relative; min-width: min(420px, 100%); box-shadow: 0 16px 34px rgba(0,55,105,.22); }
-    .dashboard-footer-bottom { display: grid; grid-template-columns: minmax(240px, 1fr) repeat(3, minmax(130px, auto)); gap: 26px; padding: 34px clamp(24px, 5vw, 58px) 28px; background: linear-gradient(135deg, #075aa3 0%, #0064b4 100%); color: #fff; }
-    .footer-brand strong { display: block; font-size: 24px; font-weight: 900; }
-    .footer-brand small { display: block; max-width: 320px; margin-top: 8px; color: rgba(255,255,255,.84); font-size: 12px; line-height: 1.8; font-weight: 800; }
-    .footer-column strong { display: block; margin-bottom: 10px; font-size: 13px; font-weight: 900; }
-    .footer-column a { display: block; margin: 8px 0; color: rgba(255,255,255,.9); font-size: 12px; font-weight: 800; }
-    .footer-copy { grid-column: 1 / -1; margin-top: 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.72); text-align: center; font-size: 11px; font-weight: 800; }
-    @media (max-width: 920px) { .voice-grid { grid-template-columns: 1fr; } .dashboard-footer-bottom { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
-    @media (max-width: 620px) { .dashboard-footer-bottom { grid-template-columns: 1fr; } .footer-brand { grid-column: auto; } .voice-card { min-height: 0; } }
+    @media (max-width: 920px) { .voice-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 620px) { .voice-card { min-height: 0; } }
 
   </style>
 </head>
@@ -227,7 +216,7 @@
     </section>
 
 
-    <footer class="dashboard-footer">
+    <section class="dashboard-footer">
       <section class="voice-section" aria-label="user voices">
         <h2>利用者の声</h2>
         <p class="voice-intro">Medi Jobでプロフィールを整え、希望条件に合う医療スポット求人を見つけた求職者の声です。</p>
@@ -249,20 +238,19 @@
           </article>
         </div>
       </section>
-      <section class="footer-cta">
-        <h2>プロフィールを整えて、より良い求人に出会いましょう</h2>
-        <p>資格・経験・希望条件を更新すると、あなたに合う医療スポット求人を見つけやすくなります。</p>
-        <a class="btn btn-green" href="seeker-profile.html">プロフィールを更新する</a>
-      </section>
-      <section class="dashboard-footer-bottom">
-        <div class="footer-brand"><strong>Medi Job</strong><small>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</small></div>
-        <nav class="footer-column" aria-label="job seeker footer"><strong>求職者向け</strong><a href="seeker-jobs.html">求人を探す</a><a href="seeker-applications.html">応募管理</a></nav>
-        <nav class="footer-column" aria-label="profile footer"><strong>登録情報</strong><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav>
-        <nav class="footer-column" aria-label="service footer"><strong>サービス</strong><a href="index.html#flow">ご利用の流れ</a><a href="index.html#faq">よくある質問</a></nav>
-        <div class="footer-copy">© 2024 Medi Job. All Rights Reserved.</div>
-      </section>
-    </footer>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medi Job</strong><small>Medical Spot Job</small></span></a>
+      <p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p>
+    </div>
+    <div><h3>マイページ</h3><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a><a href="seeker-applications.html">応募管理</a></div>
+    <div><h3>求人情報</h3><a href="seeker-jobs.html">求人を探す</a><a href="index.html#flow">ご利用の流れ</a><a href="index.html#faq">よくある質問</a></div>
+    <div class="footer-cta"><strong>プロフィールを更新する</strong><span>希望条件に合う求人が見つかりやすくなります</span><a class="btn btn-green" href="seeker-profile.html">プロフィールを更新する ›</a></div>
+    <p class="copyright">© 2024 Medi Job. All Rights Reserved.</p>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
