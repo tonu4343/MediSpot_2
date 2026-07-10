@@ -185,3 +185,45 @@ on public.jobs
 for select
 to anon, authenticated
 using (status = 'open');
+
+-- Seeker resume / work history (seeker-resume.html)
+create table if not exists public.seeker_resumes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade unique,
+  seeker_profile_id uuid references public.seeker_profiles(id) on delete cascade,
+  education jsonb default '[]'::jsonb,
+  licenses jsonb default '[]'::jsonb,
+  wishes text,
+  work_summary text,
+  work_history jsonb default '[]'::jsonb,
+  skills_text text,
+  pr text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.seeker_resumes enable row level security;
+
+drop policy if exists "Allow seeker resume own inserts" on public.seeker_resumes;
+drop policy if exists "Allow seeker resume own reads" on public.seeker_resumes;
+drop policy if exists "Allow seeker resume own updates" on public.seeker_resumes;
+
+create policy "Allow seeker resume own inserts"
+on public.seeker_resumes
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Allow seeker resume own reads"
+on public.seeker_resumes
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Allow seeker resume own updates"
+on public.seeker_resumes
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+

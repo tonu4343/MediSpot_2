@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>履歴書・職務経歴書 | MediSpot</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.resume-page { background: linear-gradient(180deg, #f4faff 0%, #ffffff 46%, #f2faf8 100%); color: var(--ink); }
+    .resume-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 70px; }
+    .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
+    .dashboard-nav a { padding: 8px 0; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .page-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: end; margin-bottom: 24px; }
+    .page-heading h1 { margin: 0; color: var(--blue-dark); font-size: clamp(34px, 4vw, 52px); line-height: 1.2; font-weight: 900; }
+    .page-heading p { margin: 12px 0 0; color: var(--muted); font-size: 16px; font-weight: 800; }
+    .status-pill { display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; color: var(--green-dark); background: #ecfff5; border: 1px solid #a8e6c1; border-radius: 999px; font-weight: 900; white-space: nowrap; }
+    .resume-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: start; }
+    .resume-card, .side-card { background: rgba(255,255,255,.97); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.08); }
+    .resume-card { padding: clamp(24px, 4vw, 38px); }
+    .resume-section { padding-top: 28px; margin-top: 28px; border-top: 1px solid #e1edf6; }
+    .resume-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
+    .section-title { margin-bottom: 18px; }
+    .section-title h2 { margin: 0; color: var(--blue-dark); font-size: 23px; font-weight: 900; }
+    .section-title p { margin: 8px 0 0; color: var(--muted); font-size: 13px; font-weight: 800; line-height: 1.8; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label, .resume-label { display: block; margin-bottom: 8px; color: #102338; font-size: 15px; font-weight: 900; }
+    .hint { display:block; margin: -2px 0 10px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .input, .textarea { width: 100%; min-height: 54px; padding: 0 16px; color: #102338; background: #fff; border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; font-size: 15px; outline: none; }
+    .textarea { min-height: 128px; padding-top: 14px; resize: vertical; line-height: 1.7; }
+    .input:focus, .textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,91,172,.12); }
+    .entry-list { display: grid; gap: 12px; margin-bottom: 10px; }
+    .entry-row { display: grid; grid-template-columns: 160px minmax(0,1fr) auto; gap: 10px; align-items: center; }
+    .entry-row.work { grid-template-columns: 170px minmax(150px,.8fr) minmax(150px,.8fr) minmax(0,1fr) auto; }
+    .add-btn, .delete-btn, .ghost-btn { min-height: 42px; padding: 0 16px; border-radius: 8px; font-weight: 900; cursor: pointer; }
+    .add-btn, .ghost-btn { color: var(--blue); background: #fff; border: 1px solid #acd3f1; }
+    .delete-btn { color: #c1121f; background: #fff; border: 1px solid #f0a4a9; }
+    .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 30px; }
+    .save-btn { min-height: 58px; min-width: 320px; border: 0; border-radius: 8px; color: #fff; background: linear-gradient(180deg, var(--blue-2), var(--blue)); box-shadow: 0 16px 30px rgba(0,91,172,.24); font-size: 18px; font-weight: 900; cursor: pointer; }
+    .back-btn { min-height: 58px; padding: 0 24px; display: inline-flex; align-items: center; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-weight: 900; }
+    .form-message { display: none; font-weight: 900; color: var(--green-dark); }
+    .side-stack { display: grid; gap: 18px; position: sticky; top: 92px; }
+    .side-card { padding: 24px; }
+    .side-card h2 { margin: 0 0 14px; color: var(--blue-dark); font-size: 21px; font-weight: 900; }
+    .side-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .side-list li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; color: #243b53; font-size: 14px; font-weight: 800; }
+    .side-list b { display: grid; place-items: center; width: 34px; height: 34px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 50%; }
+    .side-note { margin: 0; color: var(--muted); font-weight: 800; line-height: 1.8; }
+    @media (max-width: 980px) { .resume-layout, .page-heading { grid-template-columns: 1fr; } .side-stack { position: static; } .site-header { flex-wrap: wrap; } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .entry-row, .entry-row.work { grid-template-columns: 1fr; } .delete-btn { width: 100%; } }
+    @media (max-width: 640px) { .resume-shell { width: calc(100% - 28px); padding-top: 28px; } .form-grid { grid-template-columns: 1fr; } .save-btn, .back-btn, .ghost-btn { width: 100%; justify-content: center; } }
+  </style>
+</head>
+<body class="resume-page">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="MediSpot home"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span></a>
+    <nav class="dashboard-nav" aria-label="resume menu"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-dashboard.html#matchedJobs">おすすめ求人</a><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav>
+    <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
+  </header>
+
+  <main class="resume-shell">
+    <div class="page-heading"><div><h1>履歴書・職務経歴書</h1><p>応募時に医療機関へ提示する学歴・資格・職務経験を登録できます。</p></div><span class="status-pill" id="saveStatus">未保存</span></div>
+    <div class="resume-layout">
+      <form class="resume-card" id="resumeForm">
+        <section class="resume-section"><div class="section-title"><h2>履歴書</h2><p>氏名・生年月日などはプロフィール情報を利用します。ここでは学歴、免許・資格、本人希望を入力します。</p></div>
+          <div class="field full"><label class="resume-label">学歴</label><div class="entry-list" id="educationList"></div><button class="add-btn" id="addEducation" type="button">＋ 学歴を追加</button></div>
+          <div class="field full" style="margin-top:22px;"><label class="resume-label">免許・資格</label><div class="entry-list" id="licenseList"></div><button class="add-btn" id="addLicense" type="button">＋ 免許・資格を追加</button></div>
+          <div class="field full" style="margin-top:22px;"><label for="wishes">本人希望記入欄</label><textarea class="textarea" id="wishes" placeholder="勤務時間・勤務地・その他の希望があればご記入ください。"></textarea></div>
+        </section>
+        <section class="resume-section"><div class="section-title"><h2>職務経歴書</h2><p>医療機関が応募判断をしやすいように、経験内容を簡潔に整理します。</p></div>
+          <div class="field full"><label for="workSummary">職務要約</label><textarea class="textarea" id="workSummary" placeholder="これまでの職務経験の概要を簡潔にご記入ください。"></textarea></div>
+          <div class="field full" style="margin-top:22px;"><label class="resume-label">職務経歴</label><span class="hint">在籍期間・勤務先・部署/役職・業務内容を入力してください。</span><div class="entry-list" id="workList"></div><button class="add-btn" id="addWork" type="button">＋ 職務経歴を追加</button></div>
+          <div class="form-grid" style="margin-top:22px;"><div class="field full"><label for="skillsText">活かせる経験・知識・スキル</label><textarea class="textarea" id="skillsText" placeholder="例）外来トリアージ、電子カルテ運用、後輩指導など"></textarea></div><div class="field full"><label for="resumePr">自己PR</label><textarea class="textarea" id="resumePr" placeholder="強み・人柄・仕事への姿勢などをご記入ください。"></textarea></div></div>
+        </section>
+        <div class="form-actions"><button class="save-btn" type="submit">履歴書・職務経歴書を保存する</button><button class="ghost-btn" id="downloadButton" type="button">ダウンロード</button><a class="back-btn" href="seeker-dashboard.html">ダッシュボードに戻る</a><span class="form-message" id="formMessage"></span></div>
+      </form>
+      <aside class="side-stack"><section class="side-card"><h2>応募時に見られる項目</h2><ul class="side-list"><li><b>1</b><span>学歴・資格で基本情報を確認</span></li><li><b>2</b><span>職務経歴で経験の深さを確認</span></li><li><b>3</b><span>本人希望と自己PRでマッチ度を判断</span></li></ul></section><section class="side-card"><h2>入力のコツ</h2><p class="side-note">長く書きすぎず、勤務先で担当した業務、使用した医療機器、患者対応、チームでの役割を具体的に書くと伝わりやすくなります。</p></section></aside>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {}; const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY'); const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null; let currentUser = null; let currentProfile = null; let currentResumeId = null; const localKey = 'medispot_seeker_resume';
+      const label = { eduDate: '年月（例 2013-03）', eduDetail: '学校名・学部・卒業/入学 など', licDate: '取得年月（例 2013-04）', licDetail: '免許・資格の名称', del: '削除', period: '期間（例 2013/04〜現在）', company: '勤務先', role: '部署・役職', detail: '業務内容・実績' };
+      function el(id) { return document.getElementById(id); } function message(text, error) { const node = el('formMessage'); node.textContent = text; node.style.display = 'inline'; node.style.color = error ? '#b42318' : 'var(--green-dark)'; } function text(id) { return el(id)?.value?.trim() || ''; } function setText(id, value) { const node = el(id); if (node) node.value = value || ''; } function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[c]); }
+      function entryRow(type, data) { if (type === 'work') return '<div class="entry-row work"><input class="input" data-field="period" placeholder="' + label.period + '" value="' + escapeHtml(data?.period) + '"><input class="input" data-field="company" placeholder="' + label.company + '" value="' + escapeHtml(data?.company) + '"><input class="input" data-field="role" placeholder="' + label.role + '" value="' + escapeHtml(data?.role) + '"><input class="input" data-field="detail" placeholder="' + label.detail + '" value="' + escapeHtml(data?.detail) + '"><button class="delete-btn" type="button">' + label.del + '</button></div>'; const isEdu = type === 'education'; return '<div class="entry-row"><input class="input" data-field="date" placeholder="' + (isEdu ? label.eduDate : label.licDate) + '" value="' + escapeHtml(data?.date) + '"><input class="input" data-field="detail" placeholder="' + (isEdu ? label.eduDetail : label.licDetail) + '" value="' + escapeHtml(data?.detail) + '"><button class="delete-btn" type="button">' + label.del + '</button></div>'; }
+      function addEntry(type, data) { const id = type === 'education' ? 'educationList' : type === 'license' ? 'licenseList' : 'workList'; el(id).insertAdjacentHTML('beforeend', entryRow(type, data || {})); } function readEntries(id) { return Array.from(el(id).querySelectorAll('.entry-row')).map(row => { const data = {}; row.querySelectorAll('[data-field]').forEach(input => data[input.dataset.field] = input.value.trim()); return data; }).filter(item => Object.values(item).some(Boolean)); }
+      function collect() { return { education: readEntries('educationList'), licenses: readEntries('licenseList'), wishes: text('wishes'), work_summary: text('workSummary'), work_history: readEntries('workList'), skills_text: text('skillsText'), pr: text('resumePr') }; }
+      function fill(data) { const r = data || {}; el('educationList').innerHTML = ''; el('licenseList').innerHTML = ''; el('workList').innerHTML = ''; (r.education?.length ? r.education : [{}]).forEach(item => addEntry('education', item)); (r.licenses?.length ? r.licenses : [{}]).forEach(item => addEntry('license', item)); (r.work_history?.length ? r.work_history : [{}]).forEach(item => addEntry('work', item)); setText('wishes', r.wishes); setText('workSummary', r.work_summary); setText('skillsText', r.skills_text); setText('resumePr', r.pr); el('saveStatus').textContent = data ? '保存済み' : '未保存'; }
+      async function load() { fill(null); if (!supabaseClient) { const local = localStorage.getItem(localKey); if (local) fill(JSON.parse(local)); message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const profileResult = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (profileResult.error || !profileResult.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } currentProfile = profileResult.data; const resumeResult = await supabaseClient.from('seeker_resumes').select('*').eq('user_id', currentUser.id).maybeSingle(); if (resumeResult.error) { const local = localStorage.getItem(localKey + '_' + currentUser.id); if (local) fill(JSON.parse(local)); message('seeker_resumesテーブル作成後にSupabaseへ保存できます。', true); return; } if (resumeResult.data) { currentResumeId = resumeResult.data.id; fill(resumeResult.data); } }
+      document.addEventListener('click', e => { if (e.target.matches('.delete-btn')) e.target.closest('.entry-row')?.remove(); }); el('addEducation').addEventListener('click', () => addEntry('education')); el('addLicense').addEventListener('click', () => addEntry('license')); el('addWork').addEventListener('click', () => addEntry('work')); el('logoutButton').addEventListener('click', async () => { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
+      el('resumeForm').addEventListener('submit', async e => { e.preventDefault(); const payload = collect(); const key = currentUser ? localKey + '_' + currentUser.id : localKey; localStorage.setItem(key, JSON.stringify(payload)); if (!supabaseClient || !currentUser || !currentProfile?.id) { message('ブラウザ内に一時保存しました。', false); return; } const record = Object.assign({}, payload, { user_id: currentUser.id, seeker_profile_id: currentProfile.id, updated_at: new Date().toISOString() }); const query = currentResumeId ? supabaseClient.from('seeker_resumes').update(record).eq('id', currentResumeId).eq('user_id', currentUser.id) : supabaseClient.from('seeker_resumes').insert(record).select('id').single(); const result = await query; if (result.error) { console.error(result.error); message('ブラウザ内に一時保存しました。Supabaseテーブル作成後に再保存してください。', true); return; } if (result.data?.id) currentResumeId = result.data.id; el('saveStatus').textContent = '保存済み'; message('履歴書・職務経歴書を保存しました。', false); });
+      el('downloadButton').addEventListener('click', () => { const data = collect(); const name = currentProfile?.name || 'MediSpot'; const lines = ['履歴書・職務経歴書', '', '氏名: ' + name, '', '【学歴】', ...data.education.map(i => (i.date || '') + ' ' + (i.detail || '')), '', '【免許・資格】', ...data.licenses.map(i => (i.date || '') + ' ' + (i.detail || '')), '', '【本人希望】', data.wishes || '', '', '【職務要約】', data.work_summary || '', '', '【職務経歴】', ...data.work_history.map(i => [i.period, i.company, i.role, i.detail].filter(Boolean).join(' / ')), '', '【スキル】', data.skills_text || '', '', '【自己PR】', data.pr || '']; const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'medispot_resume.txt'; a.click(); URL.revokeObjectURL(url); });
+      load().catch(error => { console.error(error); message('履歴書を読み込めませんでした。', true); });
+    })();
+  </script>
+</body>
+</html>
