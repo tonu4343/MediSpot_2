@@ -227,3 +227,40 @@ to authenticated
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+-- Seeker job applications (job-detail.html / seeker-applications.html)
+create table if not exists public.seeker_applications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  job_id uuid,
+  job_title text,
+  facility_name text,
+  status text not null default '応募済み',
+  message text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.seeker_applications enable row level security;
+
+drop policy if exists "Allow seeker application own inserts" on public.seeker_applications;
+drop policy if exists "Allow seeker application own reads" on public.seeker_applications;
+drop policy if exists "Allow seeker application own updates" on public.seeker_applications;
+
+create policy "Allow seeker application own inserts"
+on public.seeker_applications
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Allow seeker application own reads"
+on public.seeker_applications
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Allow seeker application own updates"
+on public.seeker_applications
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
