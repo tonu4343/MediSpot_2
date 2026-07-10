@@ -86,6 +86,15 @@
     .dashboard-summary .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0; }
     .dashboard-summary .stat-card { min-height: 104px; }
     @media (max-width: 860px) { .dashboard-summary { grid-template-columns: 1fr; } }
+
+    .job-focus-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 22px; align-items: start; margin: 0 0 24px; }
+    .dashboard-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .action-card { min-height: 150px; padding: 22px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 34px rgba(0,63,125,.07); }
+    .action-card span { display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .action-card h3 { margin: 14px 0 8px; color: var(--blue-dark); font-size: 19px; font-weight: 900; }
+    .action-card p { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.7; font-weight: 800; }
+    .action-card .profile-edit-link { margin-top: auto; }
+    @media (max-width: 960px) { .job-focus-grid, .dashboard-actions { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body class="dashboard-page">
@@ -134,43 +143,47 @@
       <div class="search-tags"><span>看護師</span><span>検査技師</span><span>東京</span><span>神奈川</span><span>スポット</span><span>パート</span></div>
     </section>
 
-    <section class="dashboard-summary" aria-label="dashboard summary">
-      <aside class="profile-card profile-card-inline" id="profileSummary">
-      <h2>プロフィール</h2>
-      <div class="profile-name">
-        <span class="avatar" id="avatarInitial">M</span>
-        <div><strong id="profileName">読み込み中</strong><span id="profileEmail">ログイン確認中</span></div>
-      </div>
-      <ul class="profile-list">
-        <li><b>職種</b><span id="profileLicense">-</span></li>
-        <li><b>勤務地</b><span id="profileArea">-</span></li>
-        <li><b>勤務形態</b><span id="profileStyle">-</span></li>
-        <li><b>経験</b><span id="profileYears">-</span></li>
-      </ul>
-      <div class="profile-action-row"><a class="profile-edit-link" href="seeker-profile.html">プロフィール編集</a><a class="profile-edit-link" href="seeker-resume.html">履歴書編集</a></div>
-    </aside>
-
-    <section class="stats-grid" aria-label="利用状況">
-      <article class="stat-card"><span>おすすめ求人</span><strong id="matchCount">0</strong></article>
-      <article class="stat-card"><span>応募中</span><strong>0</strong></article>
-      <article class="stat-card"><span>保存済み</span><strong>0</strong></article>
-      <article class="stat-card"><span>未読メッセージ</span><strong>0</strong></article>
-      </section>
-    </section>
-
-    <section class="dashboard-grid">
+    <section class="job-focus-grid" aria-label="recommended jobs and profile">
       <article class="panel-card" id="matchedJobs">
         <div class="section-title-row"><h2>あなたに合う求人</h2><a class="section-link" href="seeker-jobs.html">求人一覧を見る ›</a></div>
         <div class="jobs-list loading" id="jobsList"><div class="empty-state">求人を読み込み中です...</div></div>
       </article>
 
-      <aside class="panel-card">
-        <h2>次にできること</h2>
-        <ul class="mini-list">
-          <li><span class="mini-icon">1</span><div><strong>プロフィールを整える</strong><span>資格・希望条件を更新すると求人精度が上がります。</span></div></li>
-          <li><span class="mini-icon">2</span><div><strong>求人を比較する</strong><span>勤務日・給与・勤務地を見比べて応募先を選びます。</span></div></li>
-          <li><span class="mini-icon">3</span><div><strong>医療機関と確認する</strong><span>成立後は勤務条件をチャットで確認します。</span></div></li>
+      <aside class="profile-card profile-card-inline" id="profileSummary">
+        <h2>プロフィール</h2>
+        <div class="profile-name">
+          <span class="avatar" id="avatarInitial">M</span>
+          <div><strong id="profileName">読み込み中</strong><span id="profileEmail">ログイン確認中</span></div>
+        </div>
+        <ul class="profile-list">
+          <li><b>職種</b><span id="profileLicense">-</span></li>
+          <li><b>勤務地</b><span id="profileArea">-</span></li>
+          <li><b>勤務形態</b><span id="profileStyle">-</span></li>
+          <li><b>経験</b><span id="profileYears">-</span></li>
         </ul>
+        <div class="profile-action-row"><a class="profile-edit-link" href="seeker-profile.html">プロフィール編集</a><a class="profile-edit-link" href="seeker-resume.html">履歴書編集</a></div>
+      </aside>
+    </section>
+
+    <section class="dashboard-actions" aria-label="next actions">
+      <article class="action-card"><span>STEP 01</span><h3>求人を探す</h3><p>職種・勤務地・勤務形態で希望に合う求人を確認します。</p><a class="profile-edit-link" href="seeker-jobs.html">求人検索へ</a></article>
+      <article class="action-card"><span>STEP 02</span><h3>プロフィール完成</h3><p>資格や希望条件を登録すると、マッチ精度が上がります。</p><a class="profile-edit-link" href="seeker-profile.html">プロフィール編集</a></article>
+      <article class="action-card"><span>STEP 03</span><h3>履歴書を作成</h3><p>応募前に職務経歴やスキルを整理し、医療機関へ伝えやすくします。</p><a class="profile-edit-link" href="seeker-resume.html">履歴書編集</a></article>
+    </section>
+
+    <section class="dashboard-grid">
+      <aside class="panel-card">
+        <h2>求人探しの流れ</h2>
+        <ul class="mini-list">
+          <li><span class="mini-icon">1</span><div><strong>条件で求人を比較</strong><span>勤務日・給与・勤務地を見比べて応募先を選びます。</span></div></li>
+          <li><span class="mini-icon">2</span><div><strong>詳細を確認して応募</strong><span>業務内容や必要資格を確認してから応募できます。</span></div></li>
+          <li><span class="mini-icon">3</span><div><strong>応募状況を管理</strong><span>応募後は選考状況と医療機関との確認を管理します。</span></div></li>
+        </ul>
+      </aside>
+      <aside class="panel-card">
+        <h2>応募管理</h2>
+        <p class="job-meta">応募済み・選考中・成立後の確認をここから確認できます。</p>
+        <div class="profile-action-row"><a class="profile-edit-link" href="seeker-applications.html">応募管理を見る</a></div>
       </aside>
     </section>
   </main>
@@ -216,7 +229,7 @@
             '<div><span class="job-tag">' + esc(job.type || "スポット") + '</span><h3>' + esc(job.title || job.category || "医療求人") + '</h3>' +
             '<p class="job-meta">' + esc(job.location || "勤務地相談") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p>' +
             '<div class="job-salary">' + esc(job.salary || "給与相談") + '</div></div>' +
-            '<a class="btn btn-outline job-cta" href="seeker-jobs.html">詳細を見る</a>' +
+            '<a class="btn btn-outline job-cta" href="job-detail.html?id=' + encodeURIComponent(job.id || job.title || job.category || 'demo-nurse') + '">詳細を見る</a>' +
           '</article>';
         }).join("");
       }
