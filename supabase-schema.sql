@@ -56,6 +56,9 @@ alter table public.job_searches enable row level security;
 alter table public.seeker_profiles enable row level security;
 alter table public.employer_profiles enable row level security;
 
+drop policy if exists "Allow anonymous lead inserts" on public.leads;
+drop policy if exists "Allow anonymous search inserts" on public.job_searches;
+
 create policy "Allow anonymous lead inserts"
 on public.leads
 for insert
@@ -156,6 +159,8 @@ create table if not exists public.seekers (
 
 alter table public.seekers enable row level security;
 
+drop policy if exists "Seekers manage own row" on public.seekers;
+
 create policy "Seekers manage own row"
 on public.seekers
 for all
@@ -179,6 +184,8 @@ create table if not exists public.jobs (
 );
 
 alter table public.jobs enable row level security;
+
+drop policy if exists "Jobs public read" on public.jobs;
 
 create policy "Jobs public read"
 on public.jobs
