@@ -95,6 +95,29 @@
     .action-card p { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.7; font-weight: 800; }
     .action-card .profile-edit-link { margin-top: auto; }
     @media (max-width: 960px) { .job-focus-grid, .dashboard-actions { grid-template-columns: 1fr; } }
+
+    .dashboard-flow { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .dashboard-flow li { display: grid; grid-template-columns: 42px 1fr; gap: 14px; align-items: start; padding: 15px 16px; background: #fff; border: 1px solid #d9ecf8; border-radius: 10px; box-shadow: 0 10px 24px rgba(0,63,125,.05); }
+    .dashboard-flow .flow-number { display: grid; place-items: center; width: 42px; height: 42px; color: #fff; background: var(--blue); border-radius: 50%; font-weight: 900; }
+    .dashboard-flow strong { display: block; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
+    .dashboard-flow span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.7; font-weight: 800; }
+    .dashboard-footer { margin-top: 34px; background: var(--blue); color: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 42px rgba(0,63,125,.12); }
+    .voice-section { padding: clamp(28px, 4vw, 42px); background: linear-gradient(180deg, #f4faff 0%, #fff 100%); color: var(--ink); }
+    .voice-section h2, .footer-cta h2 { margin: 0 0 18px; text-align: center; color: var(--blue-dark); font-size: 24px; font-weight: 900; }
+    .voice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .voice-card { padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 28px rgba(0,63,125,.07); }
+    .stars { color: #0aa064; font-weight: 900; letter-spacing: 2px; }
+    .voice-card p { margin: 10px 0 14px; color: #41576a; font-size: 13px; line-height: 1.8; font-weight: 800; }
+    .voice-card strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
+    .footer-cta { padding: 34px 28px; text-align: center; background: linear-gradient(90deg, var(--blue), var(--green)); }
+    .footer-cta h2 { color: #fff; }
+    .footer-cta p { margin: 0 auto 18px; max-width: 680px; color: rgba(255,255,255,.92); font-weight: 800; line-height: 1.8; }
+    .dashboard-footer-bottom { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; padding: 28px clamp(24px, 5vw, 56px); background: #075aa3; }
+    .footer-brand strong { display: block; font-size: 22px; font-weight: 900; }
+    .footer-brand small { display: block; margin-top: 6px; color: rgba(255,255,255,.82); font-weight: 800; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; font-weight: 900; }
+    .footer-links a { color: #fff; }
+    @media (max-width: 860px) { .voice-grid, .dashboard-footer-bottom { grid-template-columns: 1fr; } .footer-links { justify-content: flex-start; } }
   </style>
 </head>
 <body class="dashboard-page">
@@ -174,10 +197,13 @@
     <section class="dashboard-grid">
       <aside class="panel-card">
         <h2>求人探しの流れ</h2>
-        <ul class="mini-list">
-          <li><span class="mini-icon">1</span><div><strong>条件で求人を比較</strong><span>勤務日・給与・勤務地を見比べて応募先を選びます。</span></div></li>
-          <li><span class="mini-icon">2</span><div><strong>詳細を確認して応募</strong><span>業務内容や必要資格を確認してから応募できます。</span></div></li>
-          <li><span class="mini-icon">3</span><div><strong>応募状況を管理</strong><span>応募後は選考状況と医療機関との確認を管理します。</span></div></li>
+        <ul class="dashboard-flow">
+          <li><span class="flow-number">1</span><div><strong>プロフィール登録</strong><span>氏名、資格、経験、希望条件を入力します。</span></div></li>
+          <li><span class="flow-number">2</span><div><strong>職種・勤務地が一致した時にメールでお知らせ</strong><span>希望に合う新着求人を見逃さないように確認できます。</span></div></li>
+          <li><span class="flow-number">3</span><div><strong>求人検索・応募</strong><span>職種・勤務地・勤務形態で求人を探し、気になる求人へ応募します。</span></div></li>
+          <li><span class="flow-number">4</span><div><strong>求人元からスカウトメール</strong><span>医療機関がプロフィールを確認し、スカウトを送る場合があります。</span></div></li>
+          <li><span class="flow-number">5</span><div><strong>条件確認</strong><span>勤務内容、報酬、時間、持ち物などを確認します。</span></div></li>
+          <li><span class="flow-number">6</span><div><strong>勤務・報酬受取</strong><span>合意した条件で勤務し、勤務後に報酬を受け取ります。</span></div></li>
         </ul>
       </aside>
       <aside class="panel-card">
@@ -186,6 +212,26 @@
         <div class="profile-action-row"><a class="profile-edit-link" href="seeker-applications.html">応募管理を見る</a></div>
       </aside>
     </section>
+
+    <footer class="dashboard-footer">
+      <section class="voice-section" aria-label="user voices">
+        <h2>利用者の声</h2>
+        <div class="voice-grid">
+          <article class="voice-card"><div class="stars">★★★★★</div><p>短時間の健診求人を探しやすく、家庭の予定に合わせて働けました。</p><strong>看護師 30代 / 東京都</strong></article>
+          <article class="voice-card"><div class="stars">★★★★★</div><p>資格や経験を登録しておくと応募がスムーズで、条件確認も簡単でした。</p><strong>臨床検査技師 20代 / 神奈川県</strong></article>
+          <article class="voice-card"><div class="stars">★★★★☆</div><p>業務委託の求人を比較しやすく、自分のペースで仕事を増やせました。</p><strong>理学療法士 30代 / 大阪府</strong></article>
+        </div>
+      </section>
+      <section class="footer-cta">
+        <h2>プロフィールを整えて、より良い求人に出会いましょう</h2>
+        <p>資格・経験・希望条件を更新すると、あなたに合う医療スポット求人を見つけやすくなります。</p>
+        <a class="btn btn-green" href="seeker-profile.html">プロフィールを更新する</a>
+      </section>
+      <section class="dashboard-footer-bottom">
+        <div class="footer-brand"><strong>MediSpot</strong><small>医療資格者と医療機関をつなぐスポット求人マッチング</small></div>
+        <nav class="footer-links" aria-label="dashboard footer"><a href="seeker-jobs.html">求人を探す</a><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a><a href="seeker-applications.html">応募管理</a></nav>
+      </section>
+    </footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
