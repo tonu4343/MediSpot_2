@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スキル・プロフィール登録 | MediSpot</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.profile-page { background: linear-gradient(180deg, #f4faff 0%, #ffffff 46%, #f2faf8 100%); color: var(--ink); }
+    .profile-shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 70px; }
+    .page-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: end; margin-bottom: 24px; }
+    .page-heading h1 { margin: 0; color: var(--blue-dark); font-size: clamp(34px, 4vw, 52px); line-height: 1.2; font-weight: 900; }
+    .page-heading p { margin: 12px 0 0; color: var(--muted); font-size: 16px; font-weight: 800; }
+    .status-pill { display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; color: var(--green-dark); background: #ecfff5; border: 1px solid #a8e6c1; border-radius: 999px; font-weight: 900; white-space: nowrap; }
+    .profile-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: start; }
+    .profile-form-card, .side-card { background: rgba(255,255,255,.97); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.08); }
+    .profile-form-card { padding: clamp(24px, 4vw, 38px); }
+    .form-section { padding-top: 26px; margin-top: 26px; border-top: 1px solid #e1edf6; }
+    .form-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
+    .form-section h2 { margin: 0 0 18px; color: var(--blue-dark); font-size: 23px; font-weight: 900; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 22px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label, .check-label { display: block; margin-bottom: 8px; color: #102338; font-size: 15px; font-weight: 900; }
+    .required { color: #d92735; margin-left: 4px; }
+    .input, .textarea { width: 100%; min-height: 54px; padding: 0 16px; color: #102338; background: #fff; border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; font-size: 15px; outline: none; }
+    .textarea { min-height: 142px; padding-top: 14px; resize: vertical; line-height: 1.7; }
+    .input:focus, .textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,91,172,.12); }
+    .hint { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .check-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .check-pill { position: relative; display: inline-flex; cursor: pointer; }
+    .check-pill input { position: absolute; opacity: 0; }
+    .check-pill span { display: inline-flex; align-items: center; min-height: 38px; padding: 0 15px; color: var(--blue-dark); background: #fff; border: 1px solid #cbdce8; border-radius: 999px; font-size: 14px; font-weight: 900; }
+    .check-pill input:checked + span { color: var(--green-dark); border-color: #7ed5a0; background: #effdf6; box-shadow: 0 8px 20px rgba(33,183,97,.12); }
+    .zip-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+    .ghost-btn { min-height: 54px; padding: 0 22px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-weight: 900; cursor: pointer; }
+    .upload-box { display: grid; place-items: center; min-height: 118px; padding: 22px; text-align: center; color: var(--muted); background: #fbfdff; border: 2px dashed #c9d8e6; border-radius: 10px; font-weight: 800; cursor: pointer; }
+    .upload-box strong { display: block; color: var(--blue-dark); font-size: 16px; }
+    .upload-list { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 30px; }
+    .save-btn { min-height: 58px; min-width: 260px; border: 0; border-radius: 8px; color: #fff; background: linear-gradient(180deg, var(--blue-2), var(--blue)); box-shadow: 0 16px 30px rgba(0,91,172,.24); font-size: 18px; font-weight: 900; cursor: pointer; }
+    .back-btn { min-height: 58px; padding: 0 24px; display: inline-flex; align-items: center; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-weight: 900; }
+    .form-message { display: none; font-weight: 900; color: var(--green-dark); }
+    .side-stack { display: grid; gap: 18px; position: sticky; top: 92px; }
+    .side-card { padding: 24px; }
+    .side-card h2 { margin: 0 0 14px; color: var(--blue-dark); font-size: 21px; font-weight: 900; }
+    .side-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .side-list li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; color: #243b53; font-size: 14px; font-weight: 800; }
+    .side-list b { display: grid; place-items: center; width: 34px; height: 34px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 50%; }
+
+    .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
+    .dashboard-nav a { padding: 8px 0; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    @media (max-width: 920px) { .profile-layout, .page-heading { grid-template-columns: 1fr; } .side-stack { position: static; } .site-header { flex-wrap: wrap; } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
+    @media (max-width: 640px) { .profile-shell { width: calc(100% - 28px); padding-top: 28px; } .form-grid, .zip-row { grid-template-columns: 1fr; } .save-btn, .back-btn, .ghost-btn { width: 100%; justify-content: center; } }
+  </style>
+</head>
+<body class="profile-page">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="MediSpot home"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>MediSpot</strong><small>メディスポット</small></span></a>
+    <nav class="dashboard-nav" aria-label="profile menu"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-dashboard.html#matchedJobs">おすすめ求人</a><a href="seeker-profile.html">プロフィール</a></nav>
+    <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
+  </header>
+
+  <main class="profile-shell">
+    <div class="page-heading">
+      <div><h1>スキル・プロフィール登録</h1><p>入力した内容は応募時に医療機関へ提示されます。</p></div>
+      <span class="status-pill" id="saveStatus">未完了</span>
+    </div>
+
+    <div class="profile-layout">
+      <form class="profile-form-card" id="seekerProfileForm">
+        <section class="form-section">
+          <h2>資格・経験</h2>
+          <div class="form-grid">
+            <div class="field"><label for="license">保有資格（職種）<span class="required">必須</span></label><select class="input" id="license" required><option value="">選択してください</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
+            <div class="field"><label for="experience">実務経験年数</label><select class="input" id="experience"><option value="">選択してください</option><option>未経験</option><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5年以上</option><option>10年以上</option></select></div>
+            <div class="field full"><label for="qualificationName">資格名称（詳細）</label><input class="input" id="qualificationName" placeholder="例）正看護師、認定看護師（感染管理）など"></div>
+            <div class="field"><label for="birthDate">生年月日<span class="required">必須</span></label><input class="input" id="birthDate" type="date" required><span class="hint">生年月日から年齢を自動計算します。</span></div>
+            <div class="field"><label for="phone">電話番号</label><input class="input" id="phone" inputmode="tel" autocomplete="tel" placeholder="090-0000-0000"></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>スキル・希望条件</h2>
+          <label class="check-label">スキル・経験（複数選択可）</label>
+          <div class="check-grid" id="skillGrid"></div>
+          <div class="form-grid" style="margin-top:22px;">
+            <div class="field"><label for="preferredStyle">希望雇用形態</label><select class="input" id="preferredStyle"><option>こだわらない</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></div>
+            <div class="field"><label for="preferredArea">居住地（郵便番号から検索）</label><div class="zip-row"><input class="input" id="preferredArea" placeholder="例） 1500001"><button class="ghost-btn" type="button" id="zipButton">住所を検索</button></div></div>
+            <div class="field full"><label for="pr">自己PR</label><textarea class="textarea" id="pr" placeholder="経験の概要や希望条件を自由にご記入ください。"></textarea></div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>資格証・履歴書</h2>
+          <label class="upload-box" for="certificateFiles"><strong>クリックして資格証（免許証）や履歴書をアップロード</strong><span>JPG / PNG / PDF・複数選択できます（プロトタイプのためファイル名のみ表示）</span></label>
+          <input id="certificateFiles" type="file" multiple accept=".jpg,.jpeg,.png,.pdf" hidden>
+          <ul class="upload-list" id="uploadList"><li>まだファイルが選択されていません。</li></ul>
+        </section>
+
+        <div class="form-actions"><button class="save-btn" type="submit">プロフィールを保存する</button><a class="back-btn" href="seeker-dashboard.html">ダッシュボードに戻る</a><span class="form-message" id="formMessage"></span></div>
+      </form>
+
+      <aside class="side-stack">
+        <section class="side-card"><h2>マッチングに必要な情報</h2><ul class="side-list"><li><b>1</b><span>資格と実務経験で応募可能な求人を整理</span></li><li><b>2</b><span>スキルと希望条件であなたに合う求人を表示</span></li><li><b>3</b><span>資格証・履歴書は応募時の信頼材料</span></li></ul></section>
+        <section class="side-card"><h2>表示場所</h2><p style="margin:0;color:var(--muted);font-weight:800;line-height:1.8;">求職者ダッシュボードの「プロフィール編集」からこの画面を開きます。</p></section>
+      </aside>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY');
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      let currentUser = null;
+      let currentProfile = null;
+      const skills = ['保健師・助産師・認定（分野）', '一般病棟', '緩和ケア', 'クリニック', '健康診断（採血・心電図・眼底）', '訪問看護', '高齢者施設', 'その他（自由記載）'];
+      function el(id) { return document.getElementById(id); }
+      function value(id) { return el(id)?.value?.trim() || null; }
+      function setValue(id, value) { const node = el(id); if (node && value) node.value = value; }
+      function message(text, error) { const node = el('formMessage'); node.textContent = text; node.style.display = 'inline'; node.style.color = error ? '#b42318' : 'var(--green-dark)'; }
+      function renderSkills(selected) { const set = new Set(Array.isArray(selected) ? selected : []); el('skillGrid').innerHTML = skills.map(function (skill, index) { const checked = set.has(skill) ? 'checked' : ''; return '<label class="check-pill"><input type="checkbox" value="' + skill.replace(/"/g, '&quot;') + '" ' + checked + '><span>' + skill + '</span></label>'; }).join(''); }
+      function selectedSkills() { return Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value); }
+      function fill(profile, user) { currentProfile = profile || {}; setValue('license', currentProfile.license); setValue('experience', currentProfile.experience_years); setValue('birthDate', currentProfile.birth_date); setValue('phone', currentProfile.phone); setValue('preferredStyle', currentProfile.preferred_style); setValue('preferredArea', currentProfile.preferred_area); setValue('pr', currentProfile.pr); renderSkills(currentProfile.skills); el('saveStatus').textContent = currentProfile.license ? '登録済み' : '未完了'; }
+      async function load() { renderSkills([]); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
+      el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + file.name + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
+      el('zipButton').addEventListener('click', function () { message('プロトタイプのため、郵便番号検索は未接続です。', false); });
+      el('logoutButton').addEventListener('click', async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
+      el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: value('preferredArea'), preferred_style: value('preferredStyle'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。', false); el('saveStatus').textContent = '登録済み'; });
+      load().catch(function (error) { console.error(error); message('プロフィールを読み込めませんでした。', true); });
+    })();
+  </script>
+</body>
+</html>

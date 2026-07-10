@@ -76,6 +76,7 @@
     .search-tags { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
     .search-tags span { display: inline-flex; align-items: center; min-height: 30px; padding: 0 16px; color: var(--blue); background: #f6fbff; border: 1px solid #b7d8ef; border-radius: 999px; font-size: 13px; font-weight: 900; }
     .profile-card-inline { margin: 0 0 24px; }
+    .profile-edit-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; margin-top: 16px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-size: 13px; font-weight: 900; }
     @media (max-width: 980px) { .hero-benefits, .seeker-search-panel { grid-template-columns: 1fr 1fr; } .seeker-search-panel .btn, .search-tags { grid-column: 1 / -1; } .seeker-first-view .welcome-card::before { background-position: right -80px top; background-size: auto 96%; } }
     @media (max-width: 640px) { .seeker-first-view .welcome-card h1.hero-red-line { margin: 18px 0 16px; font-size: clamp(32px, 9vw, 42px); } .seeker-first-view .welcome-card { min-height: 0; padding: 42px 20px 34px; } .seeker-first-view .welcome-card::before { background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.98)), url("assets/seeker-photo.png") right top / 86% auto no-repeat; opacity: .45; } .seeker-first-view .welcome-card h1 { font-size: clamp(36px, 11vw, 48px); } .hero-benefits, .seeker-search-panel { grid-template-columns: 1fr; } .seeker-search-panel { width: calc(100% - 28px); margin-top: 14px; padding: 18px; } }
 
@@ -95,7 +96,7 @@
     <nav class="dashboard-nav" aria-label="求職者メニュー">
       <a href="seeker-dashboard.html">ダッシュボード</a>
       <a href="#matchedJobs">おすすめ求人</a>
-      <a href="#profileSummary">プロフィール</a>
+      <a href="seeker-profile.html">プロフィール</a>
       <a href="index.html#faq">よくある質問</a>
     </nav>
     <div class="header-actions">
@@ -143,6 +144,7 @@
         <li><b>勤務形態</b><span id="profileStyle">-</span></li>
         <li><b>経験</b><span id="profileYears">-</span></li>
       </ul>
+      <a class="profile-edit-link" href="seeker-profile.html">プロフィール編集</a>
     </aside>
 
     <section class="stats-grid" aria-label="利用状況">
