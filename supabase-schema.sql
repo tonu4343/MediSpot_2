@@ -171,6 +171,7 @@ with check (auth.uid() = user_id);
 create table if not exists public.jobs (
   id uuid primary key default gen_random_uuid(),
   employer_id uuid,
+  facility_name text,
   title text not null,
   category text,
   type text,
@@ -260,25 +261,61 @@ with check (auth.uid() = user_id);
 create table if not exists public.seeker_applications (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade,
+  employer_id uuid references auth.users(id) on delete cascade,
   job_id uuid,
   job_title text,
   facility_name text,
+  seeker_name text,
+  seeker_email text,
+  seeker_profession text,
   status text not null default '応募済み',
   message text,
   created_at timestamptz not null default now()
 );
+
+alter table public.jobs add column if not exists facility_name text;
+
+alter table public.seeker_applications add column if not exists employer_id uuid references auth.users(id) on delete cascade;
+alter table public.seeker_applications add column if not exists seeker_name text;
+alter table public.seeker_applications add column if not exists seeker_email text;
+alter table public.seeker_applications add column if not exists seeker_profession text;
+
+update public.seeker_applications a
+set employer_id = j.employer_id,
+    facility_name = coalesce(a.facility_name, j.facility_name)
+from public.jobs j
+where a.job_id = j.id
+  and a.employer_id is null;
+
+update public.seeker_applications a
+set seeker_name = coalesce(a.seeker_name, p.name),
+    seeker_email = coalesce(a.seeker_email, p.email),
+    seeker_profession = coalesce(a.seeker_profession, p.license)
+from public.seeker_profiles p
+where a.user_id = p.user_id
+  and (a.seeker_name is null or a.seeker_email is null or a.seeker_profession is null);
 
 alter table public.seeker_applications enable row level security;
 
 drop policy if exists "Allow seeker application own inserts" on public.seeker_applications;
 drop policy if exists "Allow seeker application own reads" on public.seeker_applications;
 drop policy if exists "Allow seeker application own updates" on public.seeker_applications;
+drop policy if exists "Allow employer application reads" on public.seeker_applications;
+drop policy if exists "Allow employer application updates" on public.seeker_applications;
 
 create policy "Allow seeker application own inserts"
 on public.seeker_applications
 for insert
 to authenticated
-with check (auth.uid() = user_id);
+with check (
+  auth.uid() = user_id
+  and exists (
+    select 1 from public.jobs j
+    where j.id = job_id
+      and j.employer_id = employer_id
+      and j.status = 'open'
+  )
+);
 
 create policy "Allow seeker application own reads"
 on public.seeker_applications
@@ -286,10 +323,55 @@ for select
 to authenticated
 using (auth.uid() = user_id);
 
-create policy "Allow seeker application own updates"
+create policy "Allow employer application reads"
+on public.seeker_applications
+for select
+to authenticated
+using (auth.uid() = employer_id);
+
+create policy "Allow employer application updates"
 on public.seeker_applications
 for update
 to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
+using (auth.uid() = employer_id)
+with check (auth.uid() = employer_id);
+
+-- Private application chat (application-chat.html)
+create table if not exists public.application_messages (
+  id uuid primary key default gen_random_uuid(),
+  application_id uuid not null references public.seeker_applications(id) on delete cascade,
+  sender_id uuid not null references auth.users(id) on delete cascade,
+  body text not null check (char_length(body) between 1 and 2000),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists application_messages_application_created_idx on public.application_messages(application_id, created_at);
+alter table public.application_messages enable row level security;
+
+drop policy if exists "Participants read application messages" on public.application_messages;
+drop policy if exists "Participants send application messages" on public.application_messages;
+
+create policy "Participants read application messages"
+on public.application_messages
+for select
+to authenticated
+using (exists (
+  select 1 from public.seeker_applications a
+  where a.id = application_id
+    and (a.user_id = auth.uid() or a.employer_id = auth.uid())
+));
+
+create policy "Participants send application messages"
+on public.application_messages
+for insert
+to authenticated
+with check (
+  sender_id = auth.uid()
+  and exists (
+    select 1 from public.seeker_applications a
+    where a.id = application_id
+      and a.status in ('選考中', '採用決定')
+      and (a.user_id = auth.uid() or a.employer_id = auth.uid())
+  )
+);
 

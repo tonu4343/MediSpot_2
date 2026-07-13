@@ -134,7 +134,7 @@
         event.preventDefault();
         if (!form.reportValidity()) return;
         const data = new FormData(form);
-        const record = { employer_id: currentUser?.id || null, title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: data.get("description").trim(), requirements: data.get("requirements").trim(), status: "open" };
+        const record = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: data.get("description").trim(), requirements: data.get("requirements").trim(), status: "open" };
         localStorage.setItem("medi_job_employer_job_draft", JSON.stringify(record));
         if (!supabaseClient || !currentUser || !employerProfile) { message("入力内容をブラウザに一時保存しました。Supabase設定後にもう一度掲載してください。", true); return; }
         submitButton.disabled = true; submitButton.textContent = "掲載しています…";
