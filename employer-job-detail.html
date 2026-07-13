@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求人詳細・編集 | Medi Job</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.job-detail-page { background: linear-gradient(180deg,#f3f9fd,#fff 55%,#f2faf7); color: var(--ink); }
+    .detail-shell { width: min(980px,calc(100% - 40px)); margin: 0 auto; padding: 36px 0 72px; }
+    .breadcrumb { display: flex; gap: 8px; margin-bottom: 18px; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .breadcrumb a { color: var(--blue); }
+    .detail-head, .detail-form { background: #fff; border: 1px solid #d3e3ed; border-radius: 14px; box-shadow: 0 16px 38px rgba(0,63,125,.08); }
+    .detail-head { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: clamp(24px,4vw,36px); margin-bottom: 22px; }
+    .detail-head h1 { margin: 8px 0 5px; color: var(--blue-dark); font-size: clamp(26px,4vw,38px); font-weight: 900; }
+    .detail-head p { margin: 0; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .status-badge { display: inline-flex; min-height: 28px; align-items: center; padding: 0 12px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .status-badge.closed { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
+    .detail-form { display: none; padding: clamp(24px,4vw,38px); }
+    .detail-form.ready { display: block; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 16px; }
+    .field { display: grid; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: #153e61; font-size: 14px; font-weight: 900; }
+    .field input, .field select, .field textarea { width: 100%; padding: 13px 14px; color: #17354d; background: #fff; border: 1px solid #c9d9e4; border-radius: 8px; font: inherit; line-height: 1.6; }
+    .field textarea { min-height: 130px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,91,172,.1); }
+    .detail-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 26px; padding-top: 22px; border-top: 1px solid #e1edf4; }
+    .action-group { display: flex; flex-wrap: wrap; gap: 12px; }
+    .detail-actions button { cursor: pointer; }
+    .btn-danger { color: #b13a32; background: #fff; border: 1px solid #e6aaa5; }
+    .page-status { margin: 0 0 18px; padding: 14px 16px; color: #49667d; background: #f3f9fd; border: 1px solid #cfe3f2; border-radius: 9px; font-size: 13px; font-weight: 800; }
+    .page-status.success { color: #067044; background: #eafff3; border-color: #a8e4c2; }
+    .page-status.error { color: #9d2d24; background: #fff2f0; border-color: #f1bbb5; }
+    @media (max-width: 680px) { .detail-shell { width: calc(100% - 28px); } .detail-head { align-items: flex-start; flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } .detail-actions, .action-group { flex-direction: column; width: 100%; } .detail-actions .btn { width: 100%; } }
+  </style>
+</head>
+<body class="job-detail-page">
+  <header class="site-header"><a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medi Job</strong><small>Medical Spot Job</small></span></a><nav class="main-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">マイページ</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a></nav><div class="header-actions"><button class="btn btn-outline" id="logoutButton" type="button">ログアウト</button></div></header>
+  <main class="detail-shell">
+    <div class="breadcrumb"><a href="employer-dashboard.html">求人者マイページ</a><span>›</span><a href="employer-dashboard.html#jobs">求人管理</a><span>›</span><span>詳細・編集</span></div>
+    <section class="detail-head"><div><span class="status-badge" id="statusBadge">読み込み中</span><h1 id="pageTitle">求人情報を読み込んでいます</h1><p>掲載内容の確認・編集・募集状態の変更ができます。</p></div><a class="btn btn-outline" href="employer-dashboard.html#jobs">求人一覧へ戻る</a></section>
+    <div class="page-status" id="pageStatus" role="status" aria-live="polite">求人情報を確認しています…</div>
+    <form class="detail-form" id="detailForm">
+      <div class="form-grid">
+        <div class="field full"><label for="title">求人タイトル</label><input id="title" name="title" required maxlength="80"></div>
+        <div class="field"><label for="category">募集職種</label><select id="category" name="category" required><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>診療放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>薬剤師</option><option>医療事務</option><option>その他</option></select></div>
+        <div class="field"><label for="type">雇用形態</label><select id="type" name="type" required><option>スポット</option><option>非常勤</option><option>パート</option><option>業務委託</option><option>常勤</option></select></div>
+        <div class="field full"><label for="salary">給与</label><input id="salary" name="salary" required maxlength="80"></div>
+        <div class="field full"><label for="location">勤務地</label><input id="location" name="location" required maxlength="120"></div>
+        <div class="field full"><label for="workDate">勤務日・勤務時間</label><input id="workDate" name="work_date" maxlength="120"></div>
+        <div class="field full"><label for="description">仕事内容</label><textarea id="description" name="description" required maxlength="2000"></textarea></div>
+        <div class="field full"><label for="requirements">応募要件</label><textarea id="requirements" name="requirements" required maxlength="1200"></textarea></div>
+      </div>
+      <div class="detail-actions"><button class="btn btn-danger" id="toggleStatusButton" type="button">募集を終了する</button><div class="action-group"><a class="btn btn-outline" href="employer-dashboard.html#jobs">キャンセル</a><button class="btn btn-green" id="saveButton" type="submit">変更を保存</button></div></div>
+    </form>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      const localPreview = location.hostname === "127.0.0.1" || location.hostname === "localhost";
+      const jobId = new URLSearchParams(location.search).get("id");
+      const form = document.getElementById("detailForm");
+      const pageStatus = document.getElementById("pageStatus");
+      const statusBadge = document.getElementById("statusBadge");
+      const toggleButton = document.getElementById("toggleStatusButton");
+      const saveButton = document.getElementById("saveButton");
+      let currentUser = null;
+      let currentJob = null;
+      function message(text, type) { pageStatus.className = "page-status" + (type ? " " + type : ""); pageStatus.textContent = text; }
+      function fill(job) { currentJob = job; ["title","category","type","salary","location","description","requirements"].forEach(function (key) { if (form.elements[key]) form.elements[key].value = job[key] || ""; }); form.elements.work_date.value = job.work_date || ""; document.getElementById("pageTitle").textContent = job.title || "求人詳細"; const closed = job.status === "closed"; statusBadge.textContent = closed ? "募集終了" : "掲載中"; statusBadge.className = "status-badge" + (closed ? " closed" : ""); toggleButton.textContent = closed ? "募集を再開する" : "募集を終了する"; form.classList.add("ready"); }
+      async function load() {
+        if (!supabaseClient) { if (localPreview) { fill({ title:"スポット看護師募集", category:"看護師", type:"スポット", salary:"日給 18,000円〜22,000円", location:"東京都 新宿区", work_date:"来週金曜 9:00-17:00", description:"外来での看護業務を担当します。", requirements:"看護師免許、臨床経験1年以上", status:"open" }); message("ローカルプレビューです。画面操作を確認できます。", "success"); return; } message("Supabase設定を確認してください。", "error"); return; }
+        const sessionResult = await supabaseClient.auth.getSession(); currentUser = sessionResult.data.session?.user;
+        if (!currentUser) { if (localPreview) { fill({ title:"スポット看護師募集", category:"看護師", type:"スポット", salary:"日給 18,000円〜22,000円", location:"東京都 新宿区", work_date:"来週金曜 9:00-17:00", description:"外来での看護業務を担当します。", requirements:"看護師免許、臨床経験1年以上", status:"open" }); message("ローカルプレビューです。画面操作を確認できます。", "success"); return; } window.location.href = "login.html?role=employer"; return; }
+        if (!jobId) { message("求人IDが指定されていません。求人一覧から選択してください。", "error"); return; }
+        const result = await supabaseClient.from("jobs").select("*").eq("id", jobId).eq("employer_id", currentUser.id).maybeSingle();
+        if (result.error || !result.data) { console.error(result.error); message("求人を読み込めませんでした。閲覧権限または求人IDをご確認ください。", "error"); return; }
+        fill(result.data); message("掲載内容を編集できます。変更後は「変更を保存」を押してください。", "");
+      }
+      form.addEventListener("submit", async function (event) { event.preventDefault(); if (!form.reportValidity()) return; const data = new FormData(form); const update = { title:data.get("title").trim(), category:data.get("category"), type:data.get("type"), salary:data.get("salary").trim(), location:data.get("location").trim(), work_date:data.get("work_date").trim(), description:data.get("description").trim(), requirements:data.get("requirements").trim() }; if (!supabaseClient || !currentUser) { fill(Object.assign({},currentJob,update)); message("プレビュー上で変更を確認しました。", "success"); return; } saveButton.disabled = true; saveButton.textContent = "保存中…"; const result = await supabaseClient.from("jobs").update(update).eq("id",jobId).eq("employer_id",currentUser.id).select().single(); saveButton.disabled = false; saveButton.textContent = "変更を保存"; if (result.error) { console.error(result.error); message("変更を保存できませんでした。データベース権限をご確認ください。", "error"); return; } fill(result.data); message("求人情報を更新しました。", "success"); });
+      toggleButton.addEventListener("click", async function () { const next = currentJob?.status === "closed" ? "open" : "closed"; if (!supabaseClient || !currentUser) { fill(Object.assign({},currentJob,{status:next})); message(next === "closed" ? "プレビュー上で募集を終了しました。" : "プレビュー上で募集を再開しました。", "success"); return; } toggleButton.disabled = true; const result = await supabaseClient.from("jobs").update({status:next}).eq("id",jobId).eq("employer_id",currentUser.id).select().single(); toggleButton.disabled = false; if (result.error) { console.error(result.error); message("募集状態を変更できませんでした。", "error"); return; } fill(result.data); message(next === "closed" ? "募集を終了しました。" : "募集を再開しました。", "success"); });
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      load().catch(function (error) { console.error(error); message("求人情報の読み込み中にエラーが発生しました。", "error"); });
+    })();
+  </script>
+</body>
+</html>
