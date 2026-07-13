@@ -63,6 +63,13 @@
     .pricing-reminder strong { display: block; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
     .pricing-reminder span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 800; }
     .pricing-reminder a { flex: 0 0 auto; color: var(--blue); font-size: 13px; font-weight: 900; }
+    .message-panel { margin-top: 22px; }
+    .message-list { display: grid; gap: 12px; }
+    .message-item { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 18px; align-items: center; padding: 16px 18px; background: #f8fcff; border: 1px solid #d6e7f3; border-radius: 10px; }
+    .message-item h3 { margin: 0 0 5px; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
+    .message-item p { margin: 0; color: #4e6578; font-size: 13px; line-height: 1.65; font-weight: 700; }
+    .message-item time { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .message-empty { padding: 28px 20px; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; text-align: center; font-size: 13px; font-weight: 800; }
     .next-flow { margin-top: 22px; padding: clamp(28px,4vw,42px); }
     .next-flow h2 { width: fit-content; margin: 0 auto 24px; padding-bottom: 10px; text-align: center; position: relative; }
     .next-flow h2::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 38px; height: 3px; background: var(--blue); border-radius: 999px; transform: translateX(-50%); }
@@ -79,7 +86,7 @@
     .employer-footer { grid-template-columns: 1.5fr 1fr 1.15fr; }
     .employer-footer .footer-cta .btn { color: #fff; }
     @media (max-width: 960px) { .hero-grid, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } .hero-card::before { background-position: right -12px top 8px; background-size: min(430px, 58vw) auto; } .employer-footer { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .employer-footer { grid-template-columns: 1fr; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card, .message-item { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .employer-footer { grid-template-columns: 1fr; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
   </style>
 </head>
 <body class="employer-dashboard-page">
@@ -99,7 +106,7 @@
       </article>
     </section>
 
-    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card" href="employer-applications.html"><span>選考中・メッセージ</span><strong id="selectionApplications">0</strong></a><a class="stat-card" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
+    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card" href="#messages"><span>受信メッセージ</span><strong id="receivedMessages">0</strong></a><a class="stat-card" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
 
     <aside class="pricing-reminder" aria-label="料金のご案内"><div><strong>掲載無料・採用／稼働決定時のみ費用が発生します</strong><span>スポット求人は1名3,300円、常勤・非常勤求人は55,000円（いずれも税込）</span></div><a href="employer-job-new.html#pricing">料金詳細を見る ›</a></aside>
 
@@ -112,6 +119,8 @@
         <p class="profile-note">この施設情報は求人票と応募者へのご案内に使用されます。</p>
       </aside>
     </section>
+
+    <section class="panel-card message-panel" id="messages"><div class="section-title-row"><h2>求職者からのメッセージ</h2><a class="section-link" href="employer-applications.html">応募者・メッセージ一覧 ›</a></div><div class="message-list" id="messageList"><div class="message-empty">メッセージを読み込んでいます…</div></div></section>
 
     <section class="panel-card next-flow"><h2>求人作成から採用までの流れ</h2><ul class="mini-list"><li><span class="mini-icon">1</span><div><strong>求人情報を作成</strong><span>職種、勤務日、報酬、仕事内容、必要な資格・スキルを登録します。</span></div></li><li><span class="mini-icon">2</span><div><strong>応募者を確認</strong><span>応募者の資格、経験、プロフィール、希望条件を確認します。</span></div></li><li><span class="mini-icon">3</span><div><strong>応募者を選考</strong><span>条件が合う方を選び、勤務条件や開始日を確認します。</span></div></li><li><span class="mini-icon">4</span><div><strong>採用・稼働決定</strong><span>最終条件を確定します。成功報酬は採用または稼働決定時のみ発生します。</span></div></li></ul></section>
   </main>
@@ -149,6 +158,16 @@
         if (!items.length) { document.getElementById("jobList").innerHTML = '<div class="job-empty"><strong>掲載中の求人はありません</strong><span>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</span><a class="btn btn-green" href="employer-job-new.html">新しい求人を作成</a></div>'; return; }
         document.getElementById("jobList").innerHTML = items.map(function (job) { const closed = job.status === "closed"; const href = demo || !job.id ? "employer-job-new.html" : "employer-job-detail.html?id=" + encodeURIComponent(job.id); return '<article class="job-card"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3>' + esc(job.title || "医療求人") + '</h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><a class="btn btn-outline" href="' + href + '">' + (demo ? '求人を作成' : '詳細・編集') + '</a></article>'; }).join("");
       }
+      function renderMessages(messages, applications) {
+        const list = document.getElementById("messageList");
+        const applicationMap = new Map((applications || []).map(function (app) { return [app.id, app]; }));
+        if (!messages.length) { list.innerHTML = '<div class="message-empty">求職者からのメッセージはまだありません。選考を開始するとチャットで勤務条件を確認できます。</div>'; return; }
+        list.innerHTML = messages.map(function (message) {
+          const app = applicationMap.get(message.application_id) || {};
+          const sentAt = message.created_at ? new Date(message.created_at).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+          return '<article class="message-item"><div><h3>' + esc(app.seeker_name || "求職者") + 'さん ／ ' + esc(app.job_title || "応募求人") + '</h3><p>' + esc(message.body) + '</p><time>' + esc(sentAt) + '</time></div><a class="btn btn-outline" href="application-chat.html?id=' + encodeURIComponent(message.application_id) + '">メッセージを開く</a></article>';
+        }).join("");
+      }
       async function loadDashboard() {
         if (!supabaseClient) { applyProfile(null, null); renderJobs(demoJobs, true); return; }
         const sessionResult = await supabaseClient.auth.getSession();
@@ -166,8 +185,12 @@
         const jobsResult = await supabaseClient.from("jobs").select("*").eq("employer_id", user.id).order("created_at", { ascending: false }).limit(20);
         if (jobsResult.error) { console.error(jobsResult.error); renderJobs([]); return; }
         renderJobs(jobsResult.data || []);
-        const applicationsResult = await supabaseClient.from("seeker_applications").select("status").eq("employer_id", user.id);
-        if (!applicationsResult.error) { const applications = applicationsResult.data || []; text("newApplications", String(applications.filter(function (app) { return app.status === "応募済み"; }).length)); text("selectionApplications", String(applications.filter(function (app) { return app.status === "選考中"; }).length)); text("hiredApplications", String(applications.filter(function (app) { return app.status === "採用決定"; }).length)); }
+        const applicationsResult = await supabaseClient.from("seeker_applications").select("id,status,job_title,seeker_name").eq("employer_id", user.id);
+        const applications = applicationsResult.error ? [] : (applicationsResult.data || []);
+        if (!applicationsResult.error) { text("newApplications", String(applications.filter(function (app) { return app.status === "応募済み"; }).length)); text("hiredApplications", String(applications.filter(function (app) { return app.status === "採用決定"; }).length)); }
+        const messagesResult = await supabaseClient.from("application_messages").select("id,application_id,sender_id,body,created_at", { count: "exact" }).neq("sender_id", user.id).order("created_at", { ascending: false }).limit(5);
+        if (messagesResult.error) { console.error(messagesResult.error); text("receivedMessages", "0"); renderMessages([], applications); }
+        else { text("receivedMessages", String(messagesResult.count || 0)); renderMessages(messagesResult.data || [], applications); }
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
       loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs([]); });
