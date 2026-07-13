@@ -47,8 +47,11 @@
     .guide-list b { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; background: linear-gradient(135deg, var(--blue), var(--green)); border-radius: 50%; }
     .guide-list strong { display: block; color: var(--blue-dark); font-size: 13px; }
     .price-box { margin-top: 22px; padding: 18px; background: #f3fbff; border: 1px solid #cce5f5; border-radius: 10px; }
-    .price-box span { display: block; color: var(--muted); font-size: 11px; font-weight: 900; }
-    .price-box strong { display: block; margin-top: 5px; color: var(--green-dark); font-size: 24px; font-weight: 900; }
+    .price-box > span { display: block; color: var(--blue-dark); font-size: 14px; font-weight: 900; }
+    .price-option { margin-top: 13px; padding-top: 13px; border-top: 1px solid #d7eaf6; }
+    .price-option small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; line-height: 1.6; }
+    .price-option strong { display: block; margin-top: 3px; color: var(--green-dark); font-size: 22px; font-weight: 900; }
+    .price-option strong small { display: inline; color: inherit; font-size: 11px; }
     @media (max-width: 860px) { .form-layout { grid-template-columns: 1fr; } .guide-card { position: static; } }
     @media (max-width: 620px) { .job-new-shell { width: calc(100% - 28px); padding-top: 24px; } .form-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } .form-actions { flex-direction: column-reverse; } .form-actions .btn { width: 100%; } }
   </style>
@@ -96,7 +99,11 @@
       <aside class="guide-card">
         <h2>掲載までの流れ</h2>
         <ol class="guide-list"><li><b>1</b><div><strong>募集内容を入力</strong>職種・給与・勤務地・応募条件を登録します。</div></li><li><b>2</b><div><strong>内容を確認</strong>登録後は求人管理画面で掲載内容を確認できます。</div></li><li><b>3</b><div><strong>応募者とマッチング</strong>条件に合う医療資格者からの応募を確認します。</div></li></ol>
-        <div class="price-box"><span>採用決定時の成功報酬</span><strong>55,000円 <small>税込</small></strong></div>
+        <div class="price-box" id="pricing">
+          <span>料金について</span>
+          <div class="price-option"><small>スポット求人・稼働決定時のみ</small><strong>1名 3,300円 <small>税込</small></strong></div>
+          <div class="price-option"><small>常勤・非常勤求人・採用決定時のみ</small><strong>55,000円 <small>税込</small></strong></div>
+        </div>
       </aside>
     </div>
   </main>
