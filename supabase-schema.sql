@@ -186,12 +186,27 @@ create table if not exists public.jobs (
 alter table public.jobs enable row level security;
 
 drop policy if exists "Jobs public read" on public.jobs;
+drop policy if exists "Employers create own jobs" on public.jobs;
+drop policy if exists "Employers update own jobs" on public.jobs;
 
 create policy "Jobs public read"
 on public.jobs
 for select
 to anon, authenticated
 using (status = 'open');
+
+create policy "Employers create own jobs"
+on public.jobs
+for insert
+to authenticated
+with check (auth.uid() = employer_id);
+
+create policy "Employers update own jobs"
+on public.jobs
+for update
+to authenticated
+using (auth.uid() = employer_id)
+with check (auth.uid() = employer_id);
 
 -- Seeker resume / work history (seeker-resume.html)
 create table if not exists public.seeker_resumes (
