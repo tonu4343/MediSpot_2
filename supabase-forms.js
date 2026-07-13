@@ -125,7 +125,8 @@
     if (!requireClient()) return;
 
     const password = value("password") || "";
-    const passwordConfirm = value("passwordConfirm") || "";
+    const passwordConfirmInput = document.getElementById("passwordConfirm");
+    const passwordConfirm = passwordConfirmInput ? value("passwordConfirm") || "" : password;
 
     if (password.length < 8) {
       showMessage("formMessage", "パスワードは8文字以上で入力してください。", true);
@@ -187,9 +188,10 @@
       return;
     }
 
-    showMessage("formMessage", "登録が完了しました。ログイン画面へ移動します。", false);
+    const hasSession = Boolean(authData.session);
+    showMessage("formMessage", hasSession ? "登録が完了しました。求人者ダッシュボードへ移動します。" : "登録が完了しました。メール確認後にログインしてください。", false);
     setTimeout(function () {
-      window.location.href = "login.html?role=employer&registered=1";
+      window.location.href = hasSession ? "employer-dashboard.html" : "login.html?role=employer&registered=1";
     }, 900);
   }
   async function saveSearch(form) {
