@@ -47,11 +47,14 @@
     .pricing-reminder strong { display: block; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
     .pricing-reminder span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 800; }
     .pricing-reminder a { flex: 0 0 auto; color: var(--blue); font-size: 13px; font-weight: 900; }
-    .mini-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-    .mini-list li { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; padding: 14px; background: #f7fbff; border: 1px solid #d9ecf8; border-radius: 10px; }
-    .mini-icon { display: grid; place-items: center; width: 38px; height: 38px; color: var(--blue); background: #fff; border: 1px solid #b9dbf5; border-radius: 50%; font-weight: 900; }
+    .next-flow { margin-top: 22px; padding: clamp(28px,4vw,42px); }
+    .next-flow h2 { width: fit-content; margin: 0 auto 24px; padding-bottom: 10px; text-align: center; position: relative; }
+    .next-flow h2::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 38px; height: 3px; background: var(--blue); border-radius: 999px; transform: translateX(-50%); }
+    .mini-list { display: grid; gap: 12px; width: min(760px,100%); margin: 0 auto; padding: 0; list-style: none; }
+    .mini-list li { display: grid; grid-template-columns: 42px 1fr; gap: 14px; align-items: center; min-height: 78px; padding: 14px 18px; background: #fff; border: 1px solid #d6e7f3; border-radius: 9px; box-shadow: 0 5px 14px rgba(0,63,125,.07); }
+    .mini-icon { display: grid; place-items: center; width: 38px; height: 38px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 14px; font-weight: 900; }
     .mini-list strong { display: block; color: var(--blue-dark); font-size: 14px; font-weight: 900; }
-    .mini-list span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .mini-list span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.6; font-weight: 800; }
     @media (max-width: 960px) { .hero-grid, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } .hero-card::before { background-position: right -12px top 8px; background-size: min(430px, 58vw) auto; } }
     @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
   </style>
@@ -86,7 +89,7 @@
       </aside>
     </section>
 
-    <section class="panel-card" style="margin-top:22px"><h2>次にできること</h2><ul class="mini-list"><li><span class="mini-icon">1</span><div><strong>募集条件を整理する</strong><span>職種、勤務日、報酬、業務内容を登録します。</span></div></li><li><span class="mini-icon">2</span><div><strong>応募者を確認する</strong><span>資格・経験・希望条件を確認して選考できます。</span></div></li><li><span class="mini-icon">3</span><div><strong>採用成立後に調整する</strong><span>勤務条件を確認し、採用決定時のみ費用が発生します。</span></div></li></ul></section>
+    <section class="panel-card next-flow"><h2>求人作成から採用までの流れ</h2><ol class="mini-list"><li><span class="mini-icon">1</span><div><strong>求人情報を作成</strong><span>職種、勤務日、報酬、仕事内容、必要な資格・スキルを登録します。</span></div></li><li><span class="mini-icon">2</span><div><strong>応募者を確認</strong><span>応募者の資格、経験、プロフィール、希望条件を確認します。</span></div></li><li><span class="mini-icon">3</span><div><strong>応募者を選考</strong><span>条件が合う方を選び、勤務条件や開始日を確認します。</span></div></li><li><span class="mini-icon">4</span><div><strong>採用・稼働決定</strong><span>最終条件を確定します。成功報酬は採用または稼働決定時のみ発生します。</span></div></li></ol></section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
