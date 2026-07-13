@@ -18,6 +18,9 @@
     .hero-card::after { content: ""; position: absolute; z-index: 1; right: -90px; top: -110px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(33,183,97,.18), rgba(0,91,172,.07) 62%, transparent 63%); }
     .hero-card > * { position: relative; z-index: 2; }
     .eyebrow { display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px; border-radius: 999px; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; font-size: 13px; font-weight: 900; }
+    .hero-card .hero-message { width: min(720px, 100%); margin: 16px 0 0; font-size: clamp(22px, 3vw, 34px); line-height: 1.45; font-weight: 900; letter-spacing: .01em; }
+    .hero-message .message-blue { color: var(--blue-dark); }
+    .hero-message .message-green { color: var(--green-dark); }
     .hero-card h1 { margin: 18px 0 12px; color: var(--blue-dark); font-size: clamp(32px,4vw,48px); line-height: 1.22; font-weight: 900; letter-spacing: 0; }
     .hero-card p { width: min(650px,100%); margin: 0; color: #4e6578; font-size: 16px; font-weight: 800; line-height: 1.8; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
@@ -65,6 +68,7 @@
   <main class="dashboard-shell">
     <section class="hero-grid">
       <article class="hero-card">
+        <p class="hero-message"><span class="message-blue">必要になった時、</span><span class="message-green">必要なスキルのスタッフとつながる</span></p>
         <span class="eyebrow">求人者マイページ</span>
         <h1><span id="facilityTitle">医療機関</span>の求人管理を始めましょう。</h1>
         <p>スポット勤務・業務委託・非常勤の募集を整理し、応募者の資格や希望条件を確認できます。まずは募集内容を作成して、必要な人材とつながりましょう。</p>
