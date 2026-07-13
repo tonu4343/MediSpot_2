@@ -43,6 +43,8 @@
     .profile-note::before { content: "i"; display: grid; place-items: center; flex: 0 0 18px; width: 18px; height: 18px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 10px; font-weight: 900; }
     .stats-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { min-height: 118px; padding: 22px; }
+    a.stat-card { display: block; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+    a.stat-card:hover { transform: translateY(-2px); border-color: #9bcbed; box-shadow: 0 20px 42px rgba(0,91,172,.13); }
     .stat-card span { color: var(--muted); font-size: 13px; font-weight: 900; }
     .stat-card strong { display: block; margin-top: 6px; color: var(--blue); font-size: 34px; line-height: 1; font-weight: 900; }
     .dashboard-grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 22px; align-items: start; }
@@ -83,7 +85,7 @@
 <body class="employer-dashboard-page">
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medi Job</strong><small>Medical Spot Job</small></span></a>
-    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人作成</a><a href="#jobs">求人管理</a><a href="employer-applications.html">応募者管理</a><a href="#profile">施設情報</a></nav>
+    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人作成</a><a href="#jobs">求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="#profile">施設情報</a></nav>
     <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
   </header>
 
@@ -97,7 +99,7 @@
       </article>
     </section>
 
-    <section class="stats-grid" aria-label="求人状況"><article class="stat-card"><span>掲載中求人</span><strong id="openJobs">0</strong></article><article class="stat-card"><span>新着応募</span><strong id="newApplications">0</strong></article><article class="stat-card"><span>選考中</span><strong id="selectionApplications">0</strong></article><article class="stat-card"><span>採用成立</span><strong id="hiredApplications">0</strong></article></section>
+    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card" href="employer-applications.html"><span>選考中・メッセージ</span><strong id="selectionApplications">0</strong></a><a class="stat-card" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
 
     <aside class="pricing-reminder" aria-label="料金のご案内"><div><strong>掲載無料・採用／稼働決定時のみ費用が発生します</strong><span>スポット求人は1名3,300円、常勤・非常勤求人は55,000円（いずれも税込）</span></div><a href="employer-job-new.html#pricing">料金詳細を見る ›</a></aside>
 
@@ -118,7 +120,7 @@
 
   <footer class="site-footer employer-footer">
     <div class="footer-brand"><a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medi Job</strong><small>Medical Spot Job</small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
-    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a><a href="employer-applications.html">応募者管理</a><a href="employer-dashboard.html#profile">施設情報</a></div>
+    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="employer-dashboard.html#profile">施設情報</a></div>
     <div class="footer-cta"><strong>人材募集を始める</strong><span>掲載無料。採用・稼働決定時のみ費用が発生します。</span><a class="btn btn-green" href="employer-job-new.html">求人を作成（無料）›</a></div>
     <p class="copyright">© 2024 Medi Job. All Rights Reserved.</p>
   </footer>
