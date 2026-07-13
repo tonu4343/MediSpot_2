@@ -80,9 +80,20 @@
             <div class="field full"><label for="title">求人タイトル<span class="required">必須</span></label><input id="title" name="title" required maxlength="80" placeholder="例）【日勤のみ】外来看護師（週3日〜）"></div>
             <div class="field"><label for="category">募集職種<span class="required">必須</span></label><select id="category" name="category" required><option value="">選択してください</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>診療放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>薬剤師</option><option>医療事務</option><option>その他</option></select></div>
             <div class="field"><label for="type">雇用形態<span class="required">必須</span></label><select id="type" name="type" required><option value="">選択してください</option><option>スポット</option><option>非常勤</option><option>パート</option><option>業務委託</option><option>常勤</option></select></div>
+            <div class="field"><label for="positions">募集人数<span class="required">必須</span></label><input id="positions" name="positions" type="number" min="1" max="99" value="1" required><span class="field-help">今回募集する人数を入力してください。</span></div>
+            <div class="field"><label for="employmentPeriod">勤務期間<span class="optional">任意</span></label><input id="employmentPeriod" name="employment_period" maxlength="120" placeholder="例）単日 / 3か月 / 長期"></div>
             <div class="field full"><label for="salary">給与<span class="required">必須</span></label><input id="salary" name="salary" required maxlength="80" placeholder="例）時給 2,200円〜2,600円 / 月給 28万円〜"><span class="field-help">交通費や各種手当がある場合は仕事内容欄にも記載してください。</span></div>
             <div class="field full"><label for="location">勤務地<span class="required">必須</span></label><input id="location" name="location" required maxlength="120" placeholder="例）東京都世田谷区"></div>
-            <div class="field full"><label for="workDate">勤務日・勤務時間<span class="optional">任意</span></label><input id="workDate" name="work_date" maxlength="120" placeholder="例）月〜金 9:00〜17:00 / 週3日から相談可能"></div>
+            <div class="field full"><label for="workDate">勤務日<span class="required">必須</span></label><input id="workDate" name="work_date" required maxlength="120" placeholder="例）月〜金 / 週3日から相談可能 / 8月20日のみ"></div>
+          </div>
+        </section>
+        <section class="form-section">
+          <h2>勤務条件・待遇</h2><p class="section-lead">応募前に確認したい勤務時間や交通費を具体的に記載してください。</p>
+          <div class="form-grid">
+            <div class="field full"><label for="workingHours">勤務時間<span class="required">必須</span></label><input id="workingHours" name="working_hours" required maxlength="120" placeholder="例）9:00〜17:00 / 夜勤 16:30〜翌9:00"></div>
+            <div class="field"><label for="breakTime">休憩時間<span class="optional">任意</span></label><input id="breakTime" name="break_time" maxlength="80" placeholder="例）60分"></div>
+            <div class="field"><label for="transportation">交通費<span class="optional">任意</span></label><input id="transportation" name="transportation" maxlength="120" placeholder="例）全額支給 / 1日1,000円まで"></div>
+            <div class="field full"><label for="benefits">手当・福利厚生<span class="optional">任意</span></label><textarea id="benefits" name="benefits" maxlength="600" placeholder="例）制服貸与、残業手当、社会保険、車通勤可"></textarea></div>
           </div>
         </section>
         <section class="form-section">
@@ -90,6 +101,8 @@
           <div class="form-grid">
             <div class="field full"><label for="description">仕事内容<span class="required">必須</span></label><textarea id="description" name="description" required maxlength="2000" placeholder="業務内容、勤務時間、職場環境、チーム体制などをご記入ください。"></textarea></div>
             <div class="field full"><label for="requirements">応募要件<span class="required">必須</span></label><textarea id="requirements" name="requirements" required maxlength="1200" placeholder="必要な資格・経験、歓迎するスキルなどをご記入ください。"></textarea></div>
+            <div class="field full"><label for="preferredSkills">歓迎する経験・スキル<span class="optional">任意</span></label><textarea id="preferredSkills" name="preferred_skills" maxlength="600" placeholder="例）外来経験、採血経験、電子カルテの操作経験"></textarea></div>
+            <div class="field full"><label for="selectionProcess">応募後の流れ<span class="optional">任意</span></label><input id="selectionProcess" name="selection_process" maxlength="200" placeholder="例）応募内容確認 → チャットで条件確認 → 勤務決定"></div>
           </div>
         </section>
         <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
@@ -121,6 +134,7 @@
       const status = document.getElementById("formStatus");
       const submitButton = document.getElementById("submitButton");
       function message(text, error) { status.className = "form-status " + (error ? "error" : "success"); status.textContent = text; }
+      function detailSection(title, entries) { const lines = entries.filter(Boolean); return lines.length ? "\n\n【" + title + "】\n" + lines.join("\n") : ""; }
       async function load() {
         if (!supabaseClient) { message("Supabase設定を確認してください。入力内容は送信時にブラウザへ一時保存されます。", true); return; }
         const sessionResult = await supabaseClient.auth.getSession();
@@ -134,8 +148,10 @@
         event.preventDefault();
         if (!form.reportValidity()) return;
         const data = new FormData(form);
-        const record = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: data.get("description").trim(), requirements: data.get("requirements").trim(), status: "open" };
-        localStorage.setItem("medi_job_employer_job_draft", JSON.stringify(record));
+        const description = data.get("description").trim() + detailSection("募集・勤務情報", ["募集人数：" + data.get("positions") + "名", data.get("employment_period") ? "勤務期間：" + data.get("employment_period").trim() : "", "勤務時間：" + data.get("working_hours").trim(), data.get("break_time") ? "休憩時間：" + data.get("break_time").trim() : "", data.get("transportation") ? "交通費：" + data.get("transportation").trim() : ""]) + detailSection("手当・福利厚生", [data.get("benefits") ? data.get("benefits").trim() : ""]);
+        const requirements = data.get("requirements").trim() + detailSection("歓迎する経験・スキル", [data.get("preferred_skills") ? data.get("preferred_skills").trim() : ""]) + detailSection("応募後の流れ", [data.get("selection_process") ? data.get("selection_process").trim() : ""]);
+        const record = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: description, requirements: requirements, status: "open" };
+        localStorage.setItem("medi_job_employer_job_draft", JSON.stringify(Object.fromEntries(data.entries())));
         if (!supabaseClient || !currentUser || !employerProfile) { message("入力内容をブラウザに一時保存しました。Supabase設定後にもう一度掲載してください。", true); return; }
         submitButton.disabled = true; submitButton.textContent = "掲載しています…";
         const result = await supabaseClient.from("jobs").insert(record).select("id").single();
