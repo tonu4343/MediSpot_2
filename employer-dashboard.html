@@ -56,8 +56,14 @@
     .mini-icon { display: grid; place-items: center; width: 38px; height: 38px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 14px; font-weight: 900; }
     .mini-list strong { display: block; color: var(--blue-dark); font-size: 14px; font-weight: 900; }
     .mini-list li div > span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.6; font-weight: 800; }
-    @media (max-width: 960px) { .hero-grid, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } .hero-card::before { background-position: right -12px top 8px; background-size: min(430px, 58vw) auto; } }
-    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
+    .employer-footer-cta { padding: 44px 20px; color: #fff; background: linear-gradient(110deg, var(--blue) 0%, var(--green) 100%); text-align: center; }
+    .employer-footer-cta h2 { margin: 0 0 9px; font-size: clamp(24px,3vw,34px); font-weight: 900; }
+    .employer-footer-cta p { margin: 0 auto 20px; max-width: 680px; color: rgba(255,255,255,.9); font-size: 13px; line-height: 1.8; font-weight: 800; }
+    .employer-footer-cta .btn { display: inline-flex; min-width: 210px; justify-content: center; background: #fff; color: var(--green-dark); box-shadow: 0 10px 24px rgba(0,70,120,.18); }
+    .employer-footer { grid-template-columns: 1.5fr 1fr 1.15fr; }
+    .employer-footer .footer-cta .btn { color: #fff; }
+    @media (max-width: 960px) { .hero-grid, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } .hero-card::before { background-position: right -12px top 8px; background-size: min(430px, 58vw) auto; } .employer-footer { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .employer-footer { grid-template-columns: 1fr; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
   </style>
 </head>
 <body class="employer-dashboard-page">
@@ -92,6 +98,15 @@
 
     <section class="panel-card next-flow"><h2>求人作成から採用までの流れ</h2><ul class="mini-list"><li><span class="mini-icon">1</span><div><strong>求人情報を作成</strong><span>職種、勤務日、報酬、仕事内容、必要な資格・スキルを登録します。</span></div></li><li><span class="mini-icon">2</span><div><strong>応募者を確認</strong><span>応募者の資格、経験、プロフィール、希望条件を確認します。</span></div></li><li><span class="mini-icon">3</span><div><strong>応募者を選考</strong><span>条件が合う方を選び、勤務条件や開始日を確認します。</span></div></li><li><span class="mini-icon">4</span><div><strong>採用・稼働決定</strong><span>最終条件を確定します。成功報酬は採用または稼働決定時のみ発生します。</span></div></li></ul></section>
   </main>
+
+  <section class="employer-footer-cta" aria-labelledby="employerFooterTitle"><h2 id="employerFooterTitle">医療資格者の募集を無料で始める</h2><p>施設情報を登録して、必要なタイミングでスポット求人・常勤求人を掲載しましょう。</p><a class="btn" href="employer-job-new.html">求人を作成する ›</a></section>
+
+  <footer class="site-footer employer-footer">
+    <div class="footer-brand"><a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medi Job</strong><small>Medical Spot Job</small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
+    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a><a href="employer-dashboard.html#profile">施設情報</a></div>
+    <div class="footer-cta"><strong>人材募集を始める</strong><span>掲載無料。採用・稼働決定時のみ費用が発生します。</span><a class="btn btn-green" href="employer-job-new.html">求人を作成（無料）›</a></div>
+    <p class="copyright">© 2024 Medi Job. All Rights Reserved.</p>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
