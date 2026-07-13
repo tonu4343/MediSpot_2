@@ -65,14 +65,14 @@
         <span class="eyebrow">求人者マイページ</span>
         <h1>必要になった時、<br><span class="headline-green">必要なスキルのスタッフとつながる</span></h1>
         <p>スポット勤務・業務委託・非常勤の募集を整理し、応募者の資格や希望条件を確認できます。まずは募集内容を作成して、必要な人材とつながりましょう。</p>
-        <div class="hero-actions"><a class="btn btn-green" href="#jobs">求人を作成する</a><a class="btn btn-outline" href="#profile">施設情報を確認</a></div>
+        <div class="hero-actions"><a class="btn btn-green" href="employer-job-new.html">求人を作成する</a><a class="btn btn-outline" href="#profile">施設情報を確認</a></div>
       </article>
     </section>
 
     <section class="stats-grid" aria-label="求人状況"><article class="stat-card"><span>掲載中求人</span><strong id="openJobs">0</strong></article><article class="stat-card"><span>新着応募</span><strong>0</strong></article><article class="stat-card"><span>選考中</span><strong>0</strong></article><article class="stat-card"><span>採用成立</span><strong>0</strong></article></section>
 
     <section class="dashboard-grid">
-      <article class="panel-card" id="jobs"><div class="section-title-row"><h2>求人管理</h2><a class="section-link" href="register-employer.html#register">登録内容を編集 ›</a></div><div class="job-list" id="jobList"></div></article>
+      <article class="panel-card" id="jobs"><div class="section-title-row"><h2>求人管理</h2><a class="section-link" href="employer-job-new.html">新しい求人を作成 ›</a></div><div class="job-list" id="jobList"></div></article>
       <aside class="side-card" id="profile">
         <h2>施設プロフィール</h2>
         <div class="facility-name"><span class="avatar" id="facilityInitial">M</span><div><strong id="facilityName">読み込み中</strong><span id="contactEmail">ログイン確認中</span></div></div>
@@ -120,7 +120,7 @@
         }
         profile = profileResult.data;
         applyProfile(profile, user.email);
-        const jobsResult = await supabaseClient.from("jobs").select("*").eq("status", "open").order("created_at", { ascending: false }).limit(6);
+        const jobsResult = await supabaseClient.from("jobs").select("*").eq("employer_id", user.id).eq("status", "open").order("created_at", { ascending: false }).limit(6);
         renderJobs(jobsResult.error ? demoJobs : jobsResult.data);
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
