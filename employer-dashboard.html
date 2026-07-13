@@ -42,7 +42,11 @@
     .job-card { padding: 18px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 18px; align-items: center; }
     .job-card h3 { margin: 8px 0 5px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
     .job-tag { display: inline-flex; align-items: center; min-height: 26px; padding: 0 11px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .job-tag.closed { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
     .job-meta { margin: 0; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .job-empty { padding: 34px 20px; text-align: center; background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; }
+    .job-empty strong { display: block; color: var(--blue-dark); font-size: 17px; }
+    .job-empty span { display: block; margin: 7px 0 18px; color: var(--muted); font-size: 13px; font-weight: 700; }
     .pricing-reminder { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; padding: 18px 22px; background: linear-gradient(100deg, #effff6, #f2f9ff); border: 1px solid #bfe7d2; border-radius: 12px; }
     .pricing-reminder strong { display: block; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
     .pricing-reminder span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 800; }
@@ -126,13 +130,14 @@
         const facility = profile?.facility_name || "医療機関";
         text("facilityTitle", facility); text("facilityName", facility); text("facilityInitial", initial(facility)); text("contactEmail", profile?.email || email || "-"); text("contactName", profile?.contact_name || "未設定"); text("facilityType", profile?.facility_type || "未設定"); text("staffNeed", profile?.staff_need || "未設定"); text("address", profile?.address || "未設定");
       }
-      function renderJobs(jobs) {
-        const items = jobs && jobs.length ? jobs : demoJobs;
-        text("openJobs", String(items.length));
-        document.getElementById("jobList").innerHTML = items.map(function (job) { return '<article class="job-card"><div><span class="job-tag">' + esc(job.type || "掲載中") + '</span><h3>' + esc(job.title || "医療求人") + '</h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><a class="btn btn-outline" href="#">詳細</a></article>'; }).join("");
+      function renderJobs(jobs, demo) {
+        const items = Array.isArray(jobs) ? jobs : [];
+        text("openJobs", String(items.filter(function (job) { return job.status !== "closed"; }).length));
+        if (!items.length) { document.getElementById("jobList").innerHTML = '<div class="job-empty"><strong>掲載中の求人はありません</strong><span>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</span><a class="btn btn-green" href="employer-job-new.html">新しい求人を作成</a></div>'; return; }
+        document.getElementById("jobList").innerHTML = items.map(function (job) { const closed = job.status === "closed"; const href = demo || !job.id ? "employer-job-new.html" : "employer-job-detail.html?id=" + encodeURIComponent(job.id); return '<article class="job-card"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3>' + esc(job.title || "医療求人") + '</h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><a class="btn btn-outline" href="' + href + '">' + (demo ? '求人を作成' : '詳細・編集') + '</a></article>'; }).join("");
       }
       async function loadDashboard() {
-        if (!supabaseClient) { applyProfile(null, null); renderJobs(demoJobs); return; }
+        if (!supabaseClient) { applyProfile(null, null); renderJobs(demoJobs, true); return; }
         const sessionResult = await supabaseClient.auth.getSession();
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "login.html?role=employer"; return; }
@@ -145,11 +150,12 @@
         }
         profile = profileResult.data;
         applyProfile(profile, user.email);
-        const jobsResult = await supabaseClient.from("jobs").select("*").eq("employer_id", user.id).eq("status", "open").order("created_at", { ascending: false }).limit(6);
-        renderJobs(jobsResult.error ? demoJobs : jobsResult.data);
+        const jobsResult = await supabaseClient.from("jobs").select("*").eq("employer_id", user.id).order("created_at", { ascending: false }).limit(20);
+        if (jobsResult.error) { console.error(jobsResult.error); renderJobs([]); return; }
+        renderJobs(jobsResult.data || []);
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
-      loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs(demoJobs); });
+      loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs([]); });
     })();
   </script>
 </body>

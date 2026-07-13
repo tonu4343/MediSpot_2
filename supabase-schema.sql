@@ -186,6 +186,7 @@ create table if not exists public.jobs (
 alter table public.jobs enable row level security;
 
 drop policy if exists "Jobs public read" on public.jobs;
+drop policy if exists "Employers read own jobs" on public.jobs;
 drop policy if exists "Employers create own jobs" on public.jobs;
 drop policy if exists "Employers update own jobs" on public.jobs;
 
@@ -194,6 +195,12 @@ on public.jobs
 for select
 to anon, authenticated
 using (status = 'open');
+
+create policy "Employers read own jobs"
+on public.jobs
+for select
+to authenticated
+using (auth.uid() = employer_id);
 
 create policy "Employers create own jobs"
 on public.jobs
