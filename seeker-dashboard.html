@@ -83,23 +83,6 @@
     .dashboard-flow span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.7; font-weight: 800; }
 
     @media (min-width: 1101px) { .dashboard-page .site-footer { grid-template-columns: 1.6fr repeat(2, 1fr) 1.35fr; } }
-    .dashboard-footer { margin-top: 34px; background: #fff; border: 1px solid #cfe4f4; border-radius: 12px; overflow: hidden; box-shadow: 0 18px 42px rgba(0,63,125,.12); }
-    .voice-section { position: relative; padding: clamp(34px, 5vw, 56px) clamp(22px, 5vw, 56px); background: linear-gradient(180deg, #f3fbff 0%, #fff 62%, #f8fcff 100%); color: var(--ink); }
-    .voice-section::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 15% 20%, rgba(34,197,94,.10), transparent 28%), radial-gradient(circle at 88% 8%, rgba(18,104,179,.10), transparent 30%); }
-    .voice-section h2 { position: relative; margin: 0; text-align: center; color: var(--blue-dark); font-size: clamp(24px, 3vw, 30px); font-weight: 900; }
-    .voice-section h2::after { content: ""; display: block; width: 64px; height: 4px; margin: 12px auto 0; background: linear-gradient(90deg, var(--blue), var(--green)); border-radius: 999px; }
-    .voice-intro { position: relative; max-width: 720px; margin: 14px auto 24px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.8; font-weight: 800; }
-    .voice-grid { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-    .voice-card { min-height: 180px; padding: 20px; background: rgba(255,255,255,.96); border: 1px solid #cfe4f4; border-radius: 8px; box-shadow: 0 14px 34px rgba(0,63,125,.08); }
-    .stars { color: #0aa064; font-weight: 900; letter-spacing: 2px; }
-    .voice-card p { margin: 10px 0 18px; color: #36536b; font-size: 13px; line-height: 1.8; font-weight: 800; }
-    .voice-user { display: flex; align-items: center; gap: 12px; }
-    .voice-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #e4f4ff; box-shadow: 0 8px 18px rgba(0,63,125,.12); flex: 0 0 auto; }
-    .voice-user strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
-    .voice-user span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-weight: 800; }
-    @media (max-width: 920px) { .voice-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 620px) { .voice-card { min-height: 0; } }
-
   </style>
 </head>
 <body class="dashboard-page">
@@ -178,30 +161,6 @@
       </aside>
     </section>
 
-
-    <section class="dashboard-footer">
-      <section class="voice-section" aria-label="user voices">
-        <h2>利用者の声</h2>
-        <p class="voice-intro">Medi Jobでプロフィールを整え、希望条件に合う医療スポット求人を見つけた求職者の声です。</p>
-        <div class="voice-grid">
-          <article class="voice-card">
-            <div class="stars">★★★★★</div>
-            <p>短時間の健診求人を探しやすく、家庭の予定に合わせて働けました。</p>
-            <div class="voice-user"><img class="voice-avatar" src="assets/story-nurse.png" alt="看護師"><div><strong>看護師 30代</strong><span>東京都</span></div></div>
-          </article>
-          <article class="voice-card">
-            <div class="stars">★★★★★</div>
-            <p>資格や経験を登録しておくと応募がスムーズで、条件確認も簡単でした。</p>
-            <div class="voice-user"><img class="voice-avatar" src="assets/story-lab.png" alt="臨床検査技師"><div><strong>臨床検査技師 20代</strong><span>神奈川県</span></div></div>
-          </article>
-          <article class="voice-card">
-            <div class="stars">★★★★★</div>
-            <p>業務委託の求人を比較しやすく、自分のペースで仕事を増やせました。</p>
-            <div class="voice-user"><img class="voice-avatar" src="assets/story-pt.png" alt="理学療法士"><div><strong>理学療法士 30代</strong><span>大阪府</span></div></div>
-          </article>
-        </div>
-      </section>
-    </section>
   </main>
 
   <footer class="site-footer">
