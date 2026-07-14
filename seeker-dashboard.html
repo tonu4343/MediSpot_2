@@ -98,6 +98,15 @@
     .action-card .profile-edit-link { margin-top: auto; }
     @media (max-width: 960px) { .job-focus-grid, .dashboard-actions { grid-template-columns: 1fr; } }
 
+    .message-banner { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding: 16px 20px; text-decoration: none; background: linear-gradient(105deg, #ecfff5, #eafaff); border: 1px solid #a8e6c1; border-radius: 12px; box-shadow: 0 14px 32px rgba(33,183,97,.12); transition: transform .15s ease, box-shadow .15s ease; }
+    .message-banner:hover { transform: translateY(-1px); box-shadow: 0 18px 38px rgba(33,183,97,.18); }
+    .message-banner-icon { display: grid; place-items: center; flex: none; width: 42px; height: 42px; font-size: 20px; background: #fff; border: 1px solid #8bdbad; border-radius: 50%; }
+    .message-banner-text { display: grid; flex: 1; min-width: 0; gap: 2px; }
+    .message-banner-text strong { color: var(--green-dark); font-size: 14px; font-weight: 900; }
+    .message-banner-text span { color: #173c5e; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .message-banner-cta { flex: none; color: var(--green-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
+    @media (max-width: 640px) { .message-banner-text span { white-space: normal; } .message-banner-cta { display: none; } }
+
     .message-preview { margin-top: 14px; padding: 14px 16px; background: #f7fbff; border: 1px solid #d9ecf8; border-radius: 10px; }
     .message-preview.has-reply { background: #eefdf3; border-color: #a8e6c1; }
     .message-preview-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 10px; margin-bottom: 8px; color: var(--green-dark); background: #fff; border: 1px solid #8bdbad; border-radius: 999px; font-size: 11px; font-weight: 900; }
@@ -134,6 +143,14 @@
   </header>
 
   <main class="dashboard-shell">
+    <a class="message-banner" id="messageBanner" href="seeker-applications.html" style="display:none;">
+      <span class="message-banner-icon" aria-hidden="true">💬</span>
+      <span class="message-banner-text">
+        <strong id="bannerFrom"></strong>
+        <span id="bannerBody"></span>
+      </span>
+      <span class="message-banner-cta">返信を確認する ›</span>
+    </a>
     <section class="seeker-hero-card" aria-labelledby="seekerHeroTitle">
       <div>
         <span class="seeker-hero-eyebrow">求職者マイページ</span>
@@ -286,6 +303,14 @@
         const link = document.getElementById("messageMainLink");
         link.href = "application-chat.html?id=" + encodeURIComponent(latest.application_id);
         link.textContent = fromEmployer ? "返信を確認して返答する" : "メッセージを確認する";
+
+        if (fromEmployer) {
+          const banner = document.getElementById("messageBanner");
+          banner.href = "application-chat.html?id=" + encodeURIComponent(latest.application_id);
+          text("bannerFrom", (app.facility_name || "医療機関") + "から返信が届いています");
+          text("bannerBody", latest.body.length > 40 ? latest.body.slice(0, 40) + "…" : latest.body);
+          banner.style.display = "flex";
+        }
       }
 
       async function loadDashboard() {
