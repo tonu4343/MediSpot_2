@@ -101,24 +101,6 @@
             <div class="field full"><label for="workDate">勤務日<span class="required">必須</span></label><input id="workDate" name="work_date" required maxlength="120" placeholder="例）月〜金 / 週3日から相談可能 / 8月20日のみ"></div>
           </div>
         </section>
-        <section class="form-section">
-          <h2>勤務条件・待遇</h2><p class="section-lead">応募前に確認したい勤務時間や交通費を具体的に記載してください。</p>
-          <div class="form-grid">
-            <div class="field full"><label for="workingHours">勤務時間<span class="required">必須</span></label><input id="workingHours" name="working_hours" required maxlength="120" placeholder="例）9:00〜17:00 / 夜勤 16:30〜翌9:00"></div>
-            <div class="field"><label for="breakTime">休憩時間<span class="optional">任意</span></label><input id="breakTime" name="break_time" maxlength="80" placeholder="例）60分"></div>
-            <div class="field"><label for="transportation">交通費<span class="optional">任意</span></label><input id="transportation" name="transportation" maxlength="120" placeholder="例）全額支給 / 1日1,000円まで"></div>
-            <div class="field full"><label for="benefits">手当・福利厚生<span class="optional">任意</span></label><textarea id="benefits" name="benefits" maxlength="600" placeholder="例）制服貸与、残業手当、社会保険、車通勤可"></textarea></div>
-          </div>
-        </section>
-        <section class="form-section">
-          <h2>仕事内容・応募条件</h2><p class="section-lead">業務内容と必要な資格を整理すると、条件に合う人材から応募されやすくなります。</p>
-          <div class="form-grid">
-            <div class="field full"><label for="description">仕事内容<span class="required">必須</span></label><textarea id="description" name="description" required maxlength="2000" placeholder="業務内容、勤務時間、職場環境、チーム体制などをご記入ください。"></textarea></div>
-            <div class="field full"><label for="requirements">応募要件<span class="required">必須</span></label><textarea id="requirements" name="requirements" required maxlength="1200" placeholder="必要な資格・経験、歓迎するスキルなどをご記入ください。"></textarea></div>
-            <div class="field full"><label for="preferredSkills">歓迎する経験・スキル<span class="optional">任意</span></label><textarea id="preferredSkills" name="preferred_skills" maxlength="600" placeholder="例）外来経験、採血経験、電子カルテの操作経験"></textarea></div>
-            <div class="field full"><label for="selectionProcess">応募後の流れ<span class="optional">任意</span></label><input id="selectionProcess" name="selection_process" maxlength="200" placeholder="例）応募内容確認 → チャットで条件確認 → 勤務決定"></div>
-          </div>
-        </section>
         <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
         <div class="form-actions"><a class="btn btn-outline" href="employer-dashboard.html">キャンセル</a><button class="btn btn-green" id="submitButton" type="submit">入力内容を確認する</button></div>
       </form>
@@ -147,9 +129,7 @@
         <div class="preview-item"><dt>職種・雇用形態</dt><dd id="previewCategory"></dd></div>
         <div class="preview-item"><dt>給与</dt><dd id="previewSalary"></dd></div>
         <div class="preview-item"><dt>勤務地</dt><dd id="previewLocation"></dd></div>
-        <div class="preview-item full"><dt>勤務日・勤務時間</dt><dd id="previewSchedule"></dd></div>
-        <div class="preview-item full"><dt>仕事内容</dt><dd id="previewDescription"></dd></div>
-        <div class="preview-item full"><dt>応募要件</dt><dd id="previewRequirements"></dd></div>
+        <div class="preview-item full"><dt>勤務日</dt><dd id="previewSchedule"></dd></div>
       </dl>
       <div class="preview-actions"><button class="btn btn-outline" id="previewBack" type="button">入力に戻る</button><button class="btn btn-green" id="publishButton" type="button">この内容で掲載する</button></div>
     </section>
@@ -171,7 +151,6 @@
       const previewModal = document.getElementById("previewModal");
       const publishButton = document.getElementById("publishButton");
       function message(text, error) { status.className = "form-status " + (error ? "error" : "success"); status.textContent = text; }
-      function detailSection(title, entries) { const lines = entries.filter(Boolean); return lines.length ? "\n\n【" + title + "】\n" + lines.join("\n") : ""; }
       async function load() {
         if (!supabaseClient) { message("Supabase設定を確認してください。入力内容は送信時にブラウザへ一時保存されます。", true); return; }
         const sessionResult = await supabaseClient.auth.getSession();
@@ -183,15 +162,13 @@
       }
       function previewText(id, value) { document.getElementById(id).textContent = value || "未設定"; }
       function closePreview() { previewModal.hidden = true; document.body.classList.remove("modal-open"); submitButton.focus(); }
-      function openPreview(record, data) {
+      function openPreview(record) {
         previewText("previewJobTitle", record.title);
         previewText("previewFacility", record.facility_name || "登録中の医療機関");
         previewText("previewCategory", record.category + " / " + record.type);
         previewText("previewSalary", record.salary);
         previewText("previewLocation", record.location);
-        previewText("previewSchedule", record.work_date + "\n" + data.get("working_hours"));
-        previewText("previewDescription", record.description);
-        previewText("previewRequirements", record.requirements);
+        previewText("previewSchedule", record.work_date);
         previewModal.hidden = false;
         document.body.classList.add("modal-open");
         publishButton.focus();
@@ -200,11 +177,9 @@
         event.preventDefault();
         if (!form.reportValidity()) return;
         const data = new FormData(form);
-        const description = data.get("description").trim() + detailSection("募集・勤務情報", ["募集人数：" + data.get("positions") + "名", data.get("employment_period") ? "勤務期間：" + data.get("employment_period").trim() : "", "勤務時間：" + data.get("working_hours").trim(), data.get("break_time") ? "休憩時間：" + data.get("break_time").trim() : "", data.get("transportation") ? "交通費：" + data.get("transportation").trim() : ""]) + detailSection("手当・福利厚生", [data.get("benefits") ? data.get("benefits").trim() : ""]);
-        const requirements = data.get("requirements").trim() + detailSection("歓迎する経験・スキル", [data.get("preferred_skills") ? data.get("preferred_skills").trim() : ""]) + detailSection("応募後の流れ", [data.get("selection_process") ? data.get("selection_process").trim() : ""]);
-        pendingRecord = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: description, requirements: requirements, status: "open" };
+        pendingRecord = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), status: "open" };
         localStorage.setItem("medi_job_employer_job_draft", JSON.stringify(Object.fromEntries(data.entries())));
-        openPreview(pendingRecord, data);
+        openPreview(pendingRecord);
       });
       publishButton.addEventListener("click", async function () {
         if (!pendingRecord) return;
