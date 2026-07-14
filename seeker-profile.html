@@ -84,7 +84,9 @@
         <section class="form-section">
           <h2>スキル・希望条件</h2>
           <label class="check-label">スキル・経験（複数選択可）</label>
+          <p class="hint" style="margin-top:0; margin-bottom:8px;">選択中の職種に応じた項目が表示されます。</p>
           <div class="check-grid" id="skillGrid"></div>
+          <input class="input" id="skillOther" placeholder="その他の内容を入力してください" style="display:none; margin-top:10px;">
           <div class="form-grid" style="margin-top:22px;">
             <div class="field"><label for="preferredStyle">希望雇用形態</label><select class="input" id="preferredStyle"><option>こだわらない</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></div>
             <div class="field"><label for="preferredArea">居住地（郵便番号から検索）</label><div class="zip-row"><input class="input" id="preferredArea" placeholder="例） 1500001"><button class="ghost-btn" type="button" id="zipButton">住所を検索</button></div></div>
@@ -118,15 +120,65 @@
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
       let currentUser = null;
       let currentProfile = null;
-      const skills = ['保健師・助産師・認定（分野）', '一般病棟', '緩和ケア', 'クリニック', '健康診断（採血・心電図・眼底）', '訪問看護', '高齢者施設', 'その他（自由記載）'];
+      const SKILL_OTHER = 'その他（自由記載）';
+      const NURSE_SKILLS = ['保健師・助産師・認定（分野）', '一般病棟', '緩和ケア', 'クリニック', '健康診断（採血・心電図・眼底）', '訪問看護', '高齢者施設'];
+      const REHAB_SKILLS = ['病院', 'リハビリ施設', '訪問看護', '高齢者施設', '福祉施設'];
+      const SKILL_MAP = {
+        '看護師': NURSE_SKILLS,
+        '准看護師': NURSE_SKILLS,
+        '臨床検査技師': ['腹部エコー', '乳腺エコー', '頸動脈エコー', '心電図', '検体検査'],
+        '放射線技師': ['一般撮影', '消化管撮影', 'MRI', 'CT', '核医学'],
+        '理学療法士': REHAB_SKILLS,
+        '作業療法士': REHAB_SKILLS,
+        '言語聴覚士': REHAB_SKILLS,
+        'ヘルパー': ['高齢者施設', '訪問介護', '福祉施設', '障害者施設'],
+      };
+      function skillsFor(license) { return (SKILL_MAP[license] || []).concat(SKILL_OTHER); }
       function el(id) { return document.getElementById(id); }
       function value(id) { return el(id)?.value?.trim() || null; }
       function setValue(id, value) { const node = el(id); if (node && value) node.value = value; }
       function message(text, error) { const node = el('formMessage'); node.textContent = text; node.style.display = 'inline'; node.style.color = error ? '#b42318' : 'var(--green-dark)'; }
-      function renderSkills(selected) { const set = new Set(Array.isArray(selected) ? selected : []); el('skillGrid').innerHTML = skills.map(function (skill, index) { const checked = set.has(skill) ? 'checked' : ''; return '<label class="check-pill"><input type="checkbox" value="' + skill.replace(/"/g, '&quot;') + '" ' + checked + '><span>' + skill + '</span></label>'; }).join(''); }
-      function selectedSkills() { return Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value); }
-      function fill(profile, user) { currentProfile = profile || {}; setValue('license', currentProfile.license); setValue('experience', currentProfile.experience_years); setValue('birthDate', currentProfile.birth_date); setValue('phone', currentProfile.phone); setValue('preferredStyle', currentProfile.preferred_style); setValue('preferredArea', currentProfile.preferred_area); setValue('pr', currentProfile.pr); renderSkills(currentProfile.skills); el('saveStatus').textContent = currentProfile.license ? '登録済み' : '未完了'; }
-      async function load() { renderSkills([]); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
+      function syncOther() {
+        const checked = Array.from(el('skillGrid').querySelectorAll('input:checked')).some(input => input.value === SKILL_OTHER);
+        el('skillOther').style.display = checked ? '' : 'none';
+        if (!checked) el('skillOther').value = '';
+      }
+      function renderSkills(license, checkedSkills, otherText) {
+        const set = new Set(Array.isArray(checkedSkills) ? checkedSkills : []);
+        el('skillGrid').innerHTML = skillsFor(license).map(function (skill) {
+          const checked = set.has(skill) ? 'checked' : '';
+          return '<label class="check-pill"><input type="checkbox" value="' + skill.replace(/"/g, '&quot;') + '" ' + checked + '><span>' + skill + '</span></label>';
+        }).join('');
+        el('skillGrid').querySelectorAll('input').forEach(input => input.addEventListener('change', syncOther));
+        el('skillOther').value = otherText || '';
+        syncOther();
+      }
+      function selectedSkills() {
+        const checked = Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value);
+        const otherText = value('skillOther');
+        return checked.filter(v => v !== SKILL_OTHER).concat(checked.includes(SKILL_OTHER) ? [otherText ? SKILL_OTHER + '：' + otherText : SKILL_OTHER] : []);
+      }
+      function fill(profile, user) {
+        currentProfile = profile || {};
+        setValue('license', currentProfile.license);
+        setValue('experience', currentProfile.experience_years);
+        setValue('birthDate', currentProfile.birth_date);
+        setValue('phone', currentProfile.phone);
+        setValue('preferredStyle', currentProfile.preferred_style);
+        setValue('preferredArea', currentProfile.preferred_area);
+        setValue('pr', currentProfile.pr);
+        const savedSkills = Array.isArray(currentProfile.skills) ? currentProfile.skills : [];
+        const otherEntry = savedSkills.find(s => s === SKILL_OTHER || s.indexOf(SKILL_OTHER + '：') === 0);
+        const otherText = otherEntry && otherEntry.indexOf('：') > -1 ? otherEntry.split('：').slice(1).join('：') : '';
+        const checkedSkills = savedSkills.map(s => s.indexOf(SKILL_OTHER + '：') === 0 ? SKILL_OTHER : s);
+        renderSkills(el('license').value, checkedSkills, otherText);
+        el('saveStatus').textContent = currentProfile.license ? '登録済み' : '未完了';
+      }
+      async function load() { renderSkills(el('license').value, []); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
+      el('license').addEventListener('change', function () {
+        const cur = Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value);
+        renderSkills(this.value, cur, value('skillOther'));
+      });
       el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + file.name + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
       el('zipButton').addEventListener('click', function () { message('プロトタイプのため、郵便番号検索は未接続です。', false); });
       el('logoutButton').addEventListener('click', async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
