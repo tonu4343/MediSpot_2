@@ -15,7 +15,6 @@
     .profile-card.profile-card-inline::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 88px; background: linear-gradient(120deg, #eaf5ff 0%, #f3fbff 55%, #edfff5 100%); }
     .profile-card.profile-card-inline > * { position: relative; }
     .profile-name { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-    .avatar { display: grid; place-items: center; width: 62px; height: 62px; color: #fff; background: linear-gradient(150deg, var(--blue-2), var(--blue-dark)); border: 3px solid #fff; border-radius: 50%; font-size: 24px; font-weight: 900; box-shadow: 0 10px 22px rgba(0,63,125,.22); }
     .profile-name strong { display: block; color: #102338; font-size: 19px; font-weight: 900; }
     .profile-name span { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; font-weight: 800; }
     .profile-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
@@ -158,7 +157,6 @@
       <aside class="profile-card profile-card-inline" id="profileSummary">
         <h2>プロフィール</h2>
         <div class="profile-name">
-          <span class="avatar" id="avatarInitial">M</span>
           <div><strong id="profileName">読み込み中</strong><span id="profileEmail">ログイン確認中</span></div>
         </div>
         <ul class="profile-list">
@@ -224,14 +222,11 @@
 
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
-      function initial(name) { return (name || "M").trim().charAt(0).toUpperCase() || "M"; }
-
       function applyProfile(profile, email) {
         const name = profile?.name || profile?.full_name || "求職者";
         text("welcomeName", name);
         text("profileName", name);
         text("profileEmail", profile?.email || email || "-");
-        text("avatarInitial", initial(name));
         text("profileLicense", profile?.license || profile?.job_type || "未設定");
         text("profileArea", profile?.preferred_area || profile?.location || "未設定");
         text("profileStyle", profile?.preferred_style || profile?.work_type || "未設定");
