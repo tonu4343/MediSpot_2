@@ -52,8 +52,22 @@
     .price-option small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; line-height: 1.6; }
     .price-option strong { display: block; margin-top: 3px; color: var(--green-dark); font-size: 22px; font-weight: 900; }
     .price-option strong small { display: inline; color: inherit; font-size: 11px; }
+    body.modal-open { overflow: hidden; }
+    .preview-modal[hidden] { display: none; }
+    .preview-modal { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; }
+    .preview-backdrop { position: absolute; inset: 0; background: rgba(7,31,55,.62); backdrop-filter: blur(3px); }
+    .preview-dialog { position: relative; z-index: 1; width: min(760px, 100%); max-height: calc(100vh - 40px); overflow: auto; padding: clamp(24px,4vw,38px); background: #fff; border: 1px solid #cfe2ef; border-radius: 16px; box-shadow: 0 28px 80px rgba(0,31,67,.3); }
+    .preview-dialog h2 { margin: 12px 0 8px; color: var(--blue-dark); font-size: clamp(24px,4vw,32px); font-weight: 900; }
+    .preview-lead { margin: 0 0 22px; color: var(--muted); font-size: 13px; line-height: 1.7; font-weight: 800; }
+    .preview-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0; }
+    .preview-item { padding: 14px 16px; background: #f7fbfe; border: 1px solid #d7e8f3; border-radius: 9px; }
+    .preview-item.full { grid-column: 1 / -1; }
+    .preview-item dt { margin-bottom: 5px; color: #60798c; font-size: 11px; font-weight: 900; }
+    .preview-item dd { margin: 0; color: #153e61; font-size: 14px; line-height: 1.7; font-weight: 900; white-space: pre-line; overflow-wrap: anywhere; }
+    .preview-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .preview-actions .btn { min-width: 170px; border: 0; cursor: pointer; }
     @media (max-width: 860px) { .form-layout { grid-template-columns: 1fr; } .guide-card { position: static; } }
-    @media (max-width: 620px) { .job-new-shell { width: calc(100% - 28px); padding-top: 24px; } .form-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } .form-actions { flex-direction: column-reverse; } .form-actions .btn { width: 100%; } }
+    @media (max-width: 620px) { .job-new-shell { width: calc(100% - 28px); padding-top: 24px; } .form-grid, .preview-summary { grid-template-columns: 1fr; } .field.full, .preview-item.full { grid-column: auto; } .form-actions, .preview-actions { flex-direction: column-reverse; } .form-actions .btn, .preview-actions .btn { width: 100%; } .preview-modal { padding: 10px; } .preview-dialog { max-height: calc(100vh - 20px); } }
   </style>
 </head>
 <body class="job-new-page">
@@ -106,12 +120,12 @@
           </div>
         </section>
         <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
-        <div class="form-actions"><a class="btn btn-outline" href="employer-dashboard.html">キャンセル</a><button class="btn btn-green" id="submitButton" type="submit">この内容で掲載する</button></div>
+        <div class="form-actions"><a class="btn btn-outline" href="employer-dashboard.html">キャンセル</a><button class="btn btn-green" id="submitButton" type="submit">入力内容を確認する</button></div>
       </form>
 
       <aside class="guide-card">
         <h2>掲載までの流れ</h2>
-        <ol class="guide-list"><li><b>1</b><div><strong>募集内容を入力</strong>職種・給与・勤務地・応募条件を登録します。</div></li><li><b>2</b><div><strong>内容を確認</strong>登録後は求人管理画面で掲載内容を確認できます。</div></li><li><b>3</b><div><strong>応募者とマッチング</strong>条件に合う医療資格者からの応募を確認します。</div></li></ol>
+        <ol class="guide-list"><li><b>1</b><div><strong>募集内容を入力</strong>職種・給与・勤務地・応募条件を登録します。</div></li><li><b>2</b><div><strong>内容を確認</strong>確認画面で求職者に表示される内容を確認します。</div></li><li><b>3</b><div><strong>掲載してマッチング</strong>掲載後、条件に合う医療資格者からの応募を確認します。</div></li></ol>
         <div class="price-box" id="pricing">
           <span>料金について</span>
           <div class="price-option"><small>スポット求人・稼働決定時のみ</small><strong>1名 3,300円 <small>税込</small></strong></div>
@@ -120,6 +134,26 @@
       </aside>
     </div>
   </main>
+
+  <div class="preview-modal" id="previewModal" hidden>
+    <div class="preview-backdrop" id="previewBackdrop"></div>
+    <section class="preview-dialog" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+      <span class="eyebrow">掲載前の最終確認</span>
+      <h2 id="previewTitle">この内容で求人を掲載しますか？</h2>
+      <p class="preview-lead">内容を確認し、修正が必要な場合は「入力に戻る」を押してください。</p>
+      <dl class="preview-summary">
+        <div class="preview-item full"><dt>求人タイトル</dt><dd id="previewJobTitle"></dd></div>
+        <div class="preview-item"><dt>医療機関名</dt><dd id="previewFacility"></dd></div>
+        <div class="preview-item"><dt>職種・雇用形態</dt><dd id="previewCategory"></dd></div>
+        <div class="preview-item"><dt>給与</dt><dd id="previewSalary"></dd></div>
+        <div class="preview-item"><dt>勤務地</dt><dd id="previewLocation"></dd></div>
+        <div class="preview-item full"><dt>勤務日・勤務時間</dt><dd id="previewSchedule"></dd></div>
+        <div class="preview-item full"><dt>仕事内容</dt><dd id="previewDescription"></dd></div>
+        <div class="preview-item full"><dt>応募要件</dt><dd id="previewRequirements"></dd></div>
+      </dl>
+      <div class="preview-actions"><button class="btn btn-outline" id="previewBack" type="button">入力に戻る</button><button class="btn btn-green" id="publishButton" type="button">この内容で掲載する</button></div>
+    </section>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
@@ -130,9 +164,12 @@
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
       let currentUser = null;
       let employerProfile = null;
+      let pendingRecord = null;
       const form = document.getElementById("jobForm");
       const status = document.getElementById("formStatus");
       const submitButton = document.getElementById("submitButton");
+      const previewModal = document.getElementById("previewModal");
+      const publishButton = document.getElementById("publishButton");
       function message(text, error) { status.className = "form-status " + (error ? "error" : "success"); status.textContent = text; }
       function detailSection(title, entries) { const lines = entries.filter(Boolean); return lines.length ? "\n\n【" + title + "】\n" + lines.join("\n") : ""; }
       async function load() {
@@ -144,23 +181,55 @@
         if (profileResult.error || !profileResult.data) { window.location.href = "login.html?role=employer&roleError=1"; return; }
         employerProfile = profileResult.data;
       }
-      form.addEventListener("submit", async function (event) {
+      function previewText(id, value) { document.getElementById(id).textContent = value || "未設定"; }
+      function closePreview() { previewModal.hidden = true; document.body.classList.remove("modal-open"); submitButton.focus(); }
+      function openPreview(record, data) {
+        previewText("previewJobTitle", record.title);
+        previewText("previewFacility", record.facility_name || "登録中の医療機関");
+        previewText("previewCategory", record.category + " / " + record.type);
+        previewText("previewSalary", record.salary);
+        previewText("previewLocation", record.location);
+        previewText("previewSchedule", record.work_date + "\n" + data.get("working_hours"));
+        previewText("previewDescription", record.description);
+        previewText("previewRequirements", record.requirements);
+        previewModal.hidden = false;
+        document.body.classList.add("modal-open");
+        publishButton.focus();
+      }
+      form.addEventListener("submit", function (event) {
         event.preventDefault();
         if (!form.reportValidity()) return;
         const data = new FormData(form);
         const description = data.get("description").trim() + detailSection("募集・勤務情報", ["募集人数：" + data.get("positions") + "名", data.get("employment_period") ? "勤務期間：" + data.get("employment_period").trim() : "", "勤務時間：" + data.get("working_hours").trim(), data.get("break_time") ? "休憩時間：" + data.get("break_time").trim() : "", data.get("transportation") ? "交通費：" + data.get("transportation").trim() : ""]) + detailSection("手当・福利厚生", [data.get("benefits") ? data.get("benefits").trim() : ""]);
         const requirements = data.get("requirements").trim() + detailSection("歓迎する経験・スキル", [data.get("preferred_skills") ? data.get("preferred_skills").trim() : ""]) + detailSection("応募後の流れ", [data.get("selection_process") ? data.get("selection_process").trim() : ""]);
-        const record = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: description, requirements: requirements, status: "open" };
+        pendingRecord = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), description: description, requirements: requirements, status: "open" };
         localStorage.setItem("medi_job_employer_job_draft", JSON.stringify(Object.fromEntries(data.entries())));
-        if (!supabaseClient || !currentUser || !employerProfile) { message("入力内容をブラウザに一時保存しました。Supabase設定後にもう一度掲載してください。", true); return; }
-        submitButton.disabled = true; submitButton.textContent = "掲載しています…";
-        const result = await supabaseClient.from("jobs").insert(record).select("id").single();
-        submitButton.disabled = false; submitButton.textContent = "この内容で掲載する";
-        if (result.error) { console.error(result.error); message("求人を保存できませんでした。データベースの求人登録権限をご確認ください。入力内容はブラウザに保存されています。", true); return; }
+        openPreview(pendingRecord, data);
+      });
+      publishButton.addEventListener("click", async function () {
+        if (!pendingRecord) return;
+        if (!supabaseClient || !currentUser || !employerProfile) { closePreview(); message("入力内容をブラウザに一時保存しました。掲載するには求人者としてログインしてください。", true); return; }
+        publishButton.disabled = true; publishButton.textContent = "掲載しています…";
+        let result;
+        try {
+          result = await supabaseClient.from("jobs").insert(pendingRecord).select("id").single();
+        } catch (error) {
+          console.error(error);
+          closePreview();
+          message("通信エラーが発生しました。インターネット接続を確認して、もう一度お試しください。入力内容は保存されています。", true);
+          return;
+        } finally {
+          publishButton.disabled = false; publishButton.textContent = "この内容で掲載する";
+        }
+        if (result.error) { console.error(result.error); closePreview(); message("求人を保存できませんでした。データベースの求人登録権限をご確認ください。入力内容はブラウザに保存されています。", true); return; }
+        closePreview();
         localStorage.removeItem("medi_job_employer_job_draft");
         message("求人を掲載しました。求人管理画面へ移動します。", false);
         setTimeout(function () { window.location.href = "employer-dashboard.html#jobs"; }, 900);
       });
+      document.getElementById("previewBack").addEventListener("click", closePreview);
+      document.getElementById("previewBackdrop").addEventListener("click", closePreview);
+      document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !previewModal.hidden) closePreview(); });
       const saved = localStorage.getItem("medi_job_employer_job_draft");
       if (saved) { try { const draft = JSON.parse(saved); Object.keys(draft).forEach(function (key) { const el = form.elements[key]; if (el && draft[key] != null) el.value = draft[key]; }); } catch (_) {} }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });

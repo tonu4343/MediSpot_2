@@ -11,6 +11,13 @@
     .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
     .dashboard-nav a { padding: 8px 0; }
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .onboarding-banner { position: relative; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px; align-items: center; margin-bottom: 24px; padding: 24px 58px 24px 26px; color: #fff; background: linear-gradient(110deg, var(--blue) 0%, #078b98 52%, var(--green) 100%); border-radius: 14px; box-shadow: 0 18px 38px rgba(0,91,172,.2); }
+    .onboarding-banner[hidden] { display: none; }
+    .onboarding-banner .eyebrow { color: #fff; background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.45); }
+    .onboarding-banner h2 { margin: 10px 0 6px; color: #fff; font-size: clamp(22px,3vw,30px); font-weight: 900; }
+    .onboarding-banner p { margin: 0; color: rgba(255,255,255,.9); font-size: 13px; line-height: 1.7; font-weight: 800; }
+    .onboarding-banner .btn { min-width: 210px; justify-content: center; color: var(--green-dark); background: #fff; }
+    .onboarding-close { position: absolute; right: 14px; top: 14px; width: 34px; height: 34px; color: #fff; background: rgba(0,0,0,.14); border: 1px solid rgba(255,255,255,.4); border-radius: 50%; font-size: 20px; cursor: pointer; }
     .hero-grid { display: grid; grid-template-columns: 1fr; gap: 22px; align-items: stretch; margin-bottom: 24px; }
     .hero-card, .side-card, .panel-card, .stat-card, .job-card { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
     .hero-card { position: relative; overflow: hidden; padding: clamp(28px,4vw,42px); }
@@ -86,7 +93,7 @@
     .employer-footer { grid-template-columns: 1.5fr 1fr 1.15fr; }
     .employer-footer .footer-cta .btn { color: #fff; }
     @media (max-width: 960px) { .hero-grid, .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } .hero-card::before { background-position: right -12px top 8px; background-size: min(430px, 58vw) auto; } .employer-footer { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-card, .message-item { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .employer-footer { grid-template-columns: 1fr; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .onboarding-banner { grid-template-columns: 1fr; padding: 24px 48px 24px 22px; } .onboarding-banner .btn { width: 100%; } .stats-grid { grid-template-columns: 1fr; } .job-card, .message-item { grid-template-columns: 1fr; } .hero-actions .btn { width: 100%; } .pricing-reminder { align-items: flex-start; flex-direction: column; } .employer-footer { grid-template-columns: 1fr; } .hero-card::before { background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.98) 58%), url("assets/employer-photo.png") right -34px top 12px / 300px auto no-repeat; } }
   </style>
 </head>
 <body class="employer-dashboard-page">
@@ -97,6 +104,11 @@
   </header>
 
   <main class="dashboard-shell">
+    <section class="onboarding-banner" id="onboardingBanner" aria-labelledby="onboardingTitle" hidden>
+      <div><span class="eyebrow">登録完了</span><h2 id="onboardingTitle">最初の求人を作成しましょう</h2><p>募集職種・勤務日・給与・仕事内容を入力し、内容を確認してから掲載できます。</p></div>
+      <a class="btn" href="employer-job-new.html">最初の求人を作成する</a>
+      <button class="onboarding-close" id="onboardingClose" type="button" aria-label="案内を閉じる">×</button>
+    </section>
     <section class="hero-grid">
       <article class="hero-card">
         <span class="eyebrow">求人者マイページ</span>
@@ -141,6 +153,14 @@
       const config = window.MEDISPOT_SUPABASE || {};
       const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      const onboardingBanner = document.getElementById("onboardingBanner");
+      const onboardingClose = document.getElementById("onboardingClose");
+      const pageParams = new URLSearchParams(window.location.search);
+      if (pageParams.get("registered") === "1") {
+        onboardingBanner.hidden = false;
+        window.history.replaceState({}, "", "employer-dashboard.html");
+      }
+      onboardingClose.addEventListener("click", function () { onboardingBanner.hidden = true; });
       const demoJobs = [
         { title: "スポット看護師募集", type: "スポット", location: "東京都 新宿区", work_date: "来週金曜 9:00-17:00", salary: "日給 18,000円〜22,000円" },
         { title: "臨床検査技師 業務委託", type: "業務委託", location: "神奈川県 横浜市", work_date: "週1日から相談", salary: "日給 16,000円〜20,000円" }
