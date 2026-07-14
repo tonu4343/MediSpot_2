@@ -41,6 +41,7 @@
     .job-thumb { width: 92px; height: 78px; overflow: hidden; border-radius: 8px; background: #edf7ff; }
     .job-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .job-tag { display: inline-flex; align-items: center; min-height: 26px; padding: 0 11px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .new-tag { color: #b3260f; background: #fff1ee; border-color: #f3b3a4; margin-left: 6px; }
     .job-match-card h3 { margin: 8px 0 5px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
     .job-meta { margin: 0; color: var(--muted); font-size: 13px; font-weight: 800; }
     .job-salary { margin-top: 6px; color: #008e51; font-size: 16px; font-weight: 900; }
@@ -263,6 +264,13 @@
         text("profileYears", profile?.experience_years || profile?.experience || "未設定");
       }
 
+      function isNewJob(job) {
+        if (!job.created_at) return false;
+        const postedAt = new Date(job.created_at).getTime();
+        if (Number.isNaN(postedAt)) return false;
+        return Date.now() - postedAt < 48 * 60 * 60 * 1000;
+      }
+
       function renderJobs(jobs) {
         const list = document.getElementById("jobsList");
         const items = jobs && jobs.length ? jobs : demoJobs;
@@ -272,7 +280,7 @@
           const image = job.image || (job.category && job.category.includes("検査") ? "assets/job-lab.png" : job.category && job.category.includes("放射") ? "assets/job-radiology.png" : "assets/job-nurse.png");
           return '<article class="job-match-card">' +
             '<div class="job-thumb"><img src="' + esc(image) + '" alt=""></div>' +
-            '<div><span class="job-tag">' + esc(job.type || "スポット") + '</span><h3>' + esc(job.title || job.category || "医療求人") + '</h3>' +
+            '<div><span class="job-tag">' + esc(job.type || "スポット") + '</span>' + (isNewJob(job) ? '<span class="job-tag new-tag">NEW</span>' : '') + '<h3>' + esc(job.title || job.category || "医療求人") + '</h3>' +
             '<p class="job-meta">' + esc(job.location || "勤務地相談") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p>' +
             '<div class="job-salary">' + esc(job.salary || "給与相談") + '</div></div>' +
             '<a class="btn btn-outline job-cta" href="job-detail.html?id=' + encodeURIComponent(job.id || job.title || job.category || 'demo-nurse') + '">詳細を見る</a>' +
