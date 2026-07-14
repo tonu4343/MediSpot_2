@@ -32,6 +32,11 @@
     .check-pill input:checked + span { color: #007a52; border-color: #7ed5a0; background: #effdf6; }
     .terms-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 28px; color: #243b53; font-size: 15px; font-weight: 900; line-height: 1.6; }
     .terms-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--employer-teal); }
+    .terms-row a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+    .password-field { position: relative; }
+    .password-field .input { padding-right: 94px; }
+    .password-toggle { position: absolute; right: 8px; bottom: 8px; min-height: 40px; padding: 0 12px; color: var(--blue); background: #f4faff; border: 1px solid #b9d8ec; border-radius: 7px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .password-toggle:hover { background: #eaf6ff; }
     .submit-row { margin-top: 28px; display: grid; gap: 15px; text-align: center; }
     .submit-row .wide-cta { width: 100%; min-height: 56px; margin: 0; border: 0; border-radius: 8px; background: linear-gradient(180deg, #28c975, var(--green)); box-shadow: 0 15px 28px rgba(33,183,97,.24); font-size: 17px; cursor: pointer; }
     .login-link { color: var(--blue); font-size: 14px; font-weight: 800; }
@@ -84,12 +89,12 @@
             <div class="field full"><label for="name">お名前（ご担当者名） <span class="required">必須</span></label><input class="input" id="name" autocomplete="name" required placeholder="例）佐藤 花子"></div>
             <div class="field full"><label for="facilityName">医療機関名 <span class="required">必須</span></label><input class="input" id="facilityName" required placeholder="例）ブランチ総合クリニック"></div>
             <div class="field full"><label for="facilityType">施設区分</label><select class="input" id="facilityType"><option>病院</option><option>クリニック</option><option>薬局</option><option>介護施設</option><option>健診センター</option><option>訪問看護ステーション</option><option>その他</option></select></div>
-            <div class="field full"><label for="address">所在地</label><input class="input" id="address" placeholder="例）東京都世田谷区〇〇1-2-3"></div>
+            <div class="field full"><label for="address">所在地 <span class="required">必須</span></label><input class="input" id="address" autocomplete="street-address" required placeholder="例）東京都世田谷区〇〇1-2-3"></div>
             <div class="field full"><label for="email">メールアドレス <span class="required">必須</span></label><input class="input" id="email" type="email" autocomplete="email" required placeholder="example@example.com"></div>
-            <div class="field full"><label for="password">パスワード <span class="required">必須</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8文字以上"></div>
+            <div class="field full password-field"><label for="password">パスワード <span class="required">必須</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8文字以上"><button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false">表示する</button></div>
           </div>
 
-          <label class="terms-row"><input type="checkbox" required><span>利用規約とプライバシーポリシーに同意します。</span></label>
+          <label class="terms-row"><input type="checkbox" required><span><a href="terms.html" target="_blank" rel="noopener">利用規約</a>と<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。</span></label>
           <div class="submit-row"><button class="wide-cta" type="submit">この内容で登録する</button><a class="login-link" href="login.html?role=employer">すでにアカウントをお持ちの方はログイン</a><span class="form-message" id="formMessage">登録後、求人者ダッシュボードへ移動します。</span></div>
         </form>
       </section>
@@ -99,5 +104,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="supabase-forms.js"></script>
+  <script>
+    (function () {
+      const button = document.getElementById("passwordToggle");
+      const input = document.getElementById("password");
+      if (!button || !input) return;
+      button.addEventListener("click", function () {
+        const showing = input.type === "text";
+        input.type = showing ? "password" : "text";
+        button.textContent = showing ? "表示する" : "隠す";
+        button.setAttribute("aria-pressed", String(!showing));
+      });
+    })();
+  </script>
 </body>
 </html>

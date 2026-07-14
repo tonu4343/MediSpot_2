@@ -47,6 +47,16 @@
     return false;
   }
 
+  function registrationErrorMessage(error) {
+    const raw = String(error?.message || "").toLowerCase();
+    if (raw.includes("already registered") || raw.includes("already exists") || raw.includes("user already")) return "このメールアドレスはすでに登録されています。ログインしてください。";
+    if (raw.includes("password") && (raw.includes("short") || raw.includes("weak") || raw.includes("characters"))) return "パスワードは8文字以上で入力してください。";
+    if (raw.includes("invalid") && raw.includes("email")) return "正しいメールアドレスを入力してください。";
+    if (raw.includes("rate limit") || raw.includes("too many")) return "登録操作が続いています。しばらく時間をおいてからもう一度お試しください。";
+    if (raw.includes("network") || raw.includes("fetch")) return "通信エラーが発生しました。インターネット接続を確認して、もう一度お試しください。";
+    return "アカウントを登録できませんでした。入力内容を確認して、もう一度お試しください。";
+  }
+
   async function saveSeeker(event) {
     event.preventDefault();
 
@@ -160,7 +170,7 @@
     if (authError) {
       setBusy(form, false);
       console.error(authError);
-      showMessage("formMessage", authError.message || "アカウント登録に失敗しました。", true);
+      showMessage("formMessage", registrationErrorMessage(authError), true);
       return;
     }
 
@@ -184,14 +194,14 @@
 
     if (profileError) {
       console.error(profileError);
-      showMessage("formMessage", "アカウントは作成されましたが、施設プロフィール保存に失敗しました。" + (profileError.message ? "（" + profileError.message + "）" : ""), true);
+      showMessage("formMessage", "アカウントは作成されましたが、施設情報を保存できませんでした。再ログイン後も表示されない場合は運営者へお問い合わせください。", true);
       return;
     }
 
     const hasSession = Boolean(authData.session);
     showMessage("formMessage", hasSession ? "登録が完了しました。求人者ダッシュボードへ移動します。" : "登録が完了しました。メール確認後にログインしてください。", false);
     setTimeout(function () {
-      window.location.href = hasSession ? "employer-dashboard.html" : "login.html?role=employer&registered=1";
+      window.location.href = hasSession ? "employer-dashboard.html?registered=1" : "login.html?role=employer&registered=1";
     }, 900);
   }
   async function saveSearch(form) {
