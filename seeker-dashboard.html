@@ -47,18 +47,24 @@
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
     .loading { opacity: .72; }
 
-    .seeker-hero-card { position: relative; min-height: 340px; overflow: hidden; margin-bottom: 24px; padding: clamp(28px,4vw,42px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
-    .seeker-hero-card::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, rgba(255,255,255,.99) 0%, rgba(255,255,255,.95) 45%, rgba(255,255,255,.52) 70%, rgba(255,255,255,.14) 100%), url("assets/seeker-photo.png") right 18px center / min(520px,48vw) auto no-repeat; }
-    .seeker-hero-card::after { content: ""; position: absolute; z-index: 1; right: -90px; top: -110px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(33,183,97,.18), rgba(0,91,172,.07) 62%, transparent 63%); }
+    .seeker-hero-card { position: relative; display: grid; grid-template-columns: minmax(0,1.35fr) minmax(280px,.65fr); gap: clamp(30px,5vw,70px); align-items: center; min-height: 340px; overflow: hidden; margin-bottom: 24px; padding: clamp(30px,4vw,48px); background: linear-gradient(125deg,#ffffff 0%,#f7fcff 52%,#effff7 100%); border: 1px solid #cfe6f2; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,63,125,.1); }
+    .seeker-hero-card::before { content: ""; position: absolute; z-index: 0; right: -120px; top: -170px; width: 430px; height: 430px; border: 72px solid rgba(33,183,97,.08); border-radius: 50%; }
+    .seeker-hero-card::after { content: ""; position: absolute; z-index: 0; left: 42%; bottom: -160px; width: 340px; height: 340px; background: radial-gradient(circle, rgba(0,91,172,.1), transparent 68%); }
     .seeker-hero-card > * { position: relative; z-index: 2; }
     .seeker-hero-eyebrow { display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; border-radius: 999px; font-size: 13px; font-weight: 900; }
-    .seeker-hero-card h1 { width: min(700px,100%); margin: 18px 0 12px; color: var(--blue-dark); font-size: clamp(32px,4vw,48px); line-height: 1.22; font-weight: 900; letter-spacing: 0; }
+    .seeker-hero-card h1 { width: min(700px,100%); margin: 18px 0 12px; color: var(--blue-dark); font-size: clamp(32px,4vw,48px); line-height: 1.22; font-weight: 900; letter-spacing: -.02em; }
     .seeker-hero-card h1 span { color: var(--green-dark); }
     .seeker-hero-card p { width: min(650px,100%); margin: 0; color: #4e6578; font-size: 16px; font-weight: 800; line-height: 1.8; }
     .seeker-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .seeker-hero-visual { display: grid; gap: 12px; padding: 14px; background: rgba(255,255,255,.58); border: 1px solid rgba(183,218,235,.75); border-radius: 14px; backdrop-filter: blur(8px); }
+    .seeker-hero-point { display: grid; grid-template-columns: 44px 1fr; gap: 13px; align-items: center; padding: 14px; background: rgba(255,255,255,.95); border: 1px solid #dcecf5; border-radius: 11px; box-shadow: 0 10px 24px rgba(0,63,125,.06); }
+    .seeker-hero-point:nth-child(2) { transform: translateX(-16px); }
+    .seeker-hero-icon { display: grid; place-items: center; width: 44px; height: 44px; color: #fff; background: linear-gradient(135deg,var(--blue),#18b66b); border-radius: 12px; font-size: 20px; font-weight: 900; }
+    .seeker-hero-point strong { display: block; color: var(--blue-dark); font-size: 14px; font-weight: 900; }
+    .seeker-hero-point small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.5; font-weight: 800; }
 
-    @media (max-width: 960px) { .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } }
-    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .seeker-hero-card { min-height: 0; padding: 28px 22px; } .seeker-hero-card::before { background: linear-gradient(90deg, rgba(255,255,255,.98), rgba(255,255,255,.78)), url("assets/seeker-photo.png") right -80px top / 290px auto no-repeat; opacity: .8; } .seeker-hero-card h1 { font-size: clamp(29px,9vw,38px); } .seeker-hero-card p { font-size: 14px; } .seeker-hero-actions .btn { width: 100%; } .stats-grid { grid-template-columns: 1fr; } .job-match-card { grid-template-columns: 72px minmax(0,1fr); } .job-thumb { width: 72px; height: 72px; } .job-cta { grid-column: 1 / -1; width: 100%; } }
+    @media (max-width: 960px) { .seeker-hero-card { grid-template-columns: 1fr; } .seeker-hero-visual { grid-template-columns: repeat(3,minmax(0,1fr)); } .seeker-hero-point { grid-template-columns: 1fr; text-align: center; } .seeker-hero-point:nth-child(2) { transform: none; } .seeker-hero-icon { margin: 0 auto; } .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .seeker-hero-card { min-height: 0; padding: 28px 22px; } .seeker-hero-card h1 { font-size: clamp(29px,9vw,38px); } .seeker-hero-card p { font-size: 14px; } .seeker-hero-actions .btn { width: 100%; } .seeker-hero-visual { grid-template-columns: 1fr; padding: 10px; } .seeker-hero-point { grid-template-columns: 44px 1fr; text-align: left; } .seeker-hero-icon { margin: 0; } .stats-grid { grid-template-columns: 1fr; } .job-match-card { grid-template-columns: 72px minmax(0,1fr); } .job-thumb { width: 72px; height: 72px; } .job-cta { grid-column: 1 / -1; width: 100%; } }
 
     .seeker-search-panel { position: relative; z-index: 3; display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(160px, .7fr); gap: 12px; width: min(1080px, calc(100% - 40px)); margin: 0 auto 28px; padding: 26px 28px 20px; background: rgba(255,255,255,.97); border: 1px solid #d8e8f3; border-radius: 10px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
     .seeker-search-panel label { display: grid; gap: 8px; color: var(--blue-dark); font-size: 12px; font-weight: 900; }
@@ -117,12 +123,19 @@
 
   <main class="dashboard-shell">
     <section class="seeker-hero-card" aria-labelledby="seekerHeroTitle">
-      <span class="seeker-hero-eyebrow">求職者マイページ</span>
-      <h1 id="seekerHeroTitle">あなたのスキルを<br><span>必要としている場があります</span></h1>
-      <p>看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務・業務委託・非常勤の求人を探せます。</p>
-      <div class="seeker-hero-actions">
-        <a class="btn btn-green" href="seeker-jobs.html">求人を探す</a>
-        <a class="btn btn-outline" href="seeker-profile.html">プロフィールを確認</a>
+      <div>
+        <span class="seeker-hero-eyebrow">求職者マイページ</span>
+        <h1 id="seekerHeroTitle">あなたのスキルを<br><span>必要としている場があります</span></h1>
+        <p>看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務・業務委託・非常勤の求人を探せます。</p>
+        <div class="seeker-hero-actions">
+          <a class="btn btn-green" href="seeker-jobs.html">求人を探す</a>
+          <a class="btn btn-outline" href="seeker-profile.html">プロフィールを確認</a>
+        </div>
+      </div>
+      <div class="seeker-hero-visual" aria-label="Medi Jobの特徴">
+        <div class="seeker-hero-point"><span class="seeker-hero-icon" aria-hidden="true">✓</span><div><strong>資格から探せる</strong><small>あなたの医療資格に合う求人</small></div></div>
+        <div class="seeker-hero-point"><span class="seeker-hero-icon" aria-hidden="true">⌖</span><div><strong>希望条件で検索</strong><small>勤務地・勤務日・働き方で絞り込み</small></div></div>
+        <div class="seeker-hero-point"><span class="seeker-hero-icon" aria-hidden="true">¥</span><div><strong>登録・応募無料</strong><small>費用を気にせず求人を確認</small></div></div>
       </div>
     </section>
 
