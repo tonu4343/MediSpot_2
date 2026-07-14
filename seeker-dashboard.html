@@ -46,8 +46,19 @@
     .dashboard-nav a { padding: 8px 0; }
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
     .loading { opacity: .72; }
+
+    .seeker-hero-card { position: relative; min-height: 340px; overflow: hidden; margin-bottom: 24px; padding: clamp(28px,4vw,42px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
+    .seeker-hero-card::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, rgba(255,255,255,.99) 0%, rgba(255,255,255,.95) 45%, rgba(255,255,255,.52) 70%, rgba(255,255,255,.14) 100%), url("assets/seeker-photo.png") right 18px center / min(520px,48vw) auto no-repeat; }
+    .seeker-hero-card::after { content: ""; position: absolute; z-index: 1; right: -90px; top: -110px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(33,183,97,.18), rgba(0,91,172,.07) 62%, transparent 63%); }
+    .seeker-hero-card > * { position: relative; z-index: 2; }
+    .seeker-hero-eyebrow { display: inline-flex; align-items: center; min-height: 30px; padding: 0 14px; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; border-radius: 999px; font-size: 13px; font-weight: 900; }
+    .seeker-hero-card h1 { width: min(700px,100%); margin: 18px 0 12px; color: var(--blue-dark); font-size: clamp(32px,4vw,48px); line-height: 1.22; font-weight: 900; letter-spacing: 0; }
+    .seeker-hero-card h1 span { color: var(--green-dark); }
+    .seeker-hero-card p { width: min(650px,100%); margin: 0; color: #4e6578; font-size: 16px; font-weight: 800; line-height: 1.8; }
+    .seeker-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
     @media (max-width: 960px) { .dashboard-grid { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } .site-header { flex-wrap: wrap; } }
-    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .stats-grid { grid-template-columns: 1fr; } .job-match-card { grid-template-columns: 72px minmax(0,1fr); } .job-thumb { width: 72px; height: 72px; } .job-cta { grid-column: 1 / -1; width: 100%; } }
+    @media (max-width: 640px) { .dashboard-shell { width: calc(100% - 28px); padding-top: 22px; } .seeker-hero-card { min-height: 0; padding: 28px 22px; } .seeker-hero-card::before { background: linear-gradient(90deg, rgba(255,255,255,.98), rgba(255,255,255,.78)), url("assets/seeker-photo.png") right -80px top / 290px auto no-repeat; opacity: .8; } .seeker-hero-card h1 { font-size: clamp(29px,9vw,38px); } .seeker-hero-card p { font-size: 14px; } .seeker-hero-actions .btn { width: 100%; } .stats-grid { grid-template-columns: 1fr; } .job-match-card { grid-template-columns: 72px minmax(0,1fr); } .job-thumb { width: 72px; height: 72px; } .job-cta { grid-column: 1 / -1; width: 100%; } }
 
     .seeker-search-panel { position: relative; z-index: 3; display: grid; grid-template-columns: repeat(4, minmax(130px, 1fr)) minmax(160px, .7fr); gap: 12px; width: min(1080px, calc(100% - 40px)); margin: 0 auto 28px; padding: 26px 28px 20px; background: rgba(255,255,255,.97); border: 1px solid #d8e8f3; border-radius: 10px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
     .seeker-search-panel label { display: grid; gap: 8px; color: var(--blue-dark); font-size: 12px; font-weight: 900; }
@@ -105,6 +116,16 @@
   </header>
 
   <main class="dashboard-shell">
+    <section class="seeker-hero-card" aria-labelledby="seekerHeroTitle">
+      <span class="seeker-hero-eyebrow">求職者マイページ</span>
+      <h1 id="seekerHeroTitle">あなたのスキルを<br><span>必要としている場があります</span></h1>
+      <p>看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務・業務委託・非常勤の求人を探せます。</p>
+      <div class="seeker-hero-actions">
+        <a class="btn btn-green" href="seeker-jobs.html">求人を探す</a>
+        <a class="btn btn-outline" href="seeker-profile.html">プロフィールを確認</a>
+      </div>
+    </section>
+
     <section class="search-panel seeker-search-panel" aria-label="求人検索">
       <label><span>職種（7職種・複数選択可）</span><select><option>職種を選択</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label>
       <label><span>勤務地（首都圏・複数選択可）</span><select><option>勤務地を選択</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option></select></label>
