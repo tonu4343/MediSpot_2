@@ -44,15 +44,15 @@ img { display: block; max-width: 100%; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: 0 0 auto;
   color: var(--blue);
   font-weight: 900;
 }
 .brand-mark {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 68px;
+  height: 68px;
   background-color: var(--blue);
   -webkit-mask: url("assets/Blue.png") center / contain no-repeat;
   mask: url("assets/Blue.png") center / contain no-repeat;
@@ -742,8 +742,8 @@ body {
   }
 
   .brand-mark {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
     transform: scale(0.9);
     transform-origin: left center;
   }
@@ -2038,8 +2038,8 @@ main {
   }
 
   .brand-mark {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
   }
 
   .brand strong {
