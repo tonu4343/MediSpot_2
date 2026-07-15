@@ -2921,3 +2921,82 @@ body.profession-modal-open { overflow: hidden; }
   }
 }
 
+/* Employer showcase photo — same full-bleed + gradient-caption treatment
+   as .seeker-single-photo, scoped separately since .employer-visual has
+   its own long list of legacy rules (price-circle, etc.) elsewhere. */
+.employer-visual::before,
+.role-employer .employer-visual::before {
+  content: none;
+}
+.employer-single-photo {
+  position: relative;
+  width: min(520px, 100%);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: none;
+  background: none;
+}
+.employer-single-photo img,
+.role-employer .employer-single-photo img,
+.role-employer .role-visual .employer-single-photo img {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  object-fit: cover;
+  object-position: center 25%;
+  background: none;
+}
+.employer-single-photo::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(4, 38, 63, 0) 45%, rgba(4, 38, 63, 0.55) 75%, rgba(4, 38, 63, 0.92) 100%);
+}
+.employer-single-photo figcaption {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 24px;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  color: #fff;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  backdrop-filter: none;
+}
+.employer-single-photo figcaption strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.employer-single-photo figcaption span {
+  display: block;
+  margin-top: 4px;
+  color: #e6f1fb;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+@media (max-width: 560px) {
+  .employer-single-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  .employer-single-photo figcaption {
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+  }
+}
+
