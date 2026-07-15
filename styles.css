@@ -263,8 +263,28 @@ img { display: block; max-width: 100%; }
 .tags span { min-height: 25px; padding: 0 11px; font-size: 12px; }
 
 .profession-section { background: linear-gradient(180deg, #eaf7ff 0%, #f8fcff 100%); }
-.profession-heading div { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.profession-heading {
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  width: min(1400px, 100%);
+  margin-inline: auto;
+}
+.profession-heading-copy { display: flex; flex-direction: column; gap: 6px; flex: 1 1 320px; min-width: 260px; }
+.profession-heading h2 { text-align: left; }
+.profession-heading h2 .accent { color: var(--blue); }
+.profession-heading h2::after { margin: 10px 0 0; }
 .profession-heading p { margin: 0; color: var(--muted); font-size: 14px; font-weight: 700; }
+.profession-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.profession-cta-row .hero-role-card {
+  position: static;
+  flex: 1 1 260px;
+  min-height: 88px;
+  padding: 14px 16px;
+}
+.profession-cta-row .role-text strong { font-size: 14px; }
+.profession-cta-row .role-text small { font-size: 11.5px; }
 .profession-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 22px; width: min(1400px, 100%); margin: 0 auto; }
 .profession-grid article {
   display: flex;
