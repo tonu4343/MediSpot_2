@@ -1,7 +1,6 @@
 (function () {
   var professionData = {
     nurse: {
-      photo: "assets/01_nurse_real_photo_512.png",
       title: "看護師",
       desc: "病院・クリニックでの看護業務",
       salary: "¥320,000〜",
@@ -11,7 +10,6 @@
       cta: "看護師の求人を見る"
     },
     lab: {
-      photo: "assets/02_lab_tech_real_photo_512.png",
       title: "臨床検査技師",
       desc: "検体検査・生理検査・検査業務全般",
       salary: "¥300,000〜",
@@ -21,7 +19,6 @@
       cta: "臨床検査技師の求人を見る"
     },
     radiology: {
-      photo: "assets/03_radiology_real_photo_512.png",
       title: "放射線技師",
       desc: "X線撮影・CT・MRIなど画像診断業務",
       salary: "¥340,000〜",
@@ -31,7 +28,6 @@
       cta: "放射線技師の求人を見る"
     },
     pt: {
-      photo: "assets/04_physical_therapist_real_photo_512.png",
       title: "理学療法士",
       desc: "リハビリテーション・機能訓練業務",
       salary: "¥310,000〜",
@@ -41,7 +37,6 @@
       cta: "理学療法士の求人を見る"
     },
     ot: {
-      photo: "assets/05_occupational_therapist_real_photo_512.png",
       title: "作業療法士",
       desc: "日常生活動作の訓練・作業療法業務",
       salary: "¥305,000〜",
@@ -51,7 +46,6 @@
       cta: "作業療法士の求人を見る"
     },
     speech: {
-      photo: "assets/06_speech_hearing_real_photo_512.png",
       title: "言語聴覚士",
       desc: "言語訓練・嚥下訓練・リハビリ業務",
       salary: "¥315,000〜",
@@ -61,7 +55,6 @@
       cta: "言語聴覚士の求人を見る"
     },
     helper: {
-      photo: "assets/07_helper_real_photo_512.png",
       title: "ヘルパー",
       desc: "身体介護・生活援助・サポート業務",
       salary: "¥280,000〜",
@@ -76,7 +69,6 @@
   if (!overlay) return;
 
   var closeBtn = document.getElementById("professionModalClose");
-  var photoEl = document.getElementById("professionModalPhoto");
   var titleEl = document.getElementById("professionModalTitle");
   var descEl = document.getElementById("professionModalDesc");
   var salaryEl = document.getElementById("professionModalSalary");
@@ -92,8 +84,6 @@
     var data = professionData[key];
     if (!data) return;
 
-    photoEl.src = data.photo;
-    photoEl.alt = data.title;
     titleEl.textContent = data.title;
     descEl.textContent = data.desc;
     salaryEl.textContent = data.salary;

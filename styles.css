@@ -2544,12 +2544,9 @@ body.profession-modal-open { overflow: hidden; }
 
 .profession-modal {
   position: relative;
-  width: min(900px, 100%);
+  width: min(560px, 100%);
   max-height: 90vh;
   overflow-y: auto;
-  display: grid;
-  grid-template-columns: 38% 62%;
-  gap: 36px;
   background: #fff;
   border-radius: 24px;
   padding: 36px;
@@ -2583,21 +2580,6 @@ body.profession-modal-open { overflow: hidden; }
 .profession-modal-close:hover {
   background: var(--sky);
   transform: rotate(90deg);
-}
-
-.profession-modal-photo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: clamp(420px, 46vw, 480px);
-  background: linear-gradient(180deg, #eaf7ff 0%, #f4fbff 100%);
-  border-radius: 20px;
-}
-.profession-modal-photo img {
-  width: 82%;
-  height: 82%;
-  object-fit: contain;
-  display: block;
 }
 
 .profession-modal-info {
@@ -2728,13 +2710,8 @@ body.profession-modal-open { overflow: hidden; }
     width: calc(100% - 32px);
     max-height: 90vh;
     margin: 16px;
-    grid-template-columns: 1fr;
-    gap: 20px;
     padding: 24px;
     border-radius: 24px;
-  }
-  .profession-modal-photo {
-    height: 220px;
   }
   .profession-modal-info h2 {
     font-size: 24px;
