@@ -65,8 +65,27 @@
       -webkit-mask: url("assets/Blue.png") center / contain no-repeat;
       mask: url("assets/Blue.png") center / contain no-repeat;
     }
-    .brand strong { display: block; font-size: 24px; line-height: 1; letter-spacing: 0; }
-    .brand small { display: block; margin-top: 3px; color: var(--blue-dark); font-size: 10px; line-height: 1; }
+    .brand strong { display: block; font-size: 24px; line-height: 1; letter-spacing: 0.01em; text-transform: uppercase; }
+    .brand small {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 5px;
+      color: var(--green-dark);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .brand small::before,
+    .brand small::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.55;
+    }
 
     .site-nav {
       display: flex;
