@@ -44,7 +44,7 @@ img { display: block; max-width: 100%; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   flex: 0 0 auto;
   color: var(--blue);
   font-weight: 900;
