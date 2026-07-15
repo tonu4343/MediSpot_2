@@ -213,10 +213,6 @@ img { display: block; max-width: 100%; }
   font-weight: 900;
 }
 .trust-strip article > span svg { width: 22px; height: 22px; }
-.trust-strip article:nth-child(3) > span {
-  color: var(--green-dark);
-  border-color: var(--green-dark);
-}
 .trust-strip strong { display: block; color: var(--blue); font-size: 15px; }
 .trust-strip p { margin: 2px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; }
 
