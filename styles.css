@@ -2519,3 +2519,218 @@ main {
   }
 }
 
+/* Profession info modal */
+.profession-grid article[data-profession] { cursor: pointer; }
+
+body.profession-modal-open { overflow: hidden; }
+
+.profession-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(4, 26, 51, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.profession-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.profession-modal {
+  position: relative;
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 38% 62%;
+  gap: 36px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 32px 80px rgba(0, 32, 66, 0.28);
+  transform: scale(.94) translateY(8px);
+  opacity: 0;
+  transition: transform .26s cubic-bezier(.2, .8, .3, 1), opacity .22s ease;
+}
+.profession-modal-overlay.is-open .profession-modal {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.profession-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--blue-dark);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .16s ease, transform .16s ease;
+}
+.profession-modal-close:hover {
+  background: var(--sky);
+  transform: rotate(90deg);
+}
+
+.profession-modal-photo img {
+  width: 100%;
+  height: clamp(420px, 46vw, 480px);
+  object-fit: cover;
+  border-radius: 20px;
+  display: block;
+}
+
+.profession-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.profession-modal-info h2 {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.profession-modal-desc {
+  margin: -14px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.profession-modal-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  background: var(--sky);
+  border-radius: 14px;
+}
+.profession-modal-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.profession-modal-stat span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+.profession-modal-stat strong {
+  color: var(--green-dark);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.profession-modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.profession-modal-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #e5f8ee;
+  color: var(--green-dark);
+  font-size: 12.5px;
+  font-weight: 800;
+}
+.profession-modal-tag:nth-child(even) {
+  background: #e3f1ff;
+  color: var(--blue);
+}
+
+.profession-modal-duties h3 {
+  margin: 0 0 10px;
+  color: var(--blue-dark);
+  font-size: 15px;
+  font-weight: 900;
+}
+.profession-modal-duties ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.profession-modal-duties li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.profession-modal-duties li::before {
+  content: "・";
+  position: absolute;
+  left: 0;
+  color: var(--blue);
+}
+
+.profession-modal-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--blue-2), var(--blue));
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  text-align: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.profession-modal-cta:hover {
+  box-shadow: 0 12px 24px rgba(0, 91, 172, 0.28);
+}
+.profession-modal-cta-arrow {
+  transition: transform .18s ease;
+}
+.profession-modal-cta:hover .profession-modal-cta-arrow {
+  transform: translateX(5px);
+}
+
+@media (max-width: 720px) {
+  .profession-modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .profession-modal {
+    width: calc(100% - 32px);
+    max-height: 90vh;
+    margin: 16px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 24px;
+    border-radius: 24px;
+  }
+  .profession-modal-photo img {
+    height: 220px;
+  }
+  .profession-modal-info h2 {
+    font-size: 24px;
+  }
+}
+
