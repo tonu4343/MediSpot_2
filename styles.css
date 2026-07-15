@@ -212,23 +212,10 @@ img { display: block; max-width: 100%; }
   border-radius: 50%;
   font-weight: 900;
 }
-.trust-strip article:nth-child(2) > span,
+.trust-strip article > span svg { width: 22px; height: 22px; }
 .trust-strip article:nth-child(3) > span {
-  overflow: hidden;
-  border: 0;
-  border-radius: 10px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  color: transparent;
-  font-size: 0;
-}
-.trust-strip article:nth-child(2) > span {
-  background-image: url("assets/medi-job-logo-11.png");
-}
-.trust-strip article:nth-child(3) > span {
-  background-image: url("assets/medi-job-logo-08.png");
-  filter: hue-rotate(170deg) saturate(.78);
+  color: var(--green-dark);
+  border-color: var(--green-dark);
 }
 .trust-strip strong { display: block; color: var(--blue); font-size: 15px; }
 .trust-strip p { margin: 2px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; }
