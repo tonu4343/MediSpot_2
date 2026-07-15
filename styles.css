@@ -2839,3 +2839,85 @@ body.profession-modal-open { overflow: hidden; }
   .example-jobs-grid { grid-template-columns: 1fr; max-width: 420px; }
 }
 
+/* Seeker showcase photo: full-bleed image with in-photo gradient caption
+   (final overrides — supersedes the earlier fragmented rules above) */
+.seeker-showcase::before {
+  content: none;
+}
+.seeker-single-photo {
+  width: min(560px, 100%);
+  height: auto;
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: none;
+  background: none;
+}
+.seeker-single-photo img {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  background: none;
+  padding: 0;
+}
+.seeker-single-photo::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(4, 38, 63, 0) 45%, rgba(4, 38, 63, 0.55) 75%, rgba(4, 38, 63, 0.92) 100%);
+}
+.seeker-single-photo figcaption {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 24px;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  color: #fff;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  backdrop-filter: none;
+}
+.seeker-single-photo figcaption strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.seeker-single-photo figcaption span {
+  display: block;
+  margin-top: 4px;
+  color: #e6f1fb;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+@media (max-width: 560px) {
+  .seeker-single-photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 0;
+  }
+  .seeker-single-photo figcaption {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+    margin-top: 0;
+    color: #fff;
+    background: none;
+    border-color: transparent;
+  }
+  .seeker-single-photo figcaption span {
+    color: #e6f1fb;
+  }
+}
+
