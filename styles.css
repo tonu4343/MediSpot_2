@@ -51,7 +51,7 @@ img { display: block; max-width: 100%; }
 }
 .brand-mark {
   position: relative;
-  width: 68px;
+  width: 54px;
   height: 68px;
   background-color: var(--blue);
   -webkit-mask: url("assets/Blue.png") center / contain no-repeat;
@@ -742,7 +742,7 @@ body {
   }
 
   .brand-mark {
-    width: 56px;
+    width: 44px;
     height: 56px;
     transform: scale(0.9);
     transform-origin: left center;
@@ -2038,7 +2038,7 @@ main {
   }
 
   .brand-mark {
-    width: 56px;
+    width: 44px;
     height: 56px;
   }
 
