@@ -27,9 +27,28 @@
     const message = document.getElementById(id);
     if (!message) return;
 
-    message.textContent = text;
+    message.textContent = Array.isArray(text) ? text.join("\n") : text;
     message.style.display = "inline";
+    message.style.whiteSpace = "pre-line";
     message.style.color = isError ? "#b42318" : "";
+  }
+
+  function fieldLabel(el) {
+    if (el.type === "checkbox") return "利用規約・プライバシーポリシーへの同意";
+    const label = el.closest(".field")?.querySelector("label") || document.querySelector('label[for="' + el.id + '"]');
+    return label ? label.textContent.replace(/[\s　]*必須[\s　]*$/, "").trim() : "入力内容";
+  }
+
+  function fieldErrorMessage(el) {
+    const name = fieldLabel(el);
+    if (el.validity.valueMissing) return el.type === "checkbox" ? name + "が必要です。" : name + "を入力してください。";
+    if (el.validity.typeMismatch || el.validity.patternMismatch) return "正しい" + name + "を入力してください。";
+    if (el.validity.tooShort) return name + "は" + el.minLength + "文字以上で入力してください。";
+    return name + "の入力内容を確認してください。";
+  }
+
+  function collectFormErrors(form) {
+    return Array.from(form.querySelectorAll(":invalid")).map(fieldErrorMessage);
   }
 
   function setBusy(form, busy) {
@@ -62,20 +81,20 @@
 
     if (!requireClient()) return;
 
+    const form = event.currentTarget;
+    const errors = collectFormErrors(form);
+
     const password = value("password") || "";
     const passwordConfirm = value("passwordConfirm") || "";
+    if (password.length >= 8 && passwordConfirm.length >= 8 && password !== passwordConfirm) {
+      errors.push("\u30d1\u30b9\u30ef\u30fc\u30c9\u3068\u78ba\u8a8d\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u304c\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002");
+    }
 
-    if (password.length < 8) {
-      showMessage("formMessage", "\u30d1\u30b9\u30ef\u30fc\u30c9\u306f8\u6587\u5b57\u4ee5\u4e0a\u3067\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+    if (errors.length) {
+      showMessage("formMessage", errors, true);
       return;
     }
 
-    if (password !== passwordConfirm) {
-      showMessage("formMessage", "\u30d1\u30b9\u30ef\u30fc\u30c9\u3068\u78ba\u8a8d\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u304c\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002", true);
-      return;
-    }
-
-    const form = event.currentTarget;
     setBusy(form, true);
 
     const email = value("email");
@@ -95,7 +114,7 @@
     if (authError) {
       setBusy(form, false);
       console.error(authError);
-      showMessage("formMessage", authError.message || "\u30a2\u30ab\u30a6\u30f3\u30c8\u767b\u9332\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002", true);
+      showMessage("formMessage", registrationErrorMessage(authError), true);
       return;
     }
 
@@ -134,21 +153,21 @@
 
     if (!requireClient()) return;
 
+    const form = event.currentTarget;
+    const errors = collectFormErrors(form);
+
     const password = value("password") || "";
     const passwordConfirmInput = document.getElementById("passwordConfirm");
     const passwordConfirm = passwordConfirmInput ? value("passwordConfirm") || "" : password;
+    if (passwordConfirmInput && password.length >= 8 && passwordConfirm.length >= 8 && password !== passwordConfirm) {
+      errors.push("パスワードと確認用パスワードが一致しません。");
+    }
 
-    if (password.length < 8) {
-      showMessage("formMessage", "パスワードは8文字以上で入力してください。", true);
+    if (errors.length) {
+      showMessage("formMessage", errors, true);
       return;
     }
 
-    if (password !== passwordConfirm) {
-      showMessage("formMessage", "パスワードと確認用パスワードが一致しません。", true);
-      return;
-    }
-
-    const form = event.currentTarget;
     setBusy(form, true);
 
     const email = value("email");
