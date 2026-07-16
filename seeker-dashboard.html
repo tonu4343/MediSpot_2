@@ -70,7 +70,7 @@
     .search-tags span { display: inline-flex; align-items: center; min-height: 30px; padding: 0 16px; color: var(--blue); background: #f6fbff; border: 1px solid #b7d8ef; border-radius: 999px; font-size: 13px; font-weight: 900; }
     .profile-card-inline { margin: 0 0 24px; }
     .profile-action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-    .profile-edit-link { display: inline-flex; align-items: center; justify-content: center; flex: 1; min-height: 42px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-size: 13px; font-weight: 900; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+    .profile-edit-link { display: inline-flex; align-items: center; justify-content: center; flex: 1; min-height: 42px; padding: 0 10px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-size: 13px; font-weight: 900; white-space: nowrap; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
     .profile-edit-link:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,63,125,.12); }
     #profileSummary .profile-action-row .profile-edit-link:first-child { color: #fff; background: linear-gradient(180deg, #28c975, var(--green)); border-color: transparent; box-shadow: 0 9px 18px rgba(33,183,97,.26); }
     @media (max-width: 980px) { .seeker-search-panel { grid-template-columns: 1fr 1fr; } .seeker-search-panel .btn, .search-tags { grid-column: 1 / -1; } }
@@ -158,7 +158,7 @@
 
     <section class="search-panel seeker-search-panel" aria-label="求人検索">
       <label><span>職種（7職種・複数選択可）</span><select><option>職種を選択</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label>
-      <div role="group" aria-label="勤務地（首都圏・複数選択可）"><span>勤務地（首都圏・複数選択可）</span><div class="location-check-grid compact"><label class="location-check-pill"><input type="checkbox" value="東京都"><span>東京都</span></label><label class="location-check-pill"><input type="checkbox" value="神奈川県"><span>神奈川県</span></label><label class="location-check-pill"><input type="checkbox" value="千葉県"><span>千葉県</span></label><label class="location-check-pill"><input type="checkbox" value="埼玉県"><span>埼玉県</span></label></div></div>
+      <div role="group" aria-label="勤務地（複数選択可）"><span>勤務地（複数選択可）</span><div class="location-check-grid compact"><label class="location-check-pill"><input type="checkbox" value="東京都"><span>東京都</span></label><label class="location-check-pill"><input type="checkbox" value="神奈川県"><span>神奈川県</span></label><label class="location-check-pill"><input type="checkbox" value="千葉県"><span>千葉県</span></label><label class="location-check-pill"><input type="checkbox" value="埼玉県"><span>埼玉県</span></label></div></div>
       <label><span>雇用形態（複数選択可）</span><select><option>雇用形態を選択</option><option>スポット</option><option>パート</option></select></label>
       <label><span>勤務日</span><select><option>希望日を選択</option><option>平日</option><option>土日</option><option>単発</option><option>相談したい</option></select></label>
       <a class="btn btn-green" href="seeker-jobs.html">求人を探す</a>
