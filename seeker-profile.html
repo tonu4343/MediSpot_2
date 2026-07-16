@@ -118,6 +118,8 @@
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
       let currentUser = null;
       let currentProfile = null;
+      let previousLicense = '';
+      const skillState = {};
       const SKILL_OTHER = 'その他（自由記載）';
       const NURSE_SKILLS = ['保健師・助産師・認定（分野）', '一般病棟', '緩和ケア', 'クリニック', '健康診断（採血・心電図・眼底）', '訪問看護', '高齢者施設'];
       const REHAB_SKILLS = ['病院', 'リハビリ施設', '訪問看護', '高齢者施設', '福祉施設'];
@@ -150,6 +152,7 @@
         el('skillGrid').querySelectorAll('input').forEach(input => input.addEventListener('change', syncOther));
         el('skillOther').value = otherText || '';
         syncOther();
+        previousLicense = license;
       }
       function selectedSkills() {
         const checked = Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value);
@@ -189,8 +192,12 @@
       }
       async function load() { renderSkills(el('license').value, []); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
       el('license').addEventListener('change', function () {
-        const cur = Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value);
-        renderSkills(this.value, cur, value('skillOther'));
+        if (previousLicense) {
+          const cur = Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value);
+          skillState[previousLicense] = { skills: cur, other: value('skillOther') || '' };
+        }
+        const saved = skillState[this.value];
+        renderSkills(this.value, saved ? saved.skills : [], saved ? saved.other : '');
       });
       el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + file.name + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
       el('birthDate').addEventListener('input', updateAgeHint);
