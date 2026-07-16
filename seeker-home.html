@@ -278,8 +278,8 @@
     });
   }
 
-  window.logout = function () {
-    if (supabaseClient) supabaseClient.auth.signOut();
+  window.logout = async function () {
+    if (supabaseClient) await supabaseClient.auth.signOut();
     localStorage.removeItem('medispot_user');
     window.location.href = 'login.html';
   };
