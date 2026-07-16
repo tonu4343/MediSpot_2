@@ -15,6 +15,10 @@
     return document.getElementById(id)?.value?.trim() || null;
   }
 
+  function rawValue(id) {
+    return document.getElementById(id)?.value || "";
+  }
+
   function selectedCheckText(container) {
     if (!container) return [];
 
@@ -90,8 +94,8 @@
     const form = event.currentTarget;
     const errors = collectFormErrors(form);
 
-    const password = value("password") || "";
-    const passwordConfirm = value("passwordConfirm") || "";
+    const password = rawValue("password");
+    const passwordConfirm = rawValue("passwordConfirm");
     if (password.length >= 8 && passwordConfirm.length >= 8 && password !== passwordConfirm) {
       errors.push("\u30d1\u30b9\u30ef\u30fc\u30c9\u3068\u78ba\u8a8d\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u304c\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002");
     }
@@ -168,9 +172,9 @@
     const form = event.currentTarget;
     const errors = collectFormErrors(form);
 
-    const password = value("password") || "";
+    const password = rawValue("password");
     const passwordConfirmInput = document.getElementById("passwordConfirm");
-    const passwordConfirm = passwordConfirmInput ? value("passwordConfirm") || "" : password;
+    const passwordConfirm = passwordConfirmInput ? rawValue("passwordConfirm") : password;
     if (passwordConfirmInput && password.length >= 8 && passwordConfirm.length >= 8 && password !== passwordConfirm) {
       errors.push("パスワードと確認用パスワードが一致しません。");
     }
