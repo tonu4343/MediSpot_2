@@ -51,8 +51,34 @@
     return name + "の入力内容を確認してください。";
   }
 
+  function markFieldInvalid(el) {
+    el.classList.add("field-invalid");
+    if (!el.dataset.fieldErrorBound) {
+      el.dataset.fieldErrorBound = "1";
+      el.addEventListener("input", function () {
+        if (el.checkValidity()) el.classList.remove("field-invalid");
+      });
+      el.addEventListener("change", function () {
+        if (el.checkValidity()) el.classList.remove("field-invalid");
+      });
+    }
+  }
+
   function collectFormErrors(form) {
-    return Array.from(form.querySelectorAll(":invalid")).map(fieldErrorMessage);
+    Array.from(form.querySelectorAll(".field-invalid")).forEach((el) => el.classList.remove("field-invalid"));
+    const invalidFields = Array.from(form.querySelectorAll(":invalid"));
+    invalidFields.forEach(markFieldInvalid);
+    return invalidFields.map(fieldErrorMessage);
+  }
+
+  function wirePasswordMatch(passwordEl, passwordConfirmEl) {
+    if (!passwordEl || !passwordConfirmEl || passwordEl.dataset.matchBound) return;
+    passwordEl.dataset.matchBound = "1";
+    const clearIfMatching = function () {
+      if (passwordEl.value === passwordConfirmEl.value) passwordConfirmEl.classList.remove("field-invalid");
+    };
+    passwordEl.addEventListener("input", clearIfMatching);
+    passwordConfirmEl.addEventListener("input", clearIfMatching);
   }
 
   function setBusy(form, busy) {
@@ -98,6 +124,7 @@
     const passwordConfirm = rawValue("passwordConfirm");
     if (password.length >= 8 && passwordConfirm.length >= 8 && password !== passwordConfirm) {
       errors.push("\u30d1\u30b9\u30ef\u30fc\u30c9\u3068\u78ba\u8a8d\u7528\u30d1\u30b9\u30ef\u30fc\u30c9\u304c\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002");
+      markFieldInvalid(document.getElementById("passwordConfirm"));
     }
 
     if (errors.length) {
@@ -177,6 +204,7 @@
     const passwordConfirm = passwordConfirmInput ? rawValue("passwordConfirm") : password;
     if (passwordConfirmInput && password.length >= 8 && passwordConfirm.length >= 8 && password !== passwordConfirm) {
       errors.push("パスワードと確認用パスワードが一致しません。");
+      markFieldInvalid(passwordConfirmInput);
     }
 
     if (errors.length) {
@@ -263,8 +291,14 @@
     const employerForm = document.getElementById("employerForm");
     const searchButton = document.querySelector(".search-panel .btn-search");
 
-    if (seekerForm) seekerForm.addEventListener("submit", saveSeeker);
-    if (employerForm) employerForm.addEventListener("submit", saveEmployer);
+    if (seekerForm) {
+      seekerForm.addEventListener("submit", saveSeeker);
+      wirePasswordMatch(document.getElementById("password"), document.getElementById("passwordConfirm"));
+    }
+    if (employerForm) {
+      employerForm.addEventListener("submit", saveEmployer);
+      wirePasswordMatch(document.getElementById("password"), document.getElementById("passwordConfirm"));
+    }
     if (searchButton) {
       searchButton.addEventListener("click", function (event) {
         saveSearch(event.currentTarget.closest(".search-panel"));

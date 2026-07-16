@@ -42,6 +42,8 @@
     }
     .textarea { min-height: 156px; padding-top: 14px; resize: vertical; line-height: 1.7; }
     .input:focus, .textarea:focus { border-color: var(--seeker-teal); box-shadow: 0 0 0 4px rgba(22, 163, 148, .13); }
+    .input.field-invalid, .textarea.field-invalid { border-color: #d92735; box-shadow: 0 0 0 3px rgba(217, 39, 53, .12); }
+    .terms-row input.field-invalid { outline: 2px solid #d92735; outline-offset: 3px; border-radius: 4px; }
     .check-grid { display: flex; flex-wrap: wrap; gap: 10px; min-height: 38px; align-items: center; }
     .check-pill { position: relative; cursor: pointer; }
     .check-pill input { position: absolute; opacity: 0; }
