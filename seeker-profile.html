@@ -31,8 +31,6 @@
     .check-pill input { position: absolute; opacity: 0; }
     .check-pill span { display: inline-flex; align-items: center; min-height: 38px; padding: 0 15px; color: var(--blue-dark); background: #fff; border: 1px solid #cbdce8; border-radius: 999px; font-size: 14px; font-weight: 900; }
     .check-pill input:checked + span { color: var(--green-dark); border-color: #7ed5a0; background: #effdf6; box-shadow: 0 8px 20px rgba(33,183,97,.12); }
-    .zip-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
-    .ghost-btn { min-height: 54px; padding: 0 22px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-weight: 900; cursor: pointer; }
     .upload-box { display: grid; place-items: center; min-height: 118px; padding: 22px; text-align: center; color: var(--muted); background: #fbfdff; border: 2px dashed #c9d8e6; border-radius: 10px; font-weight: 800; cursor: pointer; }
     .upload-box strong { display: block; color: var(--blue-dark); font-size: 16px; }
     .upload-list { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; font-weight: 800; }
@@ -52,7 +50,7 @@
     .header-actions { display: flex; align-items: center; gap: 12px; }
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
     @media (max-width: 920px) { .profile-layout, .page-heading { grid-template-columns: 1fr; } .side-stack { position: static; } .site-header { flex-wrap: wrap; } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
-    @media (max-width: 640px) { .profile-shell { width: calc(100% - 28px); padding-top: 28px; } .form-grid, .zip-row { grid-template-columns: 1fr; } .save-btn, .back-btn, .ghost-btn { width: 100%; justify-content: center; } }
+    @media (max-width: 640px) { .profile-shell { width: calc(100% - 28px); padding-top: 28px; } .form-grid { grid-template-columns: 1fr; } .save-btn, .back-btn { width: 100%; justify-content: center; } }
   </style>
 </head>
 <body class="profile-page">
@@ -74,9 +72,9 @@
           <h2>資格・経験</h2>
           <div class="form-grid">
             <div class="field"><label for="license">保有資格（職種）<span class="required">必須</span></label><select class="input" id="license" required><option value="">選択してください</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
-            <div class="field"><label for="experience">実務経験年数</label><select class="input" id="experience"><option value="">選択してください</option><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5年以上</option><option>10年以上</option></select></div>
+            <div class="field"><label for="experience">実務経験年数</label><select class="input" id="experience"><option value="">選択してください</option><option>1年未満</option><option>1〜3年</option><option>3〜5年</option><option>5〜10年</option><option>10年以上</option></select></div>
             <div class="field full"><label for="qualificationName">資格名称（詳細）</label><input class="input" id="qualificationName" placeholder="例）正看護師、認定看護師（感染管理）など"></div>
-            <div class="field"><label for="birthDate">生年月日<span class="required">必須</span></label><input class="input" id="birthDate" type="date" required><span class="hint">生年月日から年齢を自動計算します。</span></div>
+            <div class="field"><label for="birthDate">生年月日<span class="required">必須</span></label><input class="input" id="birthDate" type="date" required><span class="hint" id="ageHint">生年月日を入力すると年齢を自動計算します。</span></div>
             <div class="field"><label for="phone">電話番号</label><input class="input" id="phone" inputmode="tel" autocomplete="tel" placeholder="090-0000-0000"></div>
           </div>
         </section>
@@ -89,7 +87,7 @@
           <input class="input" id="skillOther" placeholder="その他の内容を入力してください" style="display:none; margin-top:10px;">
           <div class="form-grid" style="margin-top:22px;">
             <div class="field"><label for="preferredStyle">希望雇用形態</label><select class="input" id="preferredStyle"><option>こだわらない</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></div>
-            <div class="field"><label for="preferredArea">居住地（郵便番号から検索）</label><div class="zip-row"><input class="input" id="preferredArea" placeholder="例） 1500001"><button class="ghost-btn" type="button" id="zipButton">住所を検索</button></div></div>
+            <div class="field"><label for="preferredArea">希望勤務地（首都圏）</label><select class="input" id="preferredArea"><option value="">選択してください</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option></select></div>
             <div class="field full"><label for="pr">自己PR</label><textarea class="textarea" id="pr" placeholder="経験の概要や希望条件を自由にご記入ください。"></textarea></div>
           </div>
         </section>
@@ -158,6 +156,20 @@
         const otherText = value('skillOther');
         return checked.filter(v => v !== SKILL_OTHER).concat(checked.includes(SKILL_OTHER) ? [otherText ? SKILL_OTHER + '：' + otherText : SKILL_OTHER] : []);
       }
+      function computeAge(dateStr) {
+        if (!dateStr) return null;
+        const birth = new Date(dateStr);
+        if (Number.isNaN(birth.getTime())) return null;
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
+        return age >= 0 ? age : null;
+      }
+      function updateAgeHint() {
+        const age = computeAge(el('birthDate').value);
+        el('ageHint').textContent = age !== null ? ('現在の年齢：' + age + '歳') : '生年月日を入力すると年齢を自動計算します。';
+      }
       function fill(profile, user) {
         currentProfile = profile || {};
         setValue('license', currentProfile.license);
@@ -173,6 +185,7 @@
         const checkedSkills = savedSkills.map(s => s.indexOf(SKILL_OTHER + '：') === 0 ? SKILL_OTHER : s);
         renderSkills(el('license').value, checkedSkills, otherText);
         el('saveStatus').textContent = currentProfile.license ? '登録済み' : '未完了';
+        updateAgeHint();
       }
       async function load() { renderSkills(el('license').value, []); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
       el('license').addEventListener('change', function () {
@@ -180,7 +193,7 @@
         renderSkills(this.value, cur, value('skillOther'));
       });
       el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + file.name + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
-      el('zipButton').addEventListener('click', function () { message('プロトタイプのため、郵便番号検索は未接続です。', false); });
+      el('birthDate').addEventListener('input', updateAgeHint);
       el('logoutButton').addEventListener('click', async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
       el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: value('preferredArea'), preferred_style: value('preferredStyle'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。', false); el('saveStatus').textContent = '登録済み'; });
       load().catch(function (error) { console.error(error); message('プロフィールを読み込めませんでした。', true); });
