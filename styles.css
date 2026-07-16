@@ -412,6 +412,7 @@ img { display: block; max-width: 100%; }
 
 .stories { background: #fff; }
 .story-grid article {
+  position: relative;
   display: grid;
   grid-template-columns: 74px 1fr;
   gap: 14px;
@@ -419,13 +420,33 @@ img { display: block; max-width: 100%; }
   padding: 18px 20px;
   background: #fff;
   border: 1px solid var(--line);
+  border-top: 4px solid #cfe3f2;
   border-radius: 8px;
   box-shadow: 0 8px 18px rgba(0,63,125,0.08);
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-.story-grid img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+.story-grid article:hover { transform: translateY(-4px); box-shadow: 0 18px 38px rgba(0,63,125,0.15); }
+.story-grid article::after {
+  content: "\201D";
+  position: absolute;
+  top: 2px;
+  right: 14px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 60px;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(0,91,172,0.07);
+  pointer-events: none;
+}
+.story-grid article.role-blue { border-top-color: var(--blue); }
+.story-grid article.role-green { border-top-color: var(--green); }
+.story-grid article.role-orange { border-top-color: #f2a44b; }
+.story-grid article.role-purple { border-top-color: #9b7ae0; }
+.story-grid img { width: 64px; height: 64px; border: 3px solid #eef5fb; border-radius: 50%; object-fit: cover; }
 .story-grid span { display: inline-block; margin-bottom: 6px; color: var(--blue); font-size: 13px; font-weight: 900; }
 .story-grid span::first-letter { color: var(--green-dark); }
-.story-grid p { margin: 0; color: #334e66; font-size: 13px; font-weight: 700; line-height: 1.7; }
+.story-grid p { position: relative; margin: 0; color: #334e66; font-size: 13px; font-weight: 700; line-height: 1.7; }
 
 .faq { padding-top: 8px; background: linear-gradient(180deg, #fff, #f7fbff); }
 .faq details { width: min(1060px, 100%); margin: 0 auto; background: #fff; border: 1px solid var(--line); border-bottom: 0; }

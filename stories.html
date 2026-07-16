@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マッチング事例 | Medi Job</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: linear-gradient(180deg,#f3f9fd,#fff 30%,#fff 100%); }
+    .stories-shell { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 44px 0 20px; }
+    .stories-title { max-width: 640px; margin: 0 auto 32px; text-align: center; }
+    .stories-title h1 { margin: 10px 0 8px; color: var(--blue-dark); font-size: clamp(28px,4vw,38px); font-weight: 900; }
+    .stories-title p { margin: 0; color: var(--muted); font-size: 15px; font-weight: 800; }
+    .stories-page .story-grid { margin-bottom: 12px; }
+    .stories-cta { width: min(1040px, calc(100% - 32px)); margin: 12px auto 60px; padding: clamp(28px,4vw,42px); text-align: center; background: linear-gradient(110deg, var(--blue) 0%, var(--green) 100%); border-radius: 16px; box-shadow: 0 20px 46px rgba(0,63,125,.16); }
+    .stories-cta h2 { margin: 0 0 8px; color: #fff; font-size: clamp(22px,3vw,30px); font-weight: 900; }
+    .stories-cta p { margin: 0 0 20px; color: rgba(255,255,255,.9); font-size: 14px; font-weight: 800; }
+    .stories-cta .btn { background: #fff; color: var(--blue-dark); }
+  </style>
+</head>
+<body class="stories-page">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Medi Job ホーム">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span>
+    </a>
+    <nav class="nav-links" aria-label="メインナビゲーション">
+      <a href="index.html#jobs">人気の求人</a>
+      <a href="index.html#professions">職種から探す</a>
+      <a href="index.html#flow">ご利用の流れ</a>
+      <a href="index.html#pricing">料金について</a>
+      <a href="index.html#faq">よくある質問</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-outline" href="login.html">ログイン</a>
+      <a class="btn btn-green" href="register.html">会員登録（無料）</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="stories-shell" aria-label="マッチング事例">
+      <div class="stories-title">
+        <span class="eyebrow" style="display:inline-flex;padding:7px 13px;color:var(--green-dark);background:#ecfff5;border:1px solid #b8ebcf;border-radius:999px;font-size:12px;font-weight:900;">Matching Stories</span>
+        <h1>マッチング事例</h1>
+        <p>7職種それぞれで、スポット勤務・業務委託を通じて活躍している方々の声をご紹介します。</p>
+      </div>
+      <div class="story-grid">
+        <article class="role-blue"><img src="assets/story-nurse.png" alt="看護師"><div><span>看護師 ／ 30代</span><p>単発で働けるので、家庭と両立しながら無理なく収入を増やせています。チャットでのやり取りもスムーズで安心して働けます。</p></div></article>
+        <article class="role-green"><img src="assets/story-lab.png" alt="臨床検査技師"><div><span>臨床検査技師 ／ 20代</span><p>色々な医療機関で経験を積めるのが魅力です。自分のスケジュールに合わせて働けるので、とても助かっています。</p></div></article>
+        <article class="role-blue"><img src="assets/03_radiology_real_photo_512.png" alt="放射線技師"><div><span>放射線技師 ／ 40代</span><p>本業の合間に単発で入れる求人が多く、無理のないペースで経験を積み増しできています。条件交渉もチャットで完結するので気軽です。</p></div></article>
+        <article class="role-green"><img src="assets/story-pt.png" alt="理学療法士"><div><span>理学療法士 ／ 30代</span><p>人手が足りない時にすぐに来てもらえるので本当に助かっています。登録から採用までの流れもとても簡単です。</p></div></article>
+        <article class="role-orange"><img src="assets/05_occupational_therapist_real_photo_512.png" alt="作業療法士"><div><span>作業療法士 ／ 20代</span><p>希望する勤務地・曜日で求人を絞り込めるので、無理なく続けられる働き方が見つかりました。応募後の連絡も早くて安心です。</p></div></article>
+        <article class="role-purple"><img src="assets/06_speech_hearing_real_photo_512.png" alt="言語聴覚士"><div><span>言語聴覚士 ／ 30代</span><p>単発の案件が多いエリアなので、育児と両立しながら少しずつ現場に戻れました。プロフィール登録だけで求人が見つかりやすいのも助かります。</p></div></article>
+        <article class="role-green"><img src="assets/07_helper_real_photo_512.png" alt="ヘルパー"><div><span>ヘルパー ／ 40代</span><p>急な人手不足の依頼にも対応でき、施設の方に感謝してもらえるのがやりがいです。勤務条件を事前にチャットで確認できるので安心して働けます。</p></div></article>
+      </div>
+    </section>
+
+    <section class="stories-cta" aria-labelledby="storiesCtaTitle">
+      <h2 id="storiesCtaTitle">あなたの経験を活かせる求人を探しませんか？</h2>
+      <p>登録・求人検索は無料。空き時間に合わせてスポット勤務・業務委託の求人を探せます。</p>
+      <a class="btn" href="register-seeker.html">求職者として無料登録 ›</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+      <p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p>
+      <div class="socials"><a href="#">f</a><a href="#">X</a><a href="#">●</a><a href="#">✉</a></div>
+    </div>
+    <div><h3>求職者向け</h3><a href="index.html#jobs">人気の求人</a><a href="index.html#professions">職種から探す</a><a href="index.html#flow">ご利用の流れ</a><a href="index.html#faq">よくある質問</a></div>
+    <div><h3>求人者向け</h3><a href="index.html#pricing">求人掲載について</a><a href="index.html#flow">ご利用の流れ</a><a href="index.html#pricing">料金について</a><a href="index.html#faq">よくある質問</a></div>
+    <div><h3>会社情報</h3><a href="#">運営会社</a><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">利用規約</a><a href="#">お問い合わせ</a></div>
+    <div class="footer-cta"><strong>まずは無料で会員登録</strong><span>あなたに合う登録ページへ進めます</span><a class="btn btn-green" href="register.html">新規会員登録（無料）›</a></div>
+    <p class="copyright">© 2024 Medi Job. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
