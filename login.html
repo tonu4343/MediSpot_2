@@ -351,7 +351,7 @@
         <p class="notice" id="notice">&#30331;&#37682;&#12375;&#12383;&#12513;&#12540;&#12523;&#12450;&#12489;&#12524;&#12473;&#12392;&#12497;&#12473;&#12527;&#12540;&#12489;&#12391;&#12525;&#12464;&#12452;&#12531;&#12375;&#12390;&#12367;&#12384;&#12373;&#12356;&#12290;</p>
         <div class="field">
           <label for="email">メールアドレス</label>
-          <input id="email" name="email" type="email" placeholder="例）example@example.com" required>
+          <input id="email" name="email" type="email" placeholder="例）example@example.com" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="ドメインを含む正しいメールアドレスの形式で入力してください（例：name@example.com）">
         </div>
         <div class="field">
           <label for="password">パスワード</label>
