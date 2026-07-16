@@ -53,9 +53,10 @@ img { display: block; max-width: 100%; }
   position: relative;
   width: 54px;
   height: 68px;
-  background-color: var(--blue);
-  -webkit-mask: url("assets/Blue.png") center / contain no-repeat;
-  mask: url("assets/Blue.png") center / contain no-repeat;
+  background-image: url("assets/Blue.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 .brand strong { display: block; font-size: 24px; line-height: 1; letter-spacing: 0.01em; text-transform: uppercase; }
 .brand small {
@@ -447,7 +448,7 @@ img { display: block; max-width: 100%; }
   background: linear-gradient(135deg, #004a91 0%, #0068bd 100%);
 }
 .inverse, .inverse small { color: #fff; }
-.inverse .brand-mark { background-color: #fff; }
+.inverse .brand-mark { background-image: url("assets/Blue-white.png"); }
 .site-footer p, .site-footer a, .site-footer span { color: rgba(255,255,255,0.86); }
 .site-footer h3 { margin: 0 0 12px; font-size: 14px; }
 .site-footer div:not(.footer-brand):not(.footer-cta):not(.socials) a { display: block; margin: 7px 0; font-size: 13px; font-weight: 700; }
