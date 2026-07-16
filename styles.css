@@ -49,6 +49,10 @@ img { display: block; max-width: 100%; }
   color: var(--blue);
   font-weight: 900;
 }
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
 .brand-mark {
   position: relative;
   width: 54px;
