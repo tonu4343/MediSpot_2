@@ -66,9 +66,15 @@
     return false;
   }
 
+  function isDuplicateSignup(authData) {
+    return Boolean(authData?.user) && Array.isArray(authData.user.identities) && authData.user.identities.length === 0;
+  }
+
+  const ALREADY_REGISTERED_MESSAGE = "このメールアドレスはすでに登録されています。ログインしてください。";
+
   function registrationErrorMessage(error) {
     const raw = String(error?.message || "").toLowerCase();
-    if (raw.includes("already registered") || raw.includes("already exists") || raw.includes("user already")) return "このメールアドレスはすでに登録されています。ログインしてください。";
+    if (raw.includes("already registered") || raw.includes("already exists") || raw.includes("user already")) return ALREADY_REGISTERED_MESSAGE;
     if (raw.includes("password") && (raw.includes("short") || raw.includes("weak") || raw.includes("characters"))) return "パスワードは8文字以上で入力してください。";
     if (raw.includes("invalid") && raw.includes("email")) return "正しいメールアドレスを入力してください。";
     if (raw.includes("rate limit") || raw.includes("too many")) return "登録操作が続いています。しばらく時間をおいてからもう一度お試しください。";
@@ -115,6 +121,12 @@
       setBusy(form, false);
       console.error(authError);
       showMessage("formMessage", registrationErrorMessage(authError), true);
+      return;
+    }
+
+    if (isDuplicateSignup(authData)) {
+      setBusy(form, false);
+      showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
       return;
     }
 
@@ -190,6 +202,12 @@
       setBusy(form, false);
       console.error(authError);
       showMessage("formMessage", registrationErrorMessage(authError), true);
+      return;
+    }
+
+    if (isDuplicateSignup(authData)) {
+      setBusy(form, false);
+      showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
       return;
     }
 
