@@ -87,7 +87,7 @@
           <input class="input" id="skillOther" placeholder="その他の内容を入力してください" style="display:none; margin-top:10px;">
           <div class="form-grid" style="margin-top:22px;">
             <div class="field"><label for="preferredStyle">希望雇用形態</label><select class="input" id="preferredStyle"><option>こだわらない</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></div>
-            <div class="field"><label for="preferredArea">希望勤務地（首都圏）</label><select class="input" id="preferredArea"><option value="">選択してください</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option></select></div>
+            <div class="field"><label>希望勤務地（首都圏・複数選択可）</label><div class="location-check-grid" id="preferredAreaGrid"><label class="location-check-pill"><input type="checkbox" value="東京都"><span>東京都</span></label><label class="location-check-pill"><input type="checkbox" value="神奈川県"><span>神奈川県</span></label><label class="location-check-pill"><input type="checkbox" value="千葉県"><span>千葉県</span></label><label class="location-check-pill"><input type="checkbox" value="埼玉県"><span>埼玉県</span></label></div></div>
             <div class="field full"><label for="pr">自己PR</label><textarea class="textarea" id="pr" placeholder="経験の概要や希望条件を自由にご記入ください。"></textarea></div>
           </div>
         </section>
@@ -159,6 +159,13 @@
         const otherText = value('skillOther');
         return checked.filter(v => v !== SKILL_OTHER).concat(checked.includes(SKILL_OTHER) ? [otherText ? SKILL_OTHER + '：' + otherText : SKILL_OTHER] : []);
       }
+      function selectedLocations() {
+        return Array.from(el('preferredAreaGrid').querySelectorAll('input:checked')).map(input => input.value);
+      }
+      function setLocations(saved) {
+        const set = new Set(Array.isArray(saved) ? saved : (saved ? [saved] : []));
+        el('preferredAreaGrid').querySelectorAll('input').forEach(input => { input.checked = set.has(input.value); });
+      }
       function computeAge(dateStr) {
         if (!dateStr) return null;
         const birth = new Date(dateStr);
@@ -180,7 +187,7 @@
         setValue('birthDate', currentProfile.birth_date);
         setValue('phone', currentProfile.phone);
         setValue('preferredStyle', currentProfile.preferred_style);
-        setValue('preferredArea', currentProfile.preferred_area);
+        setLocations(currentProfile.preferred_area);
         setValue('pr', currentProfile.pr);
         const savedSkills = Array.isArray(currentProfile.skills) ? currentProfile.skills : [];
         const otherEntry = savedSkills.find(s => s === SKILL_OTHER || s.indexOf(SKILL_OTHER + '：') === 0);
@@ -202,7 +209,7 @@
       el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + file.name + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
       el('birthDate').addEventListener('input', updateAgeHint);
       el('logoutButton').addEventListener('click', async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
-      el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: value('preferredArea'), preferred_style: value('preferredStyle'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。', false); el('saveStatus').textContent = '登録済み'; });
+      el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: selectedLocations(), preferred_style: value('preferredStyle'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。', false); el('saveStatus').textContent = '登録済み'; });
       load().catch(function (error) { console.error(error); message('プロフィールを読み込めませんでした。', true); });
     })();
   </script>

@@ -158,7 +158,7 @@
 
     <section class="search-panel seeker-search-panel" aria-label="求人検索">
       <label><span>職種（7職種・複数選択可）</span><select><option>職種を選択</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label>
-      <label><span>勤務地（首都圏・複数選択可）</span><select><option>勤務地を選択</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option></select></label>
+      <div role="group" aria-label="勤務地（首都圏・複数選択可）"><span>勤務地（首都圏・複数選択可）</span><div class="location-check-grid compact"><label class="location-check-pill"><input type="checkbox" value="東京都"><span>東京都</span></label><label class="location-check-pill"><input type="checkbox" value="神奈川県"><span>神奈川県</span></label><label class="location-check-pill"><input type="checkbox" value="千葉県"><span>千葉県</span></label><label class="location-check-pill"><input type="checkbox" value="埼玉県"><span>埼玉県</span></label></div></div>
       <label><span>雇用形態（複数選択可）</span><select><option>雇用形態を選択</option><option>スポット</option><option>パート</option></select></label>
       <label><span>勤務日</span><select><option>希望日を選択</option><option>平日</option><option>土日</option><option>単発</option><option>相談したい</option></select></label>
       <a class="btn btn-green" href="seeker-jobs.html">求人を探す</a>
@@ -251,7 +251,8 @@
         text("profileName", name);
         text("profileEmail", profile?.email || email || "-");
         text("profileLicense", profile?.license || profile?.job_type || "未設定");
-        text("profileArea", profile?.preferred_area || profile?.location || "未設定");
+        const area = profile?.preferred_area;
+        text("profileArea", (Array.isArray(area) && area.length ? area.join("、") : (typeof area === "string" ? area : "")) || profile?.location || "未設定");
         text("profileStyle", profile?.preferred_style || profile?.work_type || "未設定");
         text("profileYears", profile?.experience_years || profile?.experience || "未設定");
       }
