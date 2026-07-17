@@ -175,11 +175,14 @@
         document.body.classList.add("modal-open");
         publishButton.focus();
       }
+      function hasMarkup(value) { return /[<>]/.test(value); }
       form.addEventListener("submit", function (event) {
         event.preventDefault();
         if (!form.reportValidity()) return;
         const data = new FormData(form);
-        pendingRecord = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: data.get("title").trim(), category: data.get("category"), type: data.get("type"), salary: data.get("salary").trim(), location: data.get("location").trim(), work_date: data.get("work_date").trim(), status: "open" };
+        const title = data.get("title").trim(), salary = data.get("salary").trim(), location = data.get("location").trim(), workDate = data.get("work_date").trim();
+        if (hasMarkup(title) || hasMarkup(salary) || hasMarkup(location) || hasMarkup(workDate)) { message("「<」「>」は求人内容に使用できません。", true); return; }
+        pendingRecord = { employer_id: currentUser?.id || null, facility_name: employerProfile?.facility_name || "", title: title, category: data.get("category"), type: data.get("type"), salary: salary, location: location, work_date: workDate, status: "open" };
         localStorage.setItem("medi_job_employer_job_draft", JSON.stringify(Object.fromEntries(data.entries())));
         openPreview(pendingRecord);
       });
