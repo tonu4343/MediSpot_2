@@ -322,6 +322,25 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="profession-modal.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY');
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      async function maskExampleJobFacilities() {
+        if (!supabaseClient) return;
+        const session = await supabaseClient.auth.getSession();
+        if (session.data.session?.user) return;
+        document.querySelectorAll('.example-job-facility').forEach(function (el) {
+          el.textContent = '医療機関名は登録後に表示';
+          el.classList.add('is-masked');
+        });
+      }
+      maskExampleJobFacilities();
+    })();
+  </script>
 </body>
 </html>

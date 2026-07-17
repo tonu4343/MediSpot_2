@@ -2829,6 +2829,8 @@ body.profession-modal-open { overflow: hidden; }
 .example-job-icon.icon-purple { background: #f1eaff; }
 .example-job-heading h3 { margin: 0; color: var(--blue-dark); font-size: 16px; font-weight: 900; }
 .example-job-facility { margin: 0; color: #314d65; font-size: 13px; font-weight: 800; }
+.example-job-facility.is-masked { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-style: italic; font-weight: 700; }
+.example-job-facility.is-masked::before { content: "\1F512"; font-style: normal; font-size: 11px; }
 .example-job-meta {
   display: flex;
   flex-wrap: wrap;

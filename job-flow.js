@@ -27,11 +27,13 @@
     const title = document.getElementById('jobTitle');
     if (!title) return;
     const job = await findJob(getParam('id'));
+    let currentUser = null;
+    if (supabaseClient) { const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user || null; }
+    const isPublicVisitor = !!supabaseClient && !currentUser;
+
     title.textContent = job.title || t.detailTitle;
-    document.getElementById('jobLead').textContent = (job.facility_name || t.facility) + ' / ' + (job.location || '');
     document.getElementById('jobType').textContent = job.type || t.spot;
     document.getElementById('jobSalary').textContent = job.salary || t.salaryAsk;
-    document.getElementById('facility').textContent = job.facility_name || t.facility;
     document.getElementById('locationText').textContent = job.location || '-';
     document.getElementById('workDateText').textContent = job.work_date || '-';
     document.getElementById('requirements').textContent = job.requirements || job.category || '-';
@@ -39,7 +41,15 @@
     document.getElementById('confirmJobTitle').textContent = job.title || t.detailTitle;
     document.getElementById('confirmLocation').textContent = job.location || '-';
     document.getElementById('confirmWorkDate').textContent = job.work_date || '-';
+    if (isPublicVisitor) {
+      document.getElementById('jobLead').textContent = job.location || '';
+      document.getElementById('facility').textContent = '登録後に表示されます';
+    } else {
+      document.getElementById('jobLead').textContent = (job.facility_name || t.facility) + ' / ' + (job.location || '');
+      document.getElementById('facility').textContent = job.facility_name || t.facility;
+    }
 
+    const applyGate = document.getElementById('applyGate');
     const applyIntro = document.getElementById('applyIntro');
     const applyConfirm = document.getElementById('applyConfirm');
     const startButton = document.getElementById('startApplyButton');
@@ -51,13 +61,11 @@
     function showComplete() { applyIntro.style.display = 'none'; applyConfirm.style.display = 'none'; applyComplete.style.display = 'block'; }
     if (backButton) backButton.addEventListener('click', showIntro);
 
-    if (supabaseClient && !String(job.id || '').startsWith('demo-')) {
-      const session = await supabaseClient.auth.getSession();
-      const currentUser = session.data.session?.user;
-      if (currentUser) {
-        const existingOnLoad = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id', currentUser.id).eq('job_id', job.id).maybeSingle();
-        if (existingOnLoad.data) { showApplied(existingOnLoad.data); return; }
-      }
+    if (isPublicVisitor) { applyGate.style.display = 'block'; applyIntro.style.display = 'none'; }
+
+    if (supabaseClient && !String(job.id || '').startsWith('demo-') && currentUser) {
+      const existingOnLoad = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id', currentUser.id).eq('job_id', job.id).maybeSingle();
+      if (existingOnLoad.data) { showApplied(existingOnLoad.data); return; }
     }
 
     startButton.addEventListener('click', async () => {
