@@ -118,7 +118,7 @@
       </article>
     </section>
 
-    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card" href="#messages"><span>受信メッセージ</span><strong id="receivedMessages">0</strong></a><a class="stat-card" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
+    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card" href="#messages"><span>未読メッセージ</span><strong id="receivedMessages">0</strong></a><a class="stat-card" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
 
     <aside class="pricing-reminder" aria-label="料金のご案内"><div><strong>掲載無料・採用／稼働決定時のみ費用が発生します</strong><span>スポット求人は1名3,300円、常勤・非常勤求人は55,000円（いずれも税込）</span></div><a href="employer-job-new.html#pricing">料金詳細を見る ›</a></aside>
 
@@ -208,9 +208,11 @@
         const applicationsResult = await supabaseClient.from("seeker_applications").select("id,status,job_title,seeker_name").eq("employer_id", user.id);
         const applications = applicationsResult.error ? [] : (applicationsResult.data || []);
         if (!applicationsResult.error) { text("newApplications", String(applications.filter(function (app) { return app.status === "応募済み"; }).length)); text("hiredApplications", String(applications.filter(function (app) { return app.status === "採用決定"; }).length)); }
-        const messagesResult = await supabaseClient.from("application_messages").select("id,application_id,sender_id,body,created_at", { count: "exact" }).neq("sender_id", user.id).order("created_at", { ascending: false }).limit(5);
-        if (messagesResult.error) { console.error(messagesResult.error); text("receivedMessages", "0"); renderMessages([], applications); }
-        else { text("receivedMessages", String(messagesResult.count || 0)); renderMessages(messagesResult.data || [], applications); }
+        const unreadResult = await supabaseClient.from("application_messages").select("id", { count: "exact", head: true }).neq("sender_id", user.id).is("read_at", null);
+        text("receivedMessages", String(unreadResult.error ? 0 : (unreadResult.count || 0)));
+        const messagesResult = await supabaseClient.from("application_messages").select("id,application_id,sender_id,body,created_at").neq("sender_id", user.id).order("created_at", { ascending: false }).limit(5);
+        if (messagesResult.error) { console.error(messagesResult.error); renderMessages([], applications); }
+        else { renderMessages(messagesResult.data || [], applications); }
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
       loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs([]); });

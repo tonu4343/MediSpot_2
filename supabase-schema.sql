@@ -342,7 +342,8 @@ create table if not exists public.application_messages (
   application_id uuid not null references public.seeker_applications(id) on delete cascade,
   sender_id uuid not null references auth.users(id) on delete cascade,
   body text not null check (char_length(body) between 1 and 2000),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  read_at timestamptz
 );
 
 create index if not exists application_messages_application_created_idx on public.application_messages(application_id, created_at);
@@ -371,6 +372,29 @@ with check (
     select 1 from public.seeker_applications a
     where a.id = application_id
       and a.status in ('選考中', '採用決定')
+      and (a.user_id = auth.uid() or a.employer_id = auth.uid())
+  )
+);
+
+drop policy if exists "Participants mark messages read" on public.application_messages;
+
+create policy "Participants mark messages read"
+on public.application_messages
+for update
+to authenticated
+using (
+  sender_id <> auth.uid()
+  and exists (
+    select 1 from public.seeker_applications a
+    where a.id = application_id
+      and (a.user_id = auth.uid() or a.employer_id = auth.uid())
+  )
+)
+with check (
+  sender_id <> auth.uid()
+  and exists (
+    select 1 from public.seeker_applications a
+    where a.id = application_id
       and (a.user_id = auth.uid() or a.employer_id = auth.uid())
   )
 );
