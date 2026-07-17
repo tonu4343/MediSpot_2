@@ -12,6 +12,7 @@
     { id:'demo-pt', title:t.pt, facility_name:t.ptFacility, category:t.pt, type:t.spot, location:t.chiba, work_date:t.ptSaturday, salary:t.ptPay, description:t.ptDesc, requirements:t.ptReq, image:'assets/04_physical_therapist_real_photo_512.png' }
   ];
   function esc(v) { return String(v || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+  function looksSensitive(text) { return /(0\d{1,4}[-−ー－]?\d{1,4}[-−ー－]?\d{3,4})|(\d{10,11})/.test(text) || /(パスワード|password|暗証番号|マイナンバー|口座番号)/i.test(text); }
   function statusClass(status) { return status === '選考中' ? 'status-selection' : status === '採用決定' ? 'status-hired' : ''; }
   function getParam(name) { return new URLSearchParams(location.search).get(name); }
   function localApps() { try { return JSON.parse(localStorage.getItem('medispot_applications') || '[]'); } catch { return []; } }
@@ -119,6 +120,7 @@
       const button = document.getElementById('applyButton');
       msg.className = 'message';
       const baseApp = { job_id: job.id, employer_id: job.employer_id || null, job_title: job.title, facility_name: job.facility_name || t.facility, status: t.applied, message: document.getElementById('applyMessage').value.trim(), created_at: new Date().toISOString() };
+      if (baseApp.message && looksSensitive(baseApp.message) && !window.confirm('電話番号・住所・パスワードなど、個人情報や機密情報が含まれている可能性があります。\nこのまま送信しますか？')) return;
       if (!supabaseClient || String(job.id || '').startsWith('demo-')) { saveLocalApp(baseApp); showComplete(); return; }
       const session = await supabaseClient.auth.getSession();
       const user = session.data.session?.user;
