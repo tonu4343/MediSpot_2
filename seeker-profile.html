@@ -135,6 +135,7 @@
       };
       function skillsFor(license) { return (SKILL_MAP[license] || []).concat(SKILL_OTHER); }
       function el(id) { return document.getElementById(id); }
+      function esc(v) { return String(v || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c])); }
       function value(id) { return el(id)?.value?.trim() || null; }
       function setValue(id, value) { const node = el(id); if (node && value) node.value = value; }
       function message(text, error) { const node = el('formMessage'); node.textContent = text; node.style.display = 'inline'; node.style.color = error ? '#b42318' : 'var(--green-dark)'; }
@@ -206,7 +207,7 @@
         const saved = skillState[this.value];
         renderSkills(this.value, saved ? saved.skills : [], saved ? saved.other : '');
       });
-      el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + file.name + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
+      el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + esc(file.name) + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
       el('birthDate').addEventListener('input', updateAgeHint);
       el('logoutButton').addEventListener('click', async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
       el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: selectedLocations(), preferred_style: value('preferredStyle'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。前の画面に戻ります。', false); el('saveStatus').textContent = '登録済み'; const back = document.referrer && new URL(document.referrer).origin === window.location.origin ? document.referrer : 'seeker-dashboard.html'; setTimeout(function () { window.location.href = back; }, 900); });
