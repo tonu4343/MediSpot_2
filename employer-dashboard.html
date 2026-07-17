@@ -57,6 +57,9 @@
     a.stat-card:hover { transform: translateY(-2px); border-color: #9bcbed; box-shadow: 0 20px 42px rgba(0,91,172,.13); }
     .stat-card span { color: var(--muted); font-size: 13px; font-weight: 900; }
     .stat-card strong { display: block; margin-top: 6px; color: var(--blue); font-size: 34px; line-height: 1; font-weight: 900; }
+    .stat-card.stat-new strong { color: var(--blue); }
+    .stat-card.stat-messages strong { color: #d9822b; }
+    .stat-card.stat-hired strong { color: var(--green-dark); }
     .dashboard-grid { display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 22px; align-items: start; }
     .section-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
     .section-title-row h2 { margin: 0; }
@@ -121,7 +124,7 @@
       </article>
     </section>
 
-    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card" href="#messages"><span>未読メッセージ</span><strong id="receivedMessages">0</strong></a><a class="stat-card" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
+    <section class="stats-grid" aria-label="求人状況"><a class="stat-card" href="#jobs"><span>掲載中求人</span><strong id="openJobs">0</strong></a><a class="stat-card stat-new" href="employer-applications.html"><span>新着応募</span><strong id="newApplications">0</strong></a><a class="stat-card stat-messages" href="#messages"><span>未読メッセージ</span><strong id="receivedMessages">0</strong></a><a class="stat-card stat-hired" href="employer-applications.html"><span>採用成立</span><strong id="hiredApplications">0</strong></a></section>
 
     <aside class="pricing-reminder" aria-label="料金のご案内"><div><strong>掲載無料・採用／稼働決定時のみ費用が発生します</strong><span>スポット求人は1名3,300円、常勤・非常勤求人は55,000円（いずれも税込）</span></div><a href="employer-job-new.html#pricing">料金詳細を見る ›</a></aside>
 
