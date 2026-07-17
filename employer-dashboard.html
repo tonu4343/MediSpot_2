@@ -48,6 +48,9 @@
     .profile-list span { min-width: 0; overflow-wrap: anywhere; text-align: right; line-height: 1.65; }
     .profile-note { display: flex; align-items: flex-start; gap: 8px; margin: 0; padding: 14px 22px; color: #587084; font-size: 11px; line-height: 1.6; font-weight: 700; border-top: 1px solid var(--line); }
     .profile-note::before { content: "i"; display: grid; place-items: center; flex: 0 0 16px; width: 16px; height: 16px; color: var(--blue); background: #eaf3fb; border-radius: 50%; font-size: 10px; font-weight: 900; }
+    .profile-action-row { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 22px 20px; border-top: 1px solid var(--line); }
+    .profile-edit-link { display: inline-flex; align-items: center; justify-content: center; flex: 1; min-height: 42px; padding: 0 10px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 8px; font-size: 13px; font-weight: 900; white-space: nowrap; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+    .profile-edit-link:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,63,125,.12); }
     .stats-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { min-height: 118px; padding: 22px; }
     a.stat-card { display: block; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
@@ -99,7 +102,7 @@
 <body class="employer-dashboard-page">
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人作成</a><a href="#jobs">求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="#profile">施設情報</a></nav>
+    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人作成</a><a href="#jobs">求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="employer-profile.html">施設情報</a></nav>
     <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
   </header>
 
@@ -114,7 +117,7 @@
         <span class="eyebrow">求人者マイページ</span>
         <h1>必要になった時、<br><span class="headline-green">必要なスキルのスタッフとつながる</span></h1>
         <p>スポット勤務・業務委託・非常勤の募集を整理し、応募者の資格や希望条件を確認できます。まずは募集内容を作成して、必要な人材とつながりましょう。</p>
-        <div class="hero-actions"><a class="btn btn-green" href="employer-job-new.html">求人を作成する</a><a class="btn btn-outline" href="#profile">施設情報を確認</a></div>
+        <div class="hero-actions"><a class="btn btn-green" href="employer-job-new.html">求人を作成する</a><a class="btn btn-outline" href="employer-profile.html">施設情報を確認</a></div>
       </article>
     </section>
 
@@ -129,6 +132,7 @@
         <div class="facility-name"><span class="avatar" id="facilityInitial">M</span><div><strong id="facilityName">読み込み中</strong><span id="contactEmail">ログイン確認中</span></div></div>
         <ul class="profile-list"><li><b>担当者</b><span id="contactName">-</span></li><li><b>施設区分</b><span id="facilityType">-</span></li><li><b>募集職種</b><span id="staffNeed">-</span></li><li><b>所在地</b><span id="address">-</span></li></ul>
         <p class="profile-note">この施設情報は求人票と応募者へのご案内に使用されます。</p>
+        <div class="profile-action-row"><a class="profile-edit-link" href="employer-profile.html">施設情報を編集</a></div>
       </aside>
     </section>
 
@@ -141,7 +145,7 @@
 
   <footer class="site-footer employer-footer">
     <div class="footer-brand"><a class="brand inverse" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
-    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="employer-dashboard.html#profile">施設情報</a></div>
+    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="employer-profile.html">施設情報</a></div>
     <div class="footer-cta"><strong>人材募集を始める</strong><span>掲載無料。採用・稼働決定時のみ費用が発生します。</span><a class="btn btn-green" href="employer-job-new.html">求人を作成（無料）›</a></div>
     <p class="copyright">© 2024 Medi Job. All Rights Reserved.</p>
   </footer>
