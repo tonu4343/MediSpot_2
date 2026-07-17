@@ -19,9 +19,11 @@
       <a href="#pricing">料金について</a>
       <a href="#faq">よくある質問</a>
     </nav>
-    <div class="header-actions">
-      <a class="btn btn-outline" href="login.html">ログイン</a>
-      <a class="btn btn-green" href="register.html">会員登録（無料）</a>
+    <div class="header-actions" id="headerActions">
+      <a class="btn btn-outline" href="login.html" id="headerLoginLink">ログイン</a>
+      <a class="btn btn-green" href="register.html" id="headerRegisterLink">会員登録（無料）</a>
+      <a class="btn btn-outline" href="seeker-dashboard.html" id="headerMyPageLink" style="display:none;">マイページ</a>
+      <button class="btn btn-outline" id="headerLogoutButton" type="button" style="display:none; cursor:pointer;">ログアウト</button>
     </div>
   </header>
 
@@ -330,16 +332,33 @@
       const config = window.MEDISPOT_SUPABASE || {};
       const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY');
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
-      async function maskExampleJobFacilities() {
-        if (!supabaseClient) return;
-        const session = await supabaseClient.auth.getSession();
-        if (session.data.session?.user) return;
+      function maskExampleJobFacilities() {
         document.querySelectorAll('.example-job-facility').forEach(function (el) {
           el.textContent = '医療機関名は登録後に表示';
           el.classList.add('is-masked');
         });
       }
-      maskExampleJobFacilities();
+      function showLoggedInHeader(role) {
+        document.getElementById('headerLoginLink').style.display = 'none';
+        document.getElementById('headerRegisterLink').style.display = 'none';
+        const myPageLink = document.getElementById('headerMyPageLink');
+        myPageLink.href = role === 'employer' ? 'employer-dashboard.html' : 'seeker-dashboard.html';
+        myPageLink.style.display = '';
+        const logoutButton = document.getElementById('headerLogoutButton');
+        logoutButton.style.display = '';
+        logoutButton.addEventListener('click', async function () {
+          await supabaseClient.auth.signOut();
+          location.href = 'index.html';
+        });
+      }
+      async function applyAuthState() {
+        if (!supabaseClient) return;
+        const session = await supabaseClient.auth.getSession();
+        const user = session.data.session?.user;
+        if (!user) { maskExampleJobFacilities(); return; }
+        showLoggedInHeader(user.user_metadata?.role);
+      }
+      applyAuthState();
     })();
   </script>
 </body>
