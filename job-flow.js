@@ -4,7 +4,7 @@
   const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY');
   const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
   const t = {
-    nurse:'スポット看護師', clinic:'新宿メディカルクリニック', nurseCat:'看護師', spot:'スポット', tokyo:'東京都 新宿区', friday:'今週金曜 9:00-17:00', nursePay:'日給 18,000円〜22,000円', nurseDesc:'外来補助、採血、問診、処置準備を担当します。短時間勤務の相談も可能です。', nurseReq:'看護師免許、採血経験', lab:'臨床検査技師', labFacility:'横浜健診センター', contract:'業務委託', kanagawa:'神奈川県 横浜市', weekly:'週1日から相談', labPay:'日給 16,000円〜20,000円', labDesc:'健診における検体検査、生理検査、結果入力を担当します。', labReq:'臨床検査技師免許', radio:'放射線技師', radioFacility:'大阪画像診断クリニック', part:'パート', osaka:'大阪府 大阪市', saturday:'土曜午前', radioDesc:'一般撮影、CT補助、検査前後の患者案内を担当します。', radioReq:'診療放射線技師免許', pt:'理学療法士', ptFacility:'千葉リハビリテーション病院', chiba:'千葉県 美浜区', ptSaturday:'今週土曜 9:00-16:00', ptPay:'日給 18,000円〜22,000円', ptDesc:'入院患者様の歩行訓練、関節可動域訓練、リハビリテーション計画の補助を担当します。', ptReq:'理学療法士免許', match:'マッチ度高', medicalJob:'医療求人', facility:'医療機関', salaryAsk:'給与相談', detail:'詳細を見る', none:'条件に合う求人がありません。条件を変更して検索してください。', count:'件', detailTitle:'求人詳細', defaultDesc:'業務内容は医療機関と確認します。', applied:'応募済み', applyDone:'応募を受け付けました。応募管理ページへ移動します。', appJob:'応募求人', noApps:'まだ応募はありません。求人検索から応募できます。' };
+    nurse:'スポット看護師', clinic:'新宿メディカルクリニック', nurseCat:'看護師', spot:'スポット', tokyo:'東京都 新宿区', friday:'今週金曜 9:00-17:00', nursePay:'日給 18,000円〜22,000円', nurseDesc:'外来補助、採血、問診、処置準備を担当します。短時間勤務の相談も可能です。', nurseReq:'看護師免許、採血経験', lab:'臨床検査技師', labFacility:'横浜健診センター', contract:'業務委託', kanagawa:'神奈川県 横浜市', weekly:'週1日から相談', labPay:'日給 16,000円〜20,000円', labDesc:'健診における検体検査、生理検査、結果入力を担当します。', labReq:'臨床検査技師免許', radio:'放射線技師', radioFacility:'大阪画像診断クリニック', part:'パート', osaka:'大阪府 大阪市', saturday:'土曜午前', radioDesc:'一般撮影、CT補助、検査前後の患者案内を担当します。', radioReq:'診療放射線技師免許', pt:'理学療法士', ptFacility:'千葉リハビリテーション病院', chiba:'千葉県 美浜区', ptSaturday:'今週土曜 9:00-16:00', ptPay:'日給 18,000円〜22,000円', ptDesc:'入院患者様の歩行訓練、関節可動域訓練、リハビリテーション計画の補助を担当します。', ptReq:'理学療法士免許', match:'マッチ度高', medicalJob:'医療求人', facility:'医療機関', salaryAsk:'給与相談', detail:'詳細を見る', none:'条件に合う求人がありません。条件を変更して検索してください。', count:'件', detailTitle:'求人詳細', defaultDesc:'業務内容は医療機関と確認します。', applied:'応募済み', applyDone:'応募が完了しました。', appJob:'応募求人', noApps:'まだ応募はありません。求人検索から応募できます。' };
   const demoJobs = [
     { id:'demo-nurse', title:t.nurse, facility_name:t.clinic, category:t.nurseCat, type:t.spot, location:t.tokyo, work_date:t.friday, salary:t.nursePay, description:t.nurseDesc, requirements:t.nurseReq, image:'assets/job-nurse.png' },
     { id:'demo-lab', title:t.lab, facility_name:t.labFacility, category:t.lab, type:t.contract, location:t.kanagawa, work_date:t.weekly, salary:t.labPay, description:t.labDesc, requirements:t.labReq, image:'assets/job-lab.png' },
@@ -21,22 +21,118 @@
   async function loadJobsPage() { const list = document.getElementById('jobsList'); if (!list) return; let jobs = demoJobs; if (supabaseClient) { const r = await supabaseClient.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false}); if (!r.error && r.data && r.data.length) jobs = r.data; } const render = () => { const cat = document.getElementById('category').value; const loc = document.getElementById('location').value; const type = document.getElementById('type').value; const day = document.getElementById('workDate').value; const filtered = jobs.filter(j => (!cat || j.category === cat) && (!loc || String(j.location || '').includes(loc)) && (!type || j.type === type) && (!day || String(j.work_date || '').includes(day))); document.getElementById('jobCount').textContent = filtered.length + t.count; list.innerHTML = filtered.length ? filtered.map(card).join('') : '<div class="panel">'+t.none+'</div>'; }; document.getElementById('searchButton').addEventListener('click', render); render(); }
   async function findJob(id) { if (supabaseClient && id && !id.startsWith('demo-')) { const r = await supabaseClient.from('jobs').select('*').eq('id', id).maybeSingle(); if (!r.error && r.data) return r.data; } return demoJobs.find(j => j.id === id) || demoJobs[0]; }
   function showApplied(app) { const applySection = document.getElementById('applySection'); const appliedSection = document.getElementById('appliedSection'); if (!appliedSection) return; applySection.style.display = 'none'; appliedSection.style.display = 'block'; document.getElementById('appliedStatus').textContent = app.status || t.applied; const canChat = app.status === '選考中' || app.status === '採用決定'; const note = document.getElementById('appliedNote'); const link = document.getElementById('appliedLink'); if (canChat) { note.textContent = '選考が進んでいます。チャットで医療機関とやり取りできます。'; link.textContent = 'メッセージを確認する'; link.href = 'application-chat.html?id=' + encodeURIComponent(app.id); } else { note.textContent = 'この求人にはすでに応募済みです。選考状況は応募管理から確認できます。'; link.textContent = '応募管理を見る'; link.href = 'seeker-applications.html'; } }
-  function setBadge(id, ok, completeText, incompleteText, href) { const el = document.getElementById(id); if (!el) return; el.textContent = ok ? completeText : incompleteText; el.className = 'check-badge ' + (ok ? 'complete' : 'incomplete'); el.onclick = ok ? null : () => { location.href = href; }; }
-  async function loadConfirmStatus(job) {
-    if (!supabaseClient || String(job.id || '').startsWith('demo-')) { setBadge('confirmProfileStatus', false, '', 'ログイン後に確認できます', 'login.html?role=seeker'); setBadge('confirmResumeStatus', false, '', 'ログイン後に確認できます', 'login.html?role=seeker'); return; }
-    const session = await supabaseClient.auth.getSession();
-    const user = session.data.session?.user;
-    if (!user) { setBadge('confirmProfileStatus', false, '', 'ログインが必要です', 'login.html?role=seeker'); setBadge('confirmResumeStatus', false, '', 'ログインが必要です', 'login.html?role=seeker'); return; }
-    const [profileResult, resumeResult] = await Promise.all([
-      supabaseClient.from('seeker_profiles').select('license,birth_date').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-      supabaseClient.from('seeker_resumes').select('id').eq('user_id', user.id).maybeSingle()
-    ]);
-    const profileOk = !profileResult.error && !!(profileResult.data && profileResult.data.license && profileResult.data.birth_date);
-    const resumeOk = !resumeResult.error && !!resumeResult.data;
-    setBadge('confirmProfileStatus', profileOk, '✓ 完成', '未完了・編集する', 'seeker-profile.html');
-    setBadge('confirmResumeStatus', resumeOk, '✓ 作成済み', '未登録・編集する', 'seeker-resume.html?returnTo=' + encodeURIComponent(location.href));
+  function profileComplete(p) { return !!(p && p.name && p.license && p.birth_date && p.experience_years && p.preferred_style); }
+  async function loadDetailPage() {
+    const title = document.getElementById('jobTitle');
+    if (!title) return;
+    const job = await findJob(getParam('id'));
+    title.textContent = job.title || t.detailTitle;
+    document.getElementById('jobLead').textContent = (job.facility_name || t.facility) + ' / ' + (job.location || '');
+    document.getElementById('jobType').textContent = job.type || t.spot;
+    document.getElementById('jobSalary').textContent = job.salary || t.salaryAsk;
+    document.getElementById('facility').textContent = job.facility_name || t.facility;
+    document.getElementById('locationText').textContent = job.location || '-';
+    document.getElementById('workDateText').textContent = job.work_date || '-';
+    document.getElementById('requirements').textContent = job.requirements || job.category || '-';
+    document.getElementById('description').textContent = job.description || t.defaultDesc;
+    document.getElementById('confirmJobTitle').textContent = job.title || t.detailTitle;
+    document.getElementById('confirmLocation').textContent = job.location || '-';
+    document.getElementById('confirmWorkDate').textContent = job.work_date || '-';
+
+    const applyIntro = document.getElementById('applyIntro');
+    const applyConfirm = document.getElementById('applyConfirm');
+    const startButton = document.getElementById('startApplyButton');
+    const introMsg = document.getElementById('introMessage');
+    const backButton = document.getElementById('backButton');
+    function showIntro() { applyConfirm.style.display = 'none'; applyIntro.style.display = 'block'; }
+    function showConfirm() { applyIntro.style.display = 'none'; applyConfirm.style.display = 'block'; }
+    if (backButton) backButton.addEventListener('click', showIntro);
+
+    if (supabaseClient && !String(job.id || '').startsWith('demo-')) {
+      const session = await supabaseClient.auth.getSession();
+      const currentUser = session.data.session?.user;
+      if (currentUser) {
+        const existingOnLoad = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id', currentUser.id).eq('job_id', job.id).maybeSingle();
+        if (existingOnLoad.data) { showApplied(existingOnLoad.data); return; }
+      }
+    }
+
+    startButton.addEventListener('click', async () => {
+      introMsg.className = 'message'; introMsg.style.display = 'none';
+      if (!supabaseClient || String(job.id || '').startsWith('demo-')) { showConfirm(); return; }
+      const session = await supabaseClient.auth.getSession();
+      const user = session.data.session?.user;
+      if (!user) { location.href = 'login.html?role=seeker'; return; }
+      startButton.disabled = true; startButton.textContent = '確認しています…';
+      const [profileResult, resumeResult] = await Promise.all([
+        supabaseClient.from('seeker_profiles').select('name,email,license,birth_date,experience_years,preferred_style').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+        supabaseClient.from('seeker_resumes').select('id').eq('user_id', user.id).maybeSingle()
+      ]);
+      startButton.disabled = false; startButton.textContent = 'この求人に応募する';
+      if (profileResult.error || resumeResult.error) {
+        const err = profileResult.error || resumeResult.error;
+        introMsg.className = 'message error'; introMsg.style.display = 'block';
+        introMsg.textContent = '確認できませんでした：' + (err.message || '不明なエラー');
+        return;
+      }
+      if (!profileComplete(profileResult.data)) {
+        introMsg.className = 'message error'; introMsg.style.display = 'block';
+        introMsg.textContent = '応募するにはプロフィールの必須項目を入力してください。';
+        setTimeout(() => { location.href = 'seeker-profile.html'; }, 1200);
+        return;
+      }
+      if (!resumeResult.data) {
+        introMsg.className = 'message error'; introMsg.style.display = 'block';
+        introMsg.textContent = '応募するには履歴書を作成してください。';
+        setTimeout(() => { location.href = 'seeker-resume.html?returnTo=' + encodeURIComponent(location.href); }, 1200);
+        return;
+      }
+      showConfirm();
+    });
+
+    document.getElementById('applyButton').addEventListener('click', async () => {
+      const msg = document.getElementById('message');
+      const button = document.getElementById('applyButton');
+      msg.className = 'message';
+      const baseApp = { job_id: job.id, employer_id: job.employer_id || null, job_title: job.title, facility_name: job.facility_name || t.facility, status: t.applied, message: document.getElementById('applyMessage').value.trim(), created_at: new Date().toISOString() };
+      if (!supabaseClient || String(job.id || '').startsWith('demo-')) { saveLocalApp(baseApp); msg.style.display = 'block'; msg.textContent = t.applyDone; setTimeout(() => location.href = 'seeker-applications.html', 800); return; }
+      const session = await supabaseClient.auth.getSession();
+      const user = session.data.session?.user;
+      if (!user) { location.href = 'login.html?role=seeker'; return; }
+      button.disabled = true; button.textContent = '応募しています…';
+      const [profileResult, resumeResult] = await Promise.all([
+        supabaseClient.from('seeker_profiles').select('name,email,license,birth_date,experience_years,preferred_style').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+        supabaseClient.from('seeker_resumes').select('id').eq('user_id', user.id).maybeSingle()
+      ]);
+      if (profileResult.error || resumeResult.error) {
+        button.disabled = false; button.textContent = '応募を確定する';
+        const err = profileResult.error || resumeResult.error;
+        msg.className = 'message error'; msg.style.display = 'block';
+        msg.textContent = '確認できませんでした：' + (err.message || '不明なエラー');
+        return;
+      }
+      if (!profileComplete(profileResult.data) || !resumeResult.data) {
+        button.disabled = false; button.textContent = '応募を確定する';
+        msg.className = 'message error'; msg.style.display = 'block';
+        msg.textContent = 'プロフィールまたは履歴書の内容を確認できませんでした。内容をご確認のうえ、再度お試しください。';
+        return;
+      }
+      const profile = profileResult.data;
+      const app = Object.assign({}, baseApp, { user_id: user.id, seeker_name: profile.name || user.user_metadata?.name || '求職者', seeker_email: profile.email || user.email || '', seeker_profession: profile.license || '' });
+      const existing = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id', user.id).eq('job_id', job.id).maybeSingle();
+      if (existing.data) { button.disabled = false; button.textContent = '応募を確定する'; showApplied(existing.data); return; }
+      const result = await supabaseClient.from('seeker_applications').insert(app).select('id').single();
+      button.disabled = false; button.textContent = '応募を確定する';
+      if (result.error) {
+        console.error(result.error);
+        msg.className = 'message error'; msg.style.display = 'block';
+        msg.textContent = '応募を保存できませんでした：' + (result.error.message || '不明なエラー');
+        return;
+      }
+      msg.className = 'message'; msg.style.display = 'block'; msg.textContent = t.applyDone;
+      setTimeout(() => location.href = 'seeker-applications.html', 800);
+    });
   }
-  async function loadDetailPage() { const title = document.getElementById('jobTitle'); if (!title) return; const job = await findJob(getParam('id')); title.textContent = job.title || t.detailTitle; document.getElementById('jobLead').textContent = (job.facility_name || t.facility) + ' / ' + (job.location || ''); document.getElementById('jobType').textContent = job.type || t.spot; document.getElementById('jobSalary').textContent = job.salary || t.salaryAsk; document.getElementById('facility').textContent = job.facility_name || t.facility; document.getElementById('locationText').textContent = job.location || '-'; document.getElementById('workDateText').textContent = job.work_date || '-'; document.getElementById('requirements').textContent = job.requirements || job.category || '-'; document.getElementById('description').textContent = job.description || t.defaultDesc; document.getElementById('confirmJobTitle').textContent = job.title || t.detailTitle; document.getElementById('confirmLocation').textContent = job.location || '-'; document.getElementById('confirmWorkDate').textContent = job.work_date || '-'; const backButton = document.getElementById('backButton'); if (backButton) backButton.addEventListener('click', () => { if (document.referrer && document.referrer.indexOf(location.origin) === 0) { history.back(); } else { location.href = 'seeker-jobs.html'; } }); loadConfirmStatus(job); if (supabaseClient && !String(job.id || '').startsWith('demo-')) { const session = await supabaseClient.auth.getSession(); const currentUser = session.data.session?.user; if (currentUser) { const existingOnLoad = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id', currentUser.id).eq('job_id', job.id).maybeSingle(); if (existingOnLoad.data) { showApplied(existingOnLoad.data); return; } } } document.getElementById('applyButton').addEventListener('click', async () => { const msg = document.getElementById('message'); const button = document.getElementById('applyButton'); msg.className = 'message'; const baseApp = { job_id: job.id, employer_id: job.employer_id || null, job_title: job.title, facility_name: job.facility_name || t.facility, status:t.applied, message: document.getElementById('applyMessage').value.trim(), created_at: new Date().toISOString() }; if (!supabaseClient || String(job.id || '').startsWith('demo-')) { saveLocalApp(baseApp); msg.style.display='block'; msg.textContent=t.applyDone; setTimeout(() => location.href='seeker-applications.html', 800); return; } const session = await supabaseClient.auth.getSession(); const user = session.data.session?.user; if (!user) { location.href='login.html?role=seeker'; return; } button.disabled=true; button.textContent='確認しています…'; const profileResult = await supabaseClient.from('seeker_profiles').select('name,email,license,birth_date').eq('user_id',user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(); if (profileResult.error) { button.disabled=false; button.textContent='応募を確定する'; msg.className='message error'; msg.style.display='block'; msg.textContent='プロフィールを確認できませんでした：' + (profileResult.error.message || '不明なエラー'); return; } const profile = profileResult.data; if (!profile || !profile.license || !profile.birth_date) { button.disabled=false; button.textContent='応募を確定する'; msg.style.display='block'; msg.textContent='応募には基本プロフィールの入力が必要です。プロフィール編集ページへ移動します。'; setTimeout(() => location.href='seeker-profile.html', 1000); return; } const resumeResult = await supabaseClient.from('seeker_resumes').select('id').eq('user_id',user.id).maybeSingle(); if (resumeResult.error) { button.disabled=false; button.textContent='応募を確定する'; msg.className='message error'; msg.style.display='block'; msg.textContent='履歴書を確認できませんでした：' + (resumeResult.error.message || '不明なエラー'); return; } if (!resumeResult.data) { button.disabled=false; button.textContent='応募を確定する'; msg.style.display='block'; msg.textContent='応募には履歴書・職務経歴書の登録が必要です。履歴書編集ページへ移動します。'; setTimeout(() => location.href='seeker-resume.html?returnTo=' + encodeURIComponent(location.href), 1000); return; } button.textContent='応募しています…'; const app = Object.assign({},baseApp,{user_id:user.id,seeker_name:profile.name || user.user_metadata?.name || '求職者',seeker_email:profile.email || user.email || '',seeker_profession:profile.license || ''}); const existing = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id',user.id).eq('job_id',job.id).maybeSingle(); if (existing.data) { button.disabled=false; button.textContent='応募を確定する'; showApplied(existing.data); return; } const result = await supabaseClient.from('seeker_applications').insert(app).select('id').single(); button.disabled=false; button.textContent='応募を確定する'; if (result.error) { console.error(result.error); msg.className='message error'; msg.style.display='block'; msg.textContent='応募を保存できませんでした：' + (result.error.message || '不明なエラー'); return; } msg.className='message'; msg.style.display='block'; msg.textContent=t.applyDone; setTimeout(() => location.href='seeker-applications.html', 800); }); }
   async function loadApplicationsPage() { const list = document.getElementById('applicationsList'); if (!list) return; let apps = localApps(); if (supabaseClient) { const session = await supabaseClient.auth.getSession(); const user = session.data.session?.user; if (!user && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') { location.href='login.html?role=seeker'; return; } if (user) { const profileResult = await supabaseClient.from('seeker_profiles').select('id').eq('user_id', user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(); if (profileResult.error || !profileResult.data) { await supabaseClient.auth.signOut(); location.href='login.html?role=seeker&roleError=1'; return; } const r = await supabaseClient.from('seeker_applications').select('*').eq('user_id', user.id).order('created_at',{ascending:false}); if (!r.error) apps = r.data || []; } } list.innerHTML = apps.length ? apps.map(a => { const canChat = a.id && (a.status === '選考中' || a.status === '採用決定'); return '<article class="job-card"><div><span class="status">'+esc(a.status || t.applied)+'</span><h3>'+esc(a.job_title || t.appJob)+'</h3><p class="job-meta">'+esc(a.facility_name || t.facility)+' / '+esc((a.created_at || '').slice(0,10))+'</p></div><div class="job-actions" style="display:flex;flex-wrap:wrap;gap:8px;"><a class="btn btn-outline" href="job-detail.html?id='+encodeURIComponent(a.job_id || '')+'">'+t.detail+'</a>'+(canChat?'<a class="btn btn-blue" href="application-chat.html?id='+encodeURIComponent(a.id)+'">メッセージ</a>':'')+'</div></article>'; }).join('') : '<div class="panel">'+t.noApps+'</div>'; }
   logoutWire(); loadJobsPage(); loadDetailPage(); loadApplicationsPage();
 })();
