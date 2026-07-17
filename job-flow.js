@@ -151,6 +151,10 @@
       button.disabled = false; button.textContent = '応募を確定する';
       if (result.error) {
         console.error(result.error);
+        if (result.error.code === '23505') {
+          const already = await supabaseClient.from('seeker_applications').select('id,status').eq('user_id', user.id).eq('job_id', job.id).maybeSingle();
+          if (already.data) { showApplied(already.data); return; }
+        }
         msg.className = 'message error'; msg.style.display = 'block';
         msg.textContent = '応募を保存できませんでした：' + (result.error.message || '不明なエラー');
         return;

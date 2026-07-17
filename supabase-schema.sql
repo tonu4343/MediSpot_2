@@ -295,6 +295,19 @@ from public.seeker_profiles p
 where a.user_id = p.user_id
   and (a.seeker_name is null or a.seeker_email is null or a.seeker_profession is null);
 
+-- Prevent a seeker from applying to the same job twice (keep the earliest row if duplicates already exist)
+delete from public.seeker_applications a
+using public.seeker_applications b
+where a.user_id = b.user_id
+  and a.job_id = b.job_id
+  and a.job_id is not null
+  and a.user_id is not null
+  and (a.created_at, a.id) > (b.created_at, b.id);
+
+create unique index if not exists seeker_applications_user_job_unique
+on public.seeker_applications (user_id, job_id)
+where user_id is not null and job_id is not null;
+
 alter table public.seeker_applications enable row level security;
 
 drop policy if exists "Allow seeker application own inserts" on public.seeker_applications;
