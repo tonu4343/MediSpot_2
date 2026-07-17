@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>応募者プロフィール | Medi Job</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.applicant-page { background: linear-gradient(180deg,#f3f9fd,#fff 55%,#f2faf7); color: var(--ink); }
+    .main-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
+    .main-nav a { padding: 8px 0; }
+    .detail-shell { width: min(980px,calc(100% - 40px)); margin: 0 auto; padding: 36px 0 72px; }
+    .breadcrumb { display: flex; gap: 8px; margin-bottom: 18px; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .breadcrumb a { color: var(--blue); }
+    .detail-head, .panel-card { background: #fff; border: 1px solid #d3e3ed; border-radius: 14px; box-shadow: 0 16px 38px rgba(0,63,125,.08); }
+    .detail-head { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: clamp(24px,4vw,36px); margin-bottom: 22px; }
+    .detail-head h1 { margin: 8px 0 5px; color: var(--blue-dark); font-size: clamp(24px,4vw,34px); font-weight: 900; }
+    .detail-head p { margin: 0; color: var(--muted); font-size: 13px; font-weight: 800; }
+    .detail-head .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn-blue { color: #fff; background: linear-gradient(180deg, var(--blue-2), var(--blue)); box-shadow: 0 14px 28px rgba(0,91,172,.22); }
+    .status-badge { display: inline-flex; min-height: 28px; align-items: center; padding: 0 12px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .panel-card { padding: clamp(22px,4vw,32px); margin-bottom: 20px; }
+    .panel-card h2 { margin: 0 0 16px; color: var(--blue-dark); font-size: 20px; font-weight: 900; }
+    .detail-list { display: grid; grid-template-columns: 160px 1fr; gap: 12px 16px; margin: 0; }
+    .detail-list dt { color: var(--muted); font-weight: 900; font-size: 13px; }
+    .detail-list dd { margin: 0; color: #102338; font-weight: 800; overflow-wrap: anywhere; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { display: inline-flex; align-items: center; min-height: 30px; padding: 0 13px; color: var(--blue-dark); background: #f4fbff; border: 1px solid #b7d8ef; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .pr-text { margin: 0; color: #37566f; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
+    .entry-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .entry-list li { padding: 12px 14px; background: #f8fbfd; border: 1px solid #dfeaf1; border-radius: 8px; font-size: 13px; color: #263c4f; font-weight: 700; line-height: 1.7; }
+    .entry-list li b { display: block; color: var(--blue-dark); font-weight: 900; }
+    .empty-note { padding: 18px; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 9px; font-size: 13px; font-weight: 800; text-align: center; }
+    .page-status { margin: 0 0 18px; padding: 14px 16px; color: #49667d; background: #f3f9fd; border: 1px solid #cfe3f2; border-radius: 9px; font-size: 13px; font-weight: 800; }
+    .page-status.error { color: #9d2d24; background: #fff2f0; border-color: #f1bbb5; }
+    @media (max-width: 680px) { .detail-shell { width: calc(100% - 28px); } .detail-head { align-items: flex-start; flex-direction: column; } .detail-list { grid-template-columns: 1fr; } .detail-list dt { margin-top: 6px; } }
+  </style>
+</head>
+<body class="applicant-page">
+  <header class="site-header"><a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><nav class="main-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">マイページ</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a><a href="employer-applications.html">応募者管理</a></nav><div class="header-actions"><button class="btn btn-outline" id="logoutButton" type="button">ログアウト</button></div></header>
+  <main class="detail-shell">
+    <div class="breadcrumb"><a href="employer-dashboard.html">求人者マイページ</a><span>›</span><a href="employer-applications.html">応募者管理</a><span>›</span><span>応募者プロフィール</span></div>
+    <div class="page-status" id="pageStatus" role="status" aria-live="polite">応募者情報を読み込んでいます…</div>
+
+    <section class="detail-head" id="detailHead" style="display:none;">
+      <div><span class="status-badge" id="statusBadge">-</span><h1 id="seekerName">求職者</h1><p id="jobLine">-</p></div>
+      <div class="actions"><a class="btn btn-blue" id="chatLink" href="#">メッセージを開く</a><button class="btn btn-green" id="startSelectionButton" type="button" style="display:none;">選考を開始</button></div>
+    </section>
+
+    <section class="panel-card" id="messagePanel" style="display:none;"><h2>応募メッセージ</h2><p class="pr-text" id="applicationMessage"></p></section>
+
+    <section class="panel-card" id="profilePanel" style="display:none;">
+      <h2>プロフィール情報</h2>
+      <dl class="detail-list">
+        <dt>保有資格（職種）</dt><dd id="profLicense">-</dd>
+        <dt>実務経験年数</dt><dd id="profExperience">-</dd>
+        <dt>年齢</dt><dd id="profAge">-</dd>
+        <dt>電話番号</dt><dd id="profPhone">-</dd>
+        <dt>希望雇用形態</dt><dd id="profStyle">-</dd>
+        <dt>希望勤務地</dt><dd id="profArea">-</dd>
+        <dt>スキル・経験</dt><dd><div class="tag-row" id="profSkills"></div></dd>
+      </dl>
+      <p class="pr-text" id="profPr" style="margin-top:16px;"></p>
+    </section>
+
+    <section class="panel-card" id="resumePanel" style="display:none;">
+      <h2>履歴書・職務経歴書</h2>
+      <div style="margin-bottom:18px;"><dt style="color:var(--muted);font-weight:900;font-size:13px;">本人希望</dt><p class="pr-text" id="resumeWishes"></p></div>
+      <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">学歴</span><ul class="entry-list" id="resumeEducation"></ul></div>
+      <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">免許・資格</span><ul class="entry-list" id="resumeLicenses"></ul></div>
+      <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">職務要約</span><p class="pr-text" id="resumeSummary"></p></div>
+      <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">職務経歴</span><ul class="entry-list" id="resumeWork"></ul></div>
+      <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">活かせる経験・知識・スキル</span><p class="pr-text" id="resumeSkillsText"></p></div>
+      <div><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">自己PR</span><p class="pr-text" id="resumePr"></p></div>
+    </section>
+
+    <section class="panel-card" id="certificatePanel" style="display:none;">
+      <h2>資格証明書</h2>
+      <div class="empty-note">この求職者はまだ資格証明書をアップロードしていません。（現在、証明書アップロードはプロトタイプ機能のためファイル自体は保存されません）</div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      const appId = new URLSearchParams(location.search).get("id");
+      const pageStatus = document.getElementById("pageStatus");
+      let currentUser = null;
+      let currentApp = null;
+
+      function message(text, error) { pageStatus.style.display = text ? "block" : "none"; pageStatus.className = "page-status" + (error ? " error" : ""); pageStatus.textContent = text; }
+      function esc(value) { return String(value || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
+      function text(id, value) { document.getElementById(id).textContent = value || "-"; }
+      function show(id) { document.getElementById(id).style.display = ""; }
+
+      function computeAge(dateStr) {
+        if (!dateStr) return null;
+        const birth = new Date(dateStr);
+        if (Number.isNaN(birth.getTime())) return null;
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) age--;
+        return age >= 0 ? age : null;
+      }
+
+      function toList(value) {
+        if (Array.isArray(value)) return value;
+        if (typeof value === "string" && value.trim()) {
+          try { const parsed = JSON.parse(value); if (Array.isArray(parsed)) return parsed; } catch (e) {}
+          return value.split(/[、,]/).map(function (v) { return v.trim(); }).filter(Boolean);
+        }
+        return [];
+      }
+
+      function fillApplication(app) {
+        currentApp = app;
+        text("seekerName", (app.seeker_name || "求職者") + " さん");
+        document.getElementById("jobLine").textContent = "応募求人：" + (app.job_title || "医療求人") + "／応募日：" + (app.created_at || "").slice(0, 10);
+        document.getElementById("statusBadge").textContent = app.status || "応募済み";
+        document.getElementById("chatLink").href = "application-chat.html?id=" + encodeURIComponent(app.id);
+        const startButton = document.getElementById("startSelectionButton");
+        if (app.status === "応募済み") { startButton.style.display = ""; } else { startButton.style.display = "none"; }
+        if (app.message) { document.getElementById("applicationMessage").textContent = app.message; show("messagePanel"); }
+        show("detailHead");
+      }
+
+      function fillProfile(profile) {
+        if (!profile) return;
+        text("profLicense", profile.license);
+        text("profExperience", profile.experience_years);
+        const age = computeAge(profile.birth_date);
+        text("profAge", age !== null ? age + "歳" : null);
+        text("profPhone", profile.phone);
+        text("profStyle", profile.preferred_style);
+        const areas = toList(profile.preferred_area);
+        text("profArea", areas.length ? areas.join("、") : null);
+        const skills = toList(profile.skills);
+        document.getElementById("profSkills").innerHTML = skills.length ? skills.map(function (s) { return '<span class="tag">' + esc(s) + '</span>'; }).join("") : "";
+        document.getElementById("profPr").textContent = profile.pr || "";
+        show("profilePanel");
+      }
+
+      function entryHtml(item, fields) {
+        return "<li>" + fields.map(function (f) { return esc(item[f.key] || ""); }).filter(Boolean).join(" ／ ") + "</li>";
+      }
+
+      function fillResume(resume) {
+        if (!resume) { document.getElementById("certificatePanel").style.display = ""; return; }
+        text("resumeWishes", resume.wishes);
+        document.getElementById("resumeEducation").innerHTML = (resume.education || []).length ? resume.education.map(function (i) { return "<li><b>" + esc(i.date || "") + "</b>" + esc(i.detail || "") + "</li>"; }).join("") : '<li>登録がありません。</li>';
+        document.getElementById("resumeLicenses").innerHTML = (resume.licenses || []).length ? resume.licenses.map(function (i) { return "<li><b>" + esc(i.date || "") + "</b>" + esc(i.detail || "") + "</li>"; }).join("") : '<li>登録がありません。</li>';
+        text("resumeSummary", resume.work_summary);
+        document.getElementById("resumeWork").innerHTML = (resume.work_history || []).length ? resume.work_history.map(function (i) { return "<li><b>" + esc(i.period || "") + "</b>" + [i.company, i.role, i.detail].filter(Boolean).map(esc).join(" ／ ") + "</li>"; }).join("") : '<li>登録がありません。</li>';
+        text("resumeSkillsText", resume.skills_text);
+        text("resumePr", resume.pr);
+        show("resumePanel");
+        show("certificatePanel");
+      }
+
+      async function startSelection() {
+        const button = document.getElementById("startSelectionButton");
+        if (!supabaseClient || !currentUser) { location.href = "application-chat.html?id=" + encodeURIComponent(appId); return; }
+        button.disabled = true; button.textContent = "開始しています…";
+        const result = await supabaseClient.from("seeker_applications").update({ status: "選考中" }).eq("id", appId).eq("employer_id", currentUser.id).select().single();
+        if (result.error) { console.error(result.error); button.disabled = false; button.textContent = "選考を開始"; message("選考を開始できませんでした。", true); return; }
+        location.href = "application-chat.html?id=" + encodeURIComponent(appId);
+      }
+
+      async function load() {
+        if (!appId) { message("応募者IDが指定されていません。応募者管理から開いてください。", true); return; }
+        if (!supabaseClient) { message("Supabase設定を確認してください。", true); return; }
+        const sessionResult = await supabaseClient.auth.getSession();
+        currentUser = sessionResult.data.session?.user;
+        if (!currentUser) { window.location.href = "login.html?role=employer"; return; }
+
+        const appResult = await supabaseClient.from("seeker_applications").select("*").eq("id", appId).eq("employer_id", currentUser.id).maybeSingle();
+        if (appResult.error || !appResult.data) { console.error(appResult.error); message("応募情報を読み込めませんでした。この応募者はあなたの求人への応募者ではない可能性があります。", true); return; }
+        fillApplication(appResult.data);
+
+        const [profileResult, resumeResult] = await Promise.all([
+          supabaseClient.from("seeker_profiles").select("*").eq("user_id", appResult.data.user_id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+          supabaseClient.from("seeker_resumes").select("*").eq("user_id", appResult.data.user_id).maybeSingle()
+        ]);
+        if (profileResult.error) console.error(profileResult.error); else fillProfile(profileResult.data);
+        if (resumeResult.error) console.error(resumeResult.error); else fillResume(resumeResult.data);
+
+        message("", false);
+      }
+
+      document.getElementById("startSelectionButton").addEventListener("click", startSelection);
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      load().catch(function (error) { console.error(error); message("応募者情報の読み込み中にエラーが発生しました。", true); });
+    })();
+  </script>
+</body>
+</html>
