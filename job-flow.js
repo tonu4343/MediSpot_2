@@ -20,13 +20,26 @@
   async function logoutWire() { const btn = document.getElementById('logoutButton'); if (!btn) return; btn.addEventListener('click', async () => { if (supabaseClient) await supabaseClient.auth.signOut(); location.href='login.html'; }); }
   function card(job) { return '<article class="job-card"><div class="job-thumb"><img src="'+esc(imageFor(job))+'" alt=""></div><div><span class="job-tag">'+esc(job.type || t.spot)+'</span><span class="job-tag match-tag">'+t.match+'</span><h3>'+esc(job.title || job.category || t.medicalJob)+'</h3><p class="job-meta">'+esc(job.facility_name || t.facility)+' / '+esc(job.location || '')+' / '+esc(job.work_date || '')+'</p><div class="job-salary">'+esc(job.salary || t.salaryAsk)+'</div></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id='+encodeURIComponent(job.id)+'">'+t.detail+'</a></div></article>'; }
   async function loadJobsPage() { const list = document.getElementById('jobsList'); if (!list) return; let jobs = demoJobs; if (supabaseClient) { const r = await supabaseClient.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false}); if (!r.error && r.data && r.data.length) jobs = r.data; } const render = () => { const cat = document.getElementById('category').value; const loc = document.getElementById('location').value; const type = document.getElementById('type').value; const day = document.getElementById('workDate').value; const filtered = jobs.filter(j => (!cat || j.category === cat) && (!loc || String(j.location || '').includes(loc)) && (!type || j.type === type) && (!day || String(j.work_date || '').includes(day))); document.getElementById('jobCount').textContent = filtered.length + t.count; list.innerHTML = filtered.length ? filtered.map(card).join('') : '<div class="panel">'+t.none+'</div>'; }; document.getElementById('searchButton').addEventListener('click', render); render(); }
-  async function findJob(id) { if (supabaseClient && id && !id.startsWith('demo-')) { const r = await supabaseClient.from('jobs').select('*').eq('id', id).maybeSingle(); if (!r.error && r.data) return r.data; } return demoJobs.find(j => j.id === id) || demoJobs[0]; }
+  async function findJob(id) {
+    if (!id) return demoJobs[0];
+    if (id.startsWith('demo-')) return demoJobs.find(j => j.id === id) || demoJobs[0];
+    if (!supabaseClient) return demoJobs[0];
+    const r = await supabaseClient.from('jobs').select('*').eq('id', id).maybeSingle();
+    return (!r.error && r.data) ? r.data : null;
+  }
   function showApplied(app) { const applySection = document.getElementById('applySection'); const appliedSection = document.getElementById('appliedSection'); if (!appliedSection) return; applySection.style.display = 'none'; appliedSection.style.display = 'block'; const statusEl = document.getElementById('appliedStatus'); statusEl.textContent = app.status || t.applied; statusEl.className = 'status ' + statusClass(app.status); const canChat = app.status === '選考中' || app.status === '採用決定'; const note = document.getElementById('appliedNote'); const link = document.getElementById('appliedLink'); if (canChat) { note.textContent = '選考が進んでいます。チャットで医療機関とやり取りできます。'; link.textContent = 'メッセージを確認する'; link.href = 'application-chat.html?id=' + encodeURIComponent(app.id); } else { note.textContent = 'この求人にはすでに応募済みです。選考状況は応募管理から確認できます。'; link.textContent = '応募管理を見る'; link.href = 'seeker-applications.html'; } }
   function profileComplete(p) { return !!(p && p.name && p.license && p.birth_date && p.experience_years && p.preferred_style); }
   async function loadDetailPage() {
     const title = document.getElementById('jobTitle');
     if (!title) return;
     const job = await findJob(getParam('id'));
+    if (!job) {
+      title.textContent = '求人が見つかりません';
+      document.getElementById('jobLead').textContent = 'この求人は募集を終了しているか、削除された可能性があります。';
+      const layout = document.querySelector('.detail-layout');
+      if (layout) layout.style.display = 'none';
+      return;
+    }
     let currentUser = null;
     if (supabaseClient) { const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user || null; }
     const isPublicVisitor = !!supabaseClient && !currentUser;
