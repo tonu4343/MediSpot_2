@@ -32,11 +32,11 @@
     const message = rawMessage.toLowerCase();
 
     if (message.includes("email not confirmed") || message.includes("not confirmed")) {
-      return "メール認証がまだ完了していません。Supabaseから届いた確認メールを開いてから、もう一度ログインしてください。";
+      return "メール認証がまだ完了していません。届いた確認メールを開いてから、もう一度ログインしてください。";
     }
 
     if (message.includes("invalid login credentials") || message.includes("invalid credentials")) {
-      return "メールアドレスまたはパスワードが違います。Supabase Authentication > Users にこのメールが登録されているか確認してください。";
+      return "メールアドレスまたはパスワードが正しくありません。ご確認のうえ、再度お試しください。";
     }
 
     return rawMessage
@@ -58,7 +58,7 @@
     event.preventDefault();
 
     if (!supabaseClient) {
-      showNotice("Supabase URL と anon key を設定してください。", true);
+      showNotice("ただいまログインをご利用いただけません。しばらくしてから再度お試しください。", true);
       return;
     }
 
