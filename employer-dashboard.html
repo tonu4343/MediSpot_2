@@ -132,10 +132,11 @@
     .tip-card p { margin: 0 0 10px; color: var(--muted); font-size: 12px; line-height: 1.7; font-weight: 700; }
     .tip-card a { color: var(--blue); font-size: 12px; font-weight: 900; }
 
-    .employer-footer-cta { position: relative; overflow: hidden; min-height: 240px; display: flex; align-items: center; padding: 0 clamp(24px,6vw,90px); background-image: linear-gradient(100deg, rgba(2,52,92,.42) 0%, rgba(2,52,92,.08) 46%, rgba(2,52,92,0) 62%), url("assets/male-doctor-recruitment-cta-banner.png"); background-size: cover; background-position: center top; }
-    .employer-footer-cta-inner { max-width: 560px; }
-    .employer-footer-cta h2 { margin: 0 0 9px; color: #fff; font-size: clamp(22px,3vw,32px); font-weight: 900; }
-    .employer-footer-cta p { margin: 0 0 20px; color: rgba(255,255,255,.94); font-size: 13px; line-height: 1.8; font-weight: 800; }
+    .employer-footer-cta { position: relative; background: #fff; }
+    .cta-banner-img { display: block; width: 100%; height: auto; }
+    .employer-footer-cta-inner { position: absolute; left: clamp(24px,6vw,90px); top: 50%; transform: translateY(-50%); max-width: 560px; }
+    .employer-footer-cta h2 { margin: 0 0 9px; color: #fff; font-size: clamp(20px,2.6vw,32px); font-weight: 900; }
+    .employer-footer-cta p { margin: 0 0 20px; color: rgba(255,255,255,.94); font-size: clamp(11px,1.3vw,13px); line-height: 1.8; font-weight: 800; }
     .employer-footer-cta .btn { display: inline-flex; min-width: 210px; justify-content: center; background: #fff; color: var(--green-dark); box-shadow: 0 10px 24px rgba(0,70,120,.18); }
     .employer-footer { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) 1.1fr; gap: 28px; padding: 40px clamp(20px,5vw,64px) 18px; color: var(--ink); background: #fff; border-top: 1px solid var(--line); }
     .employer-footer .footer-brand p { max-width: 250px; margin: 12px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
@@ -169,8 +170,7 @@
       .stats-grid, .quick-actions, .tips-grid { grid-template-columns: 1fr 1fr; }
       .job-row { grid-template-columns: 1fr; }
       .job-apply-count { text-align: left; }
-      .employer-footer-cta { min-height: 0; background-image: linear-gradient(180deg, rgba(2,52,92,.55), rgba(2,52,92,.55)), url("assets/male-doctor-recruitment-cta-banner.png"); background-position: center top; padding: 34px 22px; text-align: center; }
-      .employer-footer-cta-inner { max-width: none; }
+      .employer-footer-cta-inner { position: static; transform: none; max-width: none; padding: 26px 22px; text-align: center; background: linear-gradient(110deg, var(--blue) 0%, var(--green) 100%); }
       .employer-footer { grid-template-columns: 1fr; }
     }
   </style>
@@ -281,7 +281,7 @@
     </main>
   </div>
 
-  <section class="employer-footer-cta" aria-labelledby="employerFooterTitle"><div class="employer-footer-cta-inner"><h2 id="employerFooterTitle">医療資格者の募集を無料で始める</h2><p>求人掲載は無料です。採用が決まった時のみ費用が発生します。</p><a class="btn" href="employer-job-new.html">求人を掲載する（無料）›</a></div></section>
+  <section class="employer-footer-cta" aria-labelledby="employerFooterTitle"><img class="cta-banner-img" src="assets/male-doctor-recruitment-cta-banner.png" alt="医療資格者の募集を無料で始める"><div class="employer-footer-cta-inner"><h2 id="employerFooterTitle">医療資格者の募集を無料で始める</h2><p>求人掲載は無料です。採用が決まった時のみ費用が発生します。</p><a class="btn" href="employer-job-new.html">求人を掲載する（無料）›</a></div></section>
 
   <footer class="employer-footer">
     <div class="footer-brand"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
