@@ -47,8 +47,7 @@
 
     .welcome-card { position: relative; overflow: hidden; min-height: 300px; display: flex; align-items: center; margin-bottom: 22px; padding: clamp(24px,3.4vw,36px); background: linear-gradient(120deg,#eaf5ff 0%,#f2fbf6 100%); border: 1px solid var(--line); border-radius: 16px; }
     .welcome-card .welcome-text { position: relative; z-index: 2; max-width: 560px; }
-    .welcome-card .eyebrow { display: none; }
-    .welcome-card p.hello { margin: 0 0 6px; color: var(--muted); font-size: 13px; font-weight: 900; }
+    .welcome-card .eyebrow { display: inline-flex; align-items: center; min-height: 28px; padding: 0 14px; margin-bottom: 14px; border-radius: 999px; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; font-size: 12.5px; font-weight: 900; }
     .welcome-card h1 { margin: 0 0 12px; color: var(--blue-dark); font-size: clamp(24px,3vw,32px); line-height: 1.35; font-weight: 900; }
     .welcome-card h1 span { color: var(--green-dark); }
     .welcome-card .sub { margin: 0; color: #4e6578; font-size: 13.5px; font-weight: 800; line-height: 1.8; }
@@ -219,10 +218,10 @@
     <main class="dash-main">
       <section class="welcome-card">
         <div class="welcome-text">
-          <p class="hello">こんにちは、<span id="greetingName">読み込み中</span> 様</p>
-          <h1>本日も採用を<br><span>効率的に進めましょう。</span></h1>
-          <p class="sub">必要な人材との出会いをサポートします。募集内容を作成し、応募者の資格や希望条件を確認しましょう。</p>
-          <div class="welcome-actions"><a class="btn btn-green" href="employer-job-new.html">求人を新規作成</a><a class="btn btn-outline" href="employer-applications.html">応募者を検索</a></div>
+          <span class="eyebrow">求人者マイページ</span>
+          <h1>必要になった時、<br><span>必要なスキルのスタッフとつながる</span></h1>
+          <p class="sub">スポット勤務・業務委託・非常勤の募集を整理し、応募者の資格や希望条件を確認できます。まずは募集内容を作成して、必要な人材とつながりましょう。</p>
+          <div class="welcome-actions"><a class="btn btn-green" href="employer-job-new.html">求人を作成する</a><a class="btn btn-outline" href="employer-profile.html">施設情報を確認</a></div>
         </div>
         <div class="welcome-photo"><img src="assets/hospital-job-matching-hero.png" alt="医療機関の外観"></div>
       </section>
@@ -310,7 +309,6 @@
       function applyProfile(profile) {
         const facility = profile?.facility_name || "医療機関";
         const contact = profile?.contact_name || "ご担当者";
-        text("greetingName", facility);
         text("topbarFacility", facility);
         text("topbarContact", contact + " 様");
         text("planExpiry", "-");
