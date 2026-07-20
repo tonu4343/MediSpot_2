@@ -7,13 +7,8 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     body.dashboard-page { color: var(--ink); background: #f5f9fc; }
-    .dash-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 60px; }
 
     .site-header.seeker-topbar { position: sticky; top: 0; z-index: 70; }
-    .seeker-nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); flex: 1; justify-content: center; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
-    .seeker-nav a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 2px; border-bottom: 2px solid transparent; }
-    .seeker-nav a svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-    .seeker-nav a.active { color: var(--blue); border-color: var(--blue); }
     .seeker-topbar-right { display: flex; align-items: center; gap: 16px; }
     .bell-btn { position: relative; display: grid; place-items: center; width: 38px; height: 38px; color: var(--blue-dark); background: #f1f7fc; border: 1px solid var(--line); border-radius: 50%; cursor: pointer; }
     .bell-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
@@ -24,8 +19,25 @@
     .seeker-user strong { color: #14324c; font-size: 13px; font-weight: 900; }
     .logout-btn { min-height: 34px; padding: 0 14px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer; }
     .btn-blue { color: #fff; background: linear-gradient(180deg, var(--blue-2), var(--blue)); box-shadow: 0 14px 28px rgba(0,91,172,.22); }
-    .nav-badge { margin-left: 2px; min-width: 16px; height: 16px; padding: 0 4px; display: none; place-items: center; color: #fff; background: #e6483c; border-radius: 999px; font-size: 9px; font-weight: 900; }
-    .nav-badge:not([hidden]) { display: grid; }
+
+    .dash-body { display: grid; grid-template-columns: 230px 1fr; align-items: start; }
+    .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
+    .side-nav { display: grid; gap: 3px; margin: 0 0 16px; padding: 0; list-style: none; }
+    .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; }
+    .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
+    .side-nav a.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); box-shadow: 0 8px 18px rgba(0,91,172,.24); }
+    .side-nav a .nav-badge { margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px; display: none; place-items: center; color: #fff; background: #e6483c; border-radius: 999px; font-size: 10px; font-weight: 900; }
+    .side-nav a .nav-badge:not([hidden]) { display: grid; }
+    .side-nav a.active .nav-badge { background: rgba(255,255,255,.28); }
+    .side-nav a .nav-soon { margin-left: auto; color: var(--muted); background: #eef3f7; border-radius: 999px; padding: 1px 7px; font-size: 9.5px; font-weight: 900; }
+    .support-card { padding: 15px; background: #f7fbff; border: 1px solid var(--line); border-radius: 12px; }
+    .support-card strong { display: block; color: var(--blue-dark); font-size: 12.5px; font-weight: 900; }
+    .support-card span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .support-card .support-phone { margin-top: 8px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .support-card a.support-cta { display: block; margin-top: 10px; text-align: center; min-height: 32px; line-height: 32px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; }
+
+    .dash-main { min-width: 0; padding: 26px clamp(16px,2.6vw,34px) 60px; }
 
     .seeker-hero { position: relative; overflow: hidden; display: flex; align-items: center; gap: 24px; min-height: 340px; margin-bottom: 20px; padding: clamp(26px,3.6vw,42px); background: linear-gradient(125deg,#ffffff 0%,#f7fcff 55%,#effff7 100%); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 18px 42px rgba(0,63,125,.08); }
     .seeker-hero::before { content: ""; position: absolute; z-index: 0; right: 60px; top: -140px; width: 380px; height: 380px; border: 60px solid rgba(0,91,172,.06); border-radius: 50%; }
@@ -38,15 +50,18 @@
     .seeker-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
     .seeker-hero-graphic { position: relative; z-index: 2; flex: 0 0 auto; display: flex; align-items: center; gap: 18px; }
     .seeker-hero-stats { display: grid; gap: 12px; width: 210px; }
-    .hero-stat-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 26px rgba(0,63,125,.1); }
+    .hero-stat-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 26px rgba(0,63,125,.1); transition: transform .15s ease, box-shadow .15s ease; }
+    a.hero-stat-card:hover { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(0,63,125,.16); }
     .hero-stat-icon { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 9px; }
     .hero-stat-icon svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
     .hero-stat-card.c-blue .hero-stat-icon { color: var(--blue); background: #e9f3fd; }
     .hero-stat-card.c-green .hero-stat-icon { color: var(--green-dark); background: #e8fbf0; }
     .hero-stat-card.c-amber .hero-stat-icon { color: #b5670f; background: #fff3e0; }
-    .hero-stat-card span { display: block; color: var(--muted); font-size: 10.5px; font-weight: 900; }
+    .hero-stat-body { flex: 1; min-width: 0; }
+    .hero-stat-body span { display: block; color: var(--muted); font-size: 10.5px; font-weight: 900; }
     .hero-stat-card strong { display: block; color: #14324c; font-size: 19px; line-height: 1.3; font-weight: 900; }
     .hero-stat-card strong small { margin-left: 1px; font-size: 12px; font-weight: 800; }
+    .hero-stat-chevron { flex: 0 0 auto; color: var(--muted); font-size: 17px; }
     .seeker-hero-photo { position: relative; z-index: 1; overflow: hidden; flex: 0 0 260px; width: 260px; height: 300px; align-self: flex-end; pointer-events: none; }
     .seeker-hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%); mask-image: linear-gradient(to bottom, #000 82%, transparent 100%); }
 
@@ -73,10 +88,12 @@
     .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); padding: 22px; }
 
     .job-carousel-wrap { position: relative; }
-    .job-carousel { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; margin: 0 -2px; }
+    .job-carousel { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; margin: 0 -2px; scroll-behavior: smooth; }
     .job-carousel::-webkit-scrollbar { height: 6px; }
     .job-carousel::-webkit-scrollbar-thumb { background: #d6e7f3; border-radius: 999px; }
     .job-slide { scroll-snap-align: start; flex: 0 0 260px; }
+    .carousel-next { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 36px; height: 36px; color: var(--blue); background: #fff; border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 10px 22px rgba(0,63,125,.14); cursor: pointer; }
+    .carousel-next svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
     .rec-job-card { position: relative; display: flex; flex-direction: column; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 12px; overflow: hidden; height: 100%; }
     .rec-job-thumb { position: relative; height: 128px; background: #edf7ff; }
     .rec-job-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -86,7 +103,9 @@
     .fav-btn.active { color: #e6483c; }
     .fav-btn.active svg { fill: #e6483c; }
     .rec-job-body { display: flex; flex-direction: column; flex: 1; padding: 14px; }
-    .rec-job-tag { display: inline-flex; align-self: flex-start; align-items: center; min-height: 22px; padding: 0 9px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 10.5px; font-weight: 900; }
+    .rec-job-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .rec-job-tag { display: inline-flex; align-items: center; min-height: 22px; padding: 0 9px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 10.5px; font-weight: 900; }
+    .rec-job-tag.alt { color: var(--blue); background: #eef6ff; border-color: #b9dbf5; }
     .rec-job-body h3 { margin: 8px 0 4px; color: var(--blue-dark); font-size: 14.5px; font-weight: 900; line-height: 1.4; }
     .rec-job-body p { margin: 0; color: var(--muted); font-size: 11.5px; font-weight: 700; }
     .rec-job-salary { margin: 8px 0 12px; color: #008e51; font-size: 15px; font-weight: 900; }
@@ -110,20 +129,22 @@
     .msg-item, .app-item { display: block; padding: 13px 14px; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; }
     .msg-item + .msg-item, .app-item + .app-item { margin-top: 10px; }
     .msg-item-top { display: flex; align-items: center; gap: 10px; }
-    .msg-avatar { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 12px; font-weight: 900; }
+    .msg-avatar { position: relative; display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 12px; font-weight: 900; }
+    .msg-avatar .unread-dot { position: absolute; top: -1px; right: -1px; width: 9px; height: 9px; background: #e6483c; border: 2px solid #f8fcff; border-radius: 50%; }
     .msg-item-top strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
-    .msg-unread-tag { flex: 0 0 auto; color: #b3260f; background: #fff1ee; border: 1px solid #f3b3a4; border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight: 900; }
     .msg-item time { flex: 0 0 auto; color: var(--muted); font-size: 10.5px; font-weight: 700; }
     .msg-item p { margin: 6px 0 0 42px; color: #4e6578; font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .panel-empty { padding: 24px 14px; text-align: center; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; font-size: 12.5px; font-weight: 800; }
 
-    .app-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .app-status { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 11px; font-weight: 900; }
+    .app-item { display: flex; align-items: center; gap: 12px; }
+    .app-item-icon { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; color: var(--blue); background: #eef6ff; border-radius: 9px; }
+    .app-item-icon svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .app-item-body { flex: 1; min-width: 0; }
+    .app-item h3 { margin: 0 0 3px; color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
+    .app-item p { margin: 0; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+    .app-status { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 11px; font-weight: 900; }
     .app-status.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
     .app-status.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
-    .app-item h3 { margin: 7px 0 3px; color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
-    .app-item p { margin: 0; color: var(--muted); font-size: 11.5px; font-weight: 700; }
-    .app-item .chevron { flex: 0 0 auto; color: var(--muted); font-size: 18px; }
 
     .recent-jobs-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
     .recent-job-card { display: block; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; overflow: hidden; }
@@ -143,19 +164,23 @@
 
     @media (max-width: 1180px) { .recent-jobs-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 960px) {
-      .seeker-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; padding-top: 6px; }
-      .site-header.seeker-topbar { flex-wrap: wrap; }
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+      .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .side-nav a { white-space: nowrap; }
+      .side-nav a .nav-badge, .side-nav a .nav-soon { display: none; }
+      .support-card { display: none; }
       .seeker-hero { flex-direction: column; align-items: stretch; min-height: 0; }
       .seeker-hero-text { max-width: none; order: 2; }
       .seeker-hero-graphic { order: 1; flex-direction: column; align-items: stretch; gap: 14px; }
-      .seeker-hero-photo { width: 100%; height: 180px; }
+      .seeker-hero-photo { width: 100%; height: 220px; }
       .seeker-hero-stats { width: auto; grid-auto-flow: column; grid-template-columns: repeat(3,1fr); }
       .row-2col { grid-template-columns: minmax(0,1fr); }
       .quick-search-grid { grid-template-columns: 1fr 1fr; }
       .quick-search-grid .btn { grid-column: 1 / -1; }
     }
     @media (max-width: 640px) {
-      .dash-shell { width: calc(100% - 28px); padding-top: 18px; }
+      .dash-main { padding: 20px 14px 48px; }
       .seeker-hero-stats { grid-template-columns: 1fr; }
       .quick-search-grid { grid-template-columns: 1fr; }
       .recent-jobs-grid { grid-template-columns: 1fr 1fr; }
@@ -166,13 +191,6 @@
 <body class="dashboard-page">
   <header class="site-header seeker-topbar">
     <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="seeker-nav" aria-label="求職者メニュー">
-      <a class="active" href="seeker-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a>
-      <a href="seeker-jobs.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>求人を探す</a>
-      <a href="seeker-applications.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>応募管理</a>
-      <a href="seeker-applications.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden></span></a>
-      <a href="seeker-profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>プロフィール</a>
-    </nav>
     <div class="seeker-topbar-right">
       <button class="bell-btn" type="button" aria-label="通知"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot" id="unreadBadge" hidden>0</span></button>
       <div class="seeker-user"><span class="seeker-avatar" id="topbarInitial">求</span><strong id="topbarName">読み込み中</strong></div>
@@ -180,77 +198,102 @@
     </div>
   </header>
 
-  <main class="dash-shell">
-    <section class="seeker-hero">
-      <div class="seeker-hero-text">
-        <span class="eyebrow">求職者マイページ</span>
-        <h1>あなたのスキルを<br><span>必要としている場があります</span></h1>
-        <p class="sub">看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務・業務委託・非常勤の求人を探せます。</p>
-        <div class="seeker-hero-actions"><a class="btn btn-green" href="seeker-jobs.html">求人を探す</a><a class="btn btn-outline" href="seeker-profile.html">プロフィールを確認</a></div>
+  <div class="dash-body">
+    <aside class="dash-sidebar" aria-label="求職者メニュー">
+      <ul class="side-nav">
+        <li><a class="active" href="seeker-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
+        <li><a href="seeker-jobs.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>求人を探す</a></li>
+        <li><a href="seeker-applications.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>応募管理</a></li>
+        <li><a href="seeker-applications.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden></span></a></li>
+        <li><a href="seeker-profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>プロフィール</a></li>
+        <li><a href="seeker-resume.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>履歴書・職務経歴書</a></li>
+        <li><a href="#"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>お知らせ<span class="nav-soon">準備中</span></a></li>
+        <li><a href="seeker-profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>設定</a></li>
+      </ul>
+
+      <div class="support-card">
+        <strong>サポート窓口</strong>
+        <span>平日 9:00〜18:00</span>
+        <span class="support-phone">03-1234-5678</span>
+        <a class="support-cta" href="#">お問い合わせ</a>
       </div>
-      <div class="seeker-hero-graphic">
-        <div class="seeker-hero-photo"><img src="assets/seeker-photo-dashboard-480x520.png" alt="求職者のイメージ"></div>
-        <div class="seeker-hero-stats">
-          <div class="hero-stat-card c-blue"><span class="hero-stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span><div><span>今日のおすすめ求人</span><strong id="heroStatJobs">0<small>件</small></strong></div></div>
-          <div class="hero-stat-card c-green"><span class="hero-stat-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg></span><div><span>応募中の求人</span><strong id="heroStatApps">0<small>件</small></strong></div></div>
-          <div class="hero-stat-card c-amber"><span class="hero-stat-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 20l1.1-5.5A8.38 8.38 0 0 1 4 12 8.5 8.5 0 0 1 12.5 3.5 8.38 8.38 0 0 1 21 11.5z"/></svg></span><div><span>メッセージ未読</span><strong id="heroStatMessages">0<small>件</small></strong></div></div>
+    </aside>
+
+    <main class="dash-main">
+      <section class="seeker-hero">
+        <div class="seeker-hero-text">
+          <span class="eyebrow">求職者マイページ</span>
+          <h1>あなたのスキルを<br><span>必要としている場があります</span></h1>
+          <p class="sub">看護師・検査技師・リハビリ職など、医療資格を活かしてスポット勤務・業務委託・非常勤の求人を探せます。</p>
+          <div class="seeker-hero-actions"><a class="btn btn-green" href="seeker-jobs.html">求人を探す</a><a class="btn btn-outline" href="seeker-profile.html">プロフィールを確認</a></div>
         </div>
-      </div>
-    </section>
+        <div class="seeker-hero-graphic">
+          <div class="seeker-hero-photo"><img src="assets/seeker-photo-dashboard-480x520.png" alt="求職者のイメージ"></div>
+          <div class="seeker-hero-stats">
+            <a class="hero-stat-card c-blue" href="seeker-jobs.html"><span class="hero-stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span><span class="hero-stat-body"><span>今日のおすすめ求人</span><strong id="heroStatJobs">0<small>件</small></strong></span><span class="hero-stat-chevron">›</span></a>
+            <a class="hero-stat-card c-green" href="seeker-applications.html"><span class="hero-stat-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg></span><span class="hero-stat-body"><span>応募中の求人</span><strong id="heroStatApps">0<small>件</small></strong></span><span class="hero-stat-chevron">›</span></a>
+            <a class="hero-stat-card c-amber" href="seeker-applications.html"><span class="hero-stat-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 20l1.1-5.5A8.38 8.38 0 0 1 4 12 8.5 8.5 0 0 1 12.5 3.5 8.38 8.38 0 0 1 21 11.5z"/></svg></span><span class="hero-stat-body"><span>メッセージ未読</span><strong id="heroStatMessages">0<small>件</small></strong></span><span class="hero-stat-chevron">›</span></a>
+          </div>
+        </div>
+      </section>
 
-    <a class="notice-banner" id="messageBanner" href="seeker-applications.html" style="display:none;">
-      <span class="notice-banner-icon"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span>
-      <span class="notice-banner-text"><strong id="bannerFrom"></strong><time id="bannerTime"></time></span>
-      <span class="notice-banner-cta">メッセージを確認 ›</span>
-    </a>
+      <a class="notice-banner" id="messageBanner" href="seeker-applications.html" style="display:none;">
+        <span class="notice-banner-icon"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span>
+        <span class="notice-banner-text"><strong id="bannerFrom"></strong><time id="bannerTime"></time></span>
+        <span class="notice-banner-cta">メッセージを確認 ›</span>
+      </a>
 
-    <section class="quick-search-panel" aria-label="求人検索">
-      <h2>クイック検索</h2>
-      <div class="quick-search-grid">
-        <label><span>職種</span><select id="qsCategory"><option value="">職種を選択</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label>
-        <label><span>勤務地</span><select id="qsLocation"><option value="">勤務地を選択</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option><option>大阪府</option></select></label>
-        <label><span>勤務日</span><select id="qsDate"><option value="">勤務日を選択</option><option>平日</option><option>土日</option><option>単発</option></select></label>
-        <label><span>雇用形態</span><select id="qsType"><option value="">雇用形態を選択</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></label>
-        <a class="btn btn-green" id="qsSubmit" href="seeker-jobs.html">求人を探す</a>
-      </div>
-    </section>
+      <section class="quick-search-panel" aria-label="求人検索">
+        <h2>クイック検索</h2>
+        <div class="quick-search-grid">
+          <label><span>職種</span><select id="qsCategory"><option value="">職種を選択</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label>
+          <label><span>勤務地</span><select id="qsLocation"><option value="">勤務地を選択</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option><option>大阪府</option></select></label>
+          <label><span>勤務日</span><select id="qsDate"><option value="">勤務日を選択</option><option>平日</option><option>土日</option><option>単発</option></select></label>
+          <label><span>雇用形態</span><select id="qsType"><option value="">雇用形態を選択</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></label>
+          <a class="btn btn-blue" id="qsSubmit" href="seeker-jobs.html">検索する</a>
+        </div>
+      </section>
 
-    <section class="row-2col">
-      <article class="panel-card" id="matchedJobs">
-        <div class="section-title-row"><h2>あなたへのおすすめ求人</h2><a class="section-link" href="seeker-jobs.html">すべての求人を見る ›</a></div>
-        <div class="job-carousel-wrap"><div class="job-carousel" id="jobsList"><div class="rec-empty">求人を読み込んでいます…</div></div></div>
-        <div class="carousel-dots" id="carouselDots"></div>
-      </article>
-      <aside class="panel-card">
-        <div class="section-title-row"><h2>プロフィールの完成度</h2></div>
-        <div class="completion-ring" id="completionRing" style="--pct:0"><div class="completion-ring-inner"><strong id="completionPct">0<small>%</small></strong></div></div>
-        <p class="completion-note" id="completionNote">プロフィールを入力しましょう</p>
-        <ul class="completion-list" id="completionList"></ul>
-        <a class="btn btn-blue" style="width:100%;justify-content:center;" href="seeker-profile.html">プロフィールを編集</a>
-      </aside>
-    </section>
+      <section class="row-2col">
+        <article class="panel-card" id="matchedJobs">
+          <div class="section-title-row"><h2>あなたへのおすすめ求人</h2><a class="section-link" href="seeker-jobs.html">すべての求人を見る ›</a></div>
+          <div class="job-carousel-wrap">
+            <div class="job-carousel" id="jobsList"><div class="rec-empty">求人を読み込んでいます…</div></div>
+            <button class="carousel-next" id="carouselNext" type="button" aria-label="次の求人を見る"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+          </div>
+          <div class="carousel-dots" id="carouselDots"></div>
+        </article>
+        <aside class="panel-card">
+          <div class="section-title-row"><h2>プロフィールの完成度</h2></div>
+          <div class="completion-ring" id="completionRing" style="--pct:0"><div class="completion-ring-inner"><strong id="completionPct">0<small>%</small></strong></div></div>
+          <p class="completion-note" id="completionNote">プロフィールを入力しましょう</p>
+          <ul class="completion-list" id="completionList"></ul>
+          <a class="btn btn-blue" style="width:100%;justify-content:center;" href="seeker-profile.html">プロフィールを編集</a>
+        </aside>
+      </section>
 
-    <section class="row-2col">
-      <article class="panel-card">
-        <div class="section-title-row"><h2>メッセージ</h2><a class="section-link" href="seeker-applications.html">すべて見る ›</a></div>
-        <div id="messagesList"><div class="panel-empty">メッセージを読み込んでいます…</div></div>
-      </article>
-      <aside class="panel-card">
-        <div class="section-title-row"><h2>応募中の求人</h2><a class="section-link" href="seeker-applications.html">すべて見る ›</a></div>
-        <div id="appsList"><div class="panel-empty">応募状況を読み込んでいます…</div></div>
-      </aside>
-    </section>
+      <section class="row-2col">
+        <article class="panel-card">
+          <div class="section-title-row"><h2>メッセージ</h2><a class="section-link" href="seeker-applications.html">すべて見る ›</a></div>
+          <div id="messagesList"><div class="panel-empty">メッセージを読み込んでいます…</div></div>
+        </article>
+        <aside class="panel-card">
+          <div class="section-title-row"><h2>応募中のステータス</h2><a class="section-link" href="seeker-applications.html">すべて見る ›</a></div>
+          <div id="appsList"><div class="panel-empty">応募状況を読み込んでいます…</div></div>
+        </aside>
+      </section>
 
-    <section class="panel-card" style="margin-bottom:0;">
-      <div class="section-title-row"><h2>新着の求人</h2><a class="section-link" href="seeker-jobs.html">すべて見る ›</a></div>
-      <div class="recent-jobs-grid" id="recentJobsList"><div class="panel-empty">読み込んでいます…</div></div>
-    </section>
-  </main>
+      <section class="panel-card" style="margin-bottom:0;">
+        <div class="section-title-row"><h2>新着の求人</h2><a class="section-link" href="seeker-jobs.html">すべて見る ›</a></div>
+        <div class="recent-jobs-grid" id="recentJobsList"><div class="panel-empty">読み込んでいます…</div></div>
+      </section>
+    </main>
+  </div>
 
   <footer class="seeker-footer-light">
     <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="seeker-footer-links"><a href="#">運営会社</a><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a><a href="#">特定商取引法に基づく表記</a><a href="#">お問い合わせ</a><a href="index.html#faq">ヘルプ</a></nav>
-    <p class="seeker-footer-copy">© 2025 MEDICAL SPOT JOB. All Rights Reserved.</p>
+    <nav class="seeker-footer-links"><a href="#">運営会社</a><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a><a href="#">特定商取引法に基づく表記</a><a href="index.html#faq">よくある質問</a><a href="#">お問い合わせ</a><a href="index.html#faq">ヘルプ</a></nav>
+    <p class="seeker-footer-copy">© 2024 MEDICAL SPOT JOB. All Rights Reserved.</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -297,7 +340,7 @@
         }).join("");
       }
 
-      function renderJobs(jobs, demo) {
+      function renderJobs(jobs) {
         const list = document.getElementById("jobsList");
         const items = jobs && jobs.length ? jobs : demoJobs;
         document.getElementById("heroStatJobs").innerHTML = items.length + "<small>件</small>";
@@ -305,7 +348,7 @@
           const href = "job-detail.html?id=" + encodeURIComponent(job.id || "demo-nurse");
           return '<div class="job-slide"><article class="rec-job-card">' +
             '<div class="rec-job-thumb"><img src="' + esc(imageFor(job)) + '" alt="">' + (isNewJob(job) ? '<span class="rec-new-badge">NEW</span>' : '') + '<button class="fav-btn" type="button" aria-label="お気に入り"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9.5-8.7C1 8.3 2.6 5 6 5c2 0 3.3 1.1 4 2.2C10.7 6.1 12 5 14 5c3.4 0 5 3.3 3.5 6.3C19 15.7 12 20 12 20z"/></svg></button></div>' +
-            '<div class="rec-job-body"><span class="rec-job-tag">' + esc(job.type || "スポット") + '</span><h3>' + esc(job.title || job.category || "医療求人") + '</h3><p>' + esc(job.location || "勤務地相談") + '</p><p>' + esc(job.work_date || "") + '</p><div class="rec-job-salary">' + esc(job.salary || "給与相談") + '</div><a class="btn btn-outline" href="' + href + '">詳細を見る</a></div>' +
+            '<div class="rec-job-body"><div class="rec-job-tags"><span class="rec-job-tag">' + esc(job.type || "スポット") + '</span>' + (job.category ? '<span class="rec-job-tag alt">' + esc(job.category) + '</span>' : '') + '</div><h3>' + esc(job.title || job.category || "医療求人") + '</h3><p>' + esc(job.location || "勤務地相談") + '</p><p>' + esc(job.work_date || "") + '</p><div class="rec-job-salary">' + esc(job.salary || "給与相談") + '</div><a class="btn btn-outline" href="' + href + '">詳細を見る</a></div>' +
           '</article></div>';
         }).join("") || '<div class="rec-empty">条件に合う求人が見つかりませんでした。</div>';
         document.querySelectorAll(".fav-btn").forEach(function (btn) { btn.addEventListener("click", function () { btn.classList.toggle("active"); }); });
@@ -316,6 +359,10 @@
           const slideWidth = list.querySelector(".job-slide")?.offsetWidth || 1;
           const idx = Math.round(list.scrollLeft / (slideWidth + 14));
           dotEls.forEach(function (dot, i) { dot.classList.toggle("active", i === idx); });
+        });
+        document.getElementById("carouselNext").addEventListener("click", function () {
+          const slideWidth = list.querySelector(".job-slide")?.offsetWidth || 260;
+          list.scrollBy({ left: slideWidth + 14, behavior: "smooth" });
         });
       }
 
@@ -337,7 +384,7 @@
         list.innerHTML = apps.slice(0, 5).map(function (a) {
           const canChat = a.status === "選考中" || a.status === "採用決定";
           const href = canChat ? "application-chat.html?id=" + encodeURIComponent(a.id) : "job-detail.html?id=" + encodeURIComponent(a.job_id || "");
-          return '<a class="app-item" href="' + href + '"><div><span class="app-status ' + statusClass(a.status) + '">' + esc(a.status || "応募済み") + '</span><h3>' + esc(a.job_title || "応募求人") + '</h3><p>' + esc(a.facility_name || "医療機関") + ' ・ 応募日：' + esc((a.created_at || "").slice(0, 10)) + '</p></div><span class="chevron">›</span></a>';
+          return '<a class="app-item" href="' + href + '"><span class="app-item-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg></span><span class="app-item-body"><h3>' + esc(a.job_title || "応募求人") + '</h3><p>' + esc(a.facility_name || "医療機関") + ' ・ 応募日：' + esc((a.created_at || "").slice(0, 10)) + '</p></span><span class="app-status ' + statusClass(a.status) + '">' + esc(a.status || "応募済み") + '</span></a>';
         }).join("");
       }
 
@@ -349,7 +396,7 @@
           const app = appMap.get(m.application_id) || {};
           const sentAt = m.created_at ? new Date(m.created_at).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
           const unread = !m.read_at;
-          return '<a class="msg-item" href="application-chat.html?id=' + encodeURIComponent(m.application_id) + '"><div class="msg-item-top"><span class="msg-avatar">' + esc(initial(app.facility_name)) + '</span><strong>' + esc(app.facility_name || "医療機関") + '</strong>' + (unread ? '<span class="msg-unread-tag">未読</span>' : "") + '<time>' + esc(sentAt) + '</time></div><p>' + esc(m.body) + '</p></a>';
+          return '<a class="msg-item" href="application-chat.html?id=' + encodeURIComponent(m.application_id) + '"><div class="msg-item-top"><span class="msg-avatar">' + esc(initial(app.facility_name)) + (unread ? '<span class="unread-dot"></span>' : '') + '</span><strong>' + esc(app.facility_name || "医療機関") + '</strong><time>' + esc(sentAt) + '</time></div><p>' + esc(m.body) + '</p></a>';
         }).join("");
       }
 
@@ -391,7 +438,7 @@
       });
 
       async function loadDashboard() {
-        if (!supabaseClient) { applyProfile(null, null); renderJobs(demoJobs, true); renderRecentJobs(demoJobs); renderApps([]); renderMessages([], []); return; }
+        if (!supabaseClient) { applyProfile(null, null); renderJobs(demoJobs); renderRecentJobs(demoJobs); renderApps([]); renderMessages([], []); return; }
         const sessionResult = await supabaseClient.auth.getSession();
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "login.html?role=seeker"; return; }
@@ -420,7 +467,7 @@
       }
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
-      loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs(demoJobs, true); renderRecentJobs(demoJobs); renderApps([]); renderMessages([], []); });
+      loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs(demoJobs); renderRecentJobs(demoJobs); renderApps([]); renderMessages([], []); });
     })();
   </script>
 </body>
