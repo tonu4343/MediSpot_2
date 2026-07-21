@@ -3,70 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>求職者管理 | Medi Job 運営管理者</title>
+  <meta name="description" content="Medical Spot Job 運営管理者向け求職者管理">
+  <title>求職者管理 | Medical Spot Job 運営管理者</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     body.admin-dashboard-page { color: var(--ink); background: #f5f9fc; }
     .site-header.dash-topbar { position: sticky; top: 0; z-index: 70; }
-    .dash-topbar-right { display: flex; align-items: center; gap: 18px; }
-    .dash-user { display: flex; align-items: center; gap: 10px; }
+    .dash-topbar-right, .dash-user { display: flex; align-items: center; }
+    .dash-topbar-right { gap: 18px; }
+    .dash-user { gap: 10px; }
     .dash-user-text { text-align: right; line-height: 1.4; }
     .dash-user-text small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
     .dash-user-text strong { display: block; color: #14324c; font-size: 13px; font-weight: 900; }
     .admin-avatar { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; background: #2b3646; border-radius: 50%; font-size: 12px; font-weight: 900; }
     .dash-logout { min-height: 34px; padding: 0 14px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer; }
 
-    .dash-body { display: grid; grid-template-columns: 232px 1fr; align-items: start; }
+    .dash-body { display: grid; grid-template-columns: 232px minmax(0, 1fr); align-items: start; }
     .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
     .side-nav { display: grid; gap: 3px; margin: 0 0 18px; padding: 0; list-style: none; }
     .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; transition: background .15s ease, color .15s ease; }
     .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
-    .side-nav a.active { color: #fff; background: linear-gradient(120deg, #2b3646, #46566d); box-shadow: 0 8px 18px rgba(43,54,70,.24); }
-
-    .admin-badge-card { margin: 0 2px; padding: 15px; background: linear-gradient(135deg,#2b3646,#3a4658); border-radius: 12px; }
+    .side-nav a:hover { color: var(--blue-dark); background: #f1f7fc; }
+    .side-nav a.active { color: #fff; background: #2b3646; }
+    .admin-badge-card { margin: 0 2px; padding: 15px; background: #2b3646; border-radius: 12px; }
     .admin-badge-card strong { display: block; color: #fff; font-size: 12.5px; font-weight: 900; }
     .admin-badge-card span { display: block; margin-top: 4px; color: rgba(255,255,255,.72); font-size: 11px; font-weight: 700; line-height: 1.6; }
 
-    .dash-main { min-width: 0; max-width: 1400px; margin: 0 auto; padding: 26px clamp(16px,2.6vw,34px) 60px; }
-
-    .admin-hero { margin-bottom: 22px; }
-    .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.6vw,28px); font-weight: 900; }
+    .dash-main { min-width: 0; width: 100%; max-width: 1500px; margin: 0 auto; padding: 26px clamp(16px, 2.6vw, 34px) 60px; }
+    .admin-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px, 2.6vw, 28px); font-weight: 900; }
     .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; }
+    .secondary-btn, .primary-btn, .text-btn, .danger-text-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 14px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
+    .secondary-btn { color: var(--blue); background: #fff; border: 1px solid #a9cde8; }
+    .primary-btn { color: #fff; background: var(--blue); border: 1px solid var(--blue); }
+    .text-btn, .danger-text-btn { min-height: 30px; padding: 0 7px; background: transparent; border: 0; }
+    .text-btn { color: var(--blue); }
+    .danger-text-btn { color: #c34840; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
 
-    .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); padding: 22px; margin-bottom: 20px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .summary-card { padding: 16px 18px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,63,125,.05); }
+    .summary-card span { display: block; color: var(--muted); font-size: 11.5px; font-weight: 900; }
+    .summary-card strong { display: block; margin-top: 5px; color: #14324c; font-size: 25px; line-height: 1.25; font-weight: 900; }
+
+    .schema-notice { display: none; margin-bottom: 16px; padding: 12px 14px; color: #8a571b; background: #fff8eb; border: 1px solid #f0d19f; border-radius: 9px; font-size: 12px; font-weight: 700; line-height: 1.7; }
+    .schema-notice.show { display: block; }
+    .panel-card { margin-bottom: 20px; padding: 22px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,63,125,.05); }
     .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
     .panel-head h2 { margin: 0; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
-    .panel-head span.count { color: var(--muted); font-size: 12px; font-weight: 800; }
-    .table-search { position: relative; width: min(280px, 100%); }
-    .table-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; stroke: var(--muted); fill: none; stroke-width: 1.8; pointer-events: none; }
-    .table-search input { width: 100%; min-height: 38px; padding: 0 12px 0 34px; color: #37566f; background: #fbfdff; border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; font-size: 13px; }
+    .panel-head .count { color: var(--muted); font-size: 12px; font-weight: 800; }
+
+    .filters { display: grid; grid-template-columns: minmax(220px, 1.4fr) repeat(3, minmax(150px, 1fr)) minmax(160px, 1fr); gap: 12px; padding: 16px; margin-bottom: 18px; background: #f8fbfd; border: 1px solid #e5eef4; border-radius: 10px; }
+    .filter-field { min-width: 0; }
+    .filter-field label { display: block; margin-bottom: 6px; color: #4f6476; font-size: 10.5px; font-weight: 900; }
+    .filter-field input, .filter-field select { width: 100%; min-height: 38px; padding: 0 11px; color: #37566f; background: #fff; border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; font-size: 12.5px; }
+    .filter-actions { display: flex; align-items: flex-end; gap: 8px; grid-column: 1 / -1; }
 
     .admin-table-wrap { overflow-x: auto; }
-    table.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.admin-table th { padding: 10px 12px; text-align: left; color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .02em; border-bottom: 1px solid var(--line); white-space: nowrap; }
-    table.admin-table td { padding: 12px; color: #263949; font-weight: 700; border-bottom: 1px solid #eef3f7; vertical-align: top; }
+    table.admin-table { width: 100%; min-width: 1220px; border-collapse: collapse; table-layout: fixed; font-size: 12.5px; }
+    table.admin-table th { padding: 10px; text-align: left; color: var(--muted); font-size: 10.5px; font-weight: 900; letter-spacing: .02em; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    table.admin-table td { padding: 12px 10px; color: #263949; font-weight: 700; border-bottom: 1px solid #eef3f7; vertical-align: middle; }
     table.admin-table tr:last-child td { border-bottom: 0; }
-    table.admin-table td.name-cell { color: #14324c; font-weight: 900; white-space: nowrap; }
-    .table-empty { padding: 30px 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
+    table.admin-table tbody tr:hover { background: #fbfdff; }
+    .cell-ellipsis { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .name-cell { color: #14324c; font-weight: 900; }
+    .qualification-list { display: flex; flex-wrap: wrap; gap: 4px; max-height: 48px; overflow: hidden; }
+    .qualification-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; color: #235c88; background: #eef7fd; border: 1px solid #c8e0f0; border-radius: 999px; font-size: 10px; font-weight: 900; white-space: nowrap; }
+    .status-badge { display: inline-flex; align-items: center; min-height: 23px; padding: 0 9px; border: 1px solid; border-radius: 999px; font-size: 10px; font-weight: 900; white-space: nowrap; }
+    .status-active { color: #177344; background: #ecfff5; border-color: #b8ebcf; }
+    .status-suspended { color: #b33d35; background: #fff0ef; border-color: #f0bab6; }
+    .status-withdrawn { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
+    .status-incomplete { color: #a86112; background: #fff6e9; border-color: #f2cf9c; }
+    .action-list { display: flex; align-items: center; gap: 1px; white-space: nowrap; }
+    .table-state { padding: 38px 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .retry-btn { display: inline-flex; min-height: 34px; align-items: center; margin-top: 12px; padding: 0 13px; color: var(--blue); background: #fff; border: 1px solid #a9cde8; border-radius: 8px; font-weight: 900; cursor: pointer; }
 
-    .admin-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px,5vw,64px); background: #fff; border-top: 1px solid var(--line); }
+    .pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #eef3f7; }
+    .pagination-summary { color: var(--muted); font-size: 11.5px; font-weight: 800; }
+    .page-buttons { display: flex; align-items: center; gap: 5px; }
+    .page-btn { min-width: 34px; min-height: 34px; padding: 0 9px; color: #4e6476; background: #fff; border: 1px solid #d5e1e9; border-radius: 7px; font-size: 11.5px; font-weight: 900; cursor: pointer; }
+    .page-btn.active { color: #fff; background: var(--blue); border-color: var(--blue); }
+
+    .modal-backdrop { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(21,39,55,.42); }
+    .modal-backdrop.open { display: flex; }
+    .admin-modal { width: min(720px, 100%); max-height: min(86vh, 820px); overflow-y: auto; background: #fff; border: 1px solid #dce7ee; border-radius: 14px; box-shadow: 0 24px 70px rgba(16,49,74,.22); }
+    .admin-modal.small { width: min(440px, 100%); }
+    .modal-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; background: #fff; border-bottom: 1px solid #eef3f7; }
+    .modal-head h2 { margin: 0; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .modal-close { display: grid; place-items: center; width: 34px; height: 34px; color: #687b8b; background: #f3f6f8; border: 0; border-radius: 50%; font-size: 20px; cursor: pointer; }
+    .modal-body { padding: 20px; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; }
+    .detail-item.full { grid-column: 1 / -1; }
+    .detail-item dt { margin-bottom: 5px; color: var(--muted); font-size: 10.5px; font-weight: 900; }
+    .detail-item dd { margin: 0; overflow-wrap: anywhere; color: #20384d; font-size: 13px; font-weight: 800; line-height: 1.7; }
+    .edit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .edit-field.full { grid-column: 1 / -1; }
+    .edit-field label { display: block; margin-bottom: 6px; color: #4f6476; font-size: 11px; font-weight: 900; }
+    .edit-field input, .edit-field select, .edit-field textarea { width: 100%; padding: 10px 11px; color: #28465e; background: #fff; border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; font-size: 13px; }
+    .edit-field textarea { min-height: 86px; resize: vertical; }
+    .modal-message { min-height: 20px; margin: 14px 0 0; color: #177344; font-size: 12px; font-weight: 800; }
+    .modal-message.error { color: #b33d35; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 20px; border-top: 1px solid #eef3f7; }
+    .confirm-copy { margin: 0; color: #344e63; font-size: 14px; font-weight: 800; line-height: 1.8; }
+
+    .admin-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px, 5vw, 64px); background: #fff; border-top: 1px solid var(--line); }
     .admin-footer-light .brand { color: var(--blue); }
-    .admin-footer-copy { width: 100%; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .admin-footer-copy { width: 100%; margin: 6px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
 
+    @media (max-width: 1180px) { .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 960px) {
       .dash-body { grid-template-columns: 1fr; }
-      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
-      .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .dash-sidebar { position: static; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; height: auto; overflow-x: auto; padding: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .side-nav { display: flex; flex: 0 0 auto; gap: 4px; margin: 0; }
       .side-nav a { white-space: nowrap; }
       .admin-badge-card { display: none; }
     }
-    @media (max-width: 640px) { .dash-main { padding: 20px 14px 48px; } }
+    @media (max-width: 640px) {
+      .dash-main { padding: 20px 14px 48px; }
+      .dash-user-text { display: none; }
+      .admin-hero { flex-direction: column; }
+      .summary-grid, .filters, .edit-grid, .detail-grid { grid-template-columns: 1fr; }
+      .detail-item.full, .edit-field.full { grid-column: auto; }
+      .panel-card { padding: 16px; }
+      .filter-actions { flex-wrap: wrap; }
+      .pagination { align-items: flex-start; }
+    }
   </style>
 </head>
 <body class="admin-dashboard-page">
   <header class="site-header dash-topbar">
-    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <a class="brand" href="index.html" aria-label="Medical Spot Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
     <div class="dash-topbar-right">
       <div class="dash-user"><span class="admin-avatar" id="topbarInitial">管</span><div class="dash-user-text"><small>運営管理者</small><strong id="topbarName">読み込み中</strong></div></div>
       <button class="dash-logout" id="logoutButton" type="button">ログアウト</button>
@@ -76,98 +142,357 @@
   <div class="dash-body">
     <aside class="dash-sidebar" aria-label="管理者メニュー">
       <ul class="side-nav">
-        <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
-        <li><a class="active" href="admin-seekers.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>求職者管理</a></li>
-        <li><a href="admin-employers.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>求人者管理</a></li>
-        <li><a href="admin-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
-        <li><a href="admin-applications.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>応募管理</a></li>
-        <li><a href="admin-payments.html"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>決済管理</a></li>
-        <li><a href="admin-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>システム設定</a></li>
+        <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
+        <li><a class="active" href="admin-seekers.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>求職者管理</a></li>
+        <li><a href="admin-employers.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/></svg>求人者管理</a></li>
+        <li><a href="admin-jobs.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>求人管理</a></li>
+        <li><a href="admin-applications.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/></svg>応募管理</a></li>
+        <li><a href="admin-payments.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>決済管理</a></li>
+        <li><a href="admin-settings.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>システム設定</a></li>
       </ul>
-      <div class="admin-badge-card">
-        <strong>運営管理者モード</strong>
-        <span>求職者アカウントの閲覧のみ行えます。編集・削除は現バージョンでは未対応です。</span>
-      </div>
+      <div class="admin-badge-card"><strong>運営管理者モード</strong><span>登録求職者の確認、編集、利用状態の管理を行えます。</span></div>
     </aside>
 
     <main class="dash-main">
       <section class="admin-hero">
-        <h1>求職者管理</h1>
-        <p>プラットフォームに登録されているすべての求職者アカウントです。</p>
+        <div><h1>求職者管理</h1><p>プラットフォームに登録されているすべての求職者を管理します。</p></div>
+        <button class="secondary-btn" id="csvExportButton" type="button">CSV出力</button>
       </section>
 
+      <section class="summary-grid" aria-label="求職者サマリー">
+        <article class="summary-card"><span>求職者総数</span><strong id="summaryTotal">-</strong></article>
+        <article class="summary-card"><span>有効</span><strong id="summaryActive">-</strong></article>
+        <article class="summary-card"><span>利用停止</span><strong id="summarySuspended">-</strong></article>
+        <article class="summary-card"><span>プロフィール未完了</span><strong id="summaryIncomplete">-</strong></article>
+      </section>
+
+      <div class="schema-notice" id="schemaNotice" role="status">アカウント状態の管理には、更新済みの <code>supabase-schema.sql</code> をSupabaseへ適用してください。適用までは一覧表示のみ利用できます。</div>
+
       <section class="panel-card">
-        <div class="panel-head">
-          <h2>求職者一覧 <span class="count" id="seekerTableCount"></span></h2>
-          <label class="table-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg><input id="seekerSearch" type="text" placeholder="名前・メールアドレスで検索"></label>
-        </div>
+        <div class="panel-head"><h2>求職者一覧 <span class="count" id="seekerTableCount"></span></h2></div>
+        <form class="filters" id="filterForm">
+          <div class="filter-field"><label for="seekerSearch">キーワード</label><input id="seekerSearch" type="search" placeholder="氏名・メールアドレスで検索"></div>
+          <div class="filter-field"><label for="licenseFilter">資格・職種</label><select id="licenseFilter"><option value="">すべて</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>診療放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
+          <div class="filter-field"><label for="experienceFilter">経験年数</label><select id="experienceFilter"><option value="">すべて</option><option value="lt1">1年未満</option><option value="1to3">1〜3年</option><option value="3to5">3〜5年</option><option value="gte5">5年以上</option></select></div>
+          <div class="filter-field"><label for="statusFilter">ステータス</label><select id="statusFilter"><option value="">すべて</option><option value="active">有効</option><option value="suspended">利用停止</option><option value="withdrawn">退会</option><option value="incomplete">プロフィール未完了</option></select></div>
+          <div class="filter-field"><label for="areaFilter">希望勤務地</label><input id="areaFilter" type="search" placeholder="都道府県・市区町村"></div>
+          <div class="filter-actions"><button class="primary-btn" type="submit">検索</button><button class="secondary-btn" id="clearFiltersButton" type="button">条件をクリア</button></div>
+        </form>
+
         <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead><tr><th>氏名</th><th>メールアドレス</th><th>資格・職種</th><th>経験年数</th><th>電話番号</th><th>希望勤務地</th><th>登録日</th></tr></thead>
-            <tbody id="seekerTableBody"><tr><td colspan="7" class="table-empty">読み込んでいます…</td></tr></tbody>
+            <colgroup><col style="width:120px"><col style="width:190px"><col style="width:145px"><col style="width:100px"><col style="width:125px"><col style="width:145px"><col style="width:105px"><col style="width:105px"><col style="width:185px"></colgroup>
+            <thead><tr><th>氏名</th><th>メールアドレス</th><th>資格・職種</th><th>経験年数</th><th>電話番号</th><th>希望勤務地</th><th>登録日</th><th>ステータス</th><th>操作</th></tr></thead>
+            <tbody id="seekerTableBody"><tr><td colspan="9" class="table-state">求職者情報を読み込んでいます...</td></tr></tbody>
           </table>
         </div>
+        <nav class="pagination" aria-label="求職者一覧ページ">
+          <span class="pagination-summary" id="paginationSummary">0件 / 全0件</span>
+          <div class="page-buttons" id="pageButtons"></div>
+        </nav>
       </section>
     </main>
   </div>
 
   <footer class="admin-footer-light">
-    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <p class="admin-footer-copy">© 2024 MEDICAL SPOT JOB. All Rights Reserved.</p>
+    <a class="brand" href="index.html" aria-label="Medical Spot Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <p class="admin-footer-copy">© 2026 MEDICAL SPOT JOB. All Rights Reserved.</p>
   </footer>
+
+  <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
+    <section class="admin-modal"><div class="modal-head"><h2 id="detailModalTitle">求職者詳細</h2><button class="modal-close" type="button" data-close-modal aria-label="閉じる">×</button></div><div class="modal-body"><dl class="detail-grid" id="detailGrid"></dl></div><div class="modal-actions"><button class="secondary-btn" type="button" data-close-modal>閉じる</button></div></section>
+  </div>
+
+  <div class="modal-backdrop" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <section class="admin-modal"><div class="modal-head"><h2 id="editModalTitle">求職者プロフィールを編集</h2><button class="modal-close" type="button" data-close-modal aria-label="閉じる">×</button></div>
+      <form id="editForm"><div class="modal-body"><div class="edit-grid">
+        <div class="edit-field"><label for="editName">氏名</label><input id="editName" name="name" required></div>
+        <div class="edit-field"><label for="editEmail">メールアドレス（プロフィール表示用）</label><input id="editEmail" name="email" type="email" required></div>
+        <div class="edit-field"><label for="editPhone">電話番号</label><input id="editPhone" name="phone" inputmode="tel"></div>
+        <div class="edit-field"><label for="editLicense">資格・職種</label><select id="editLicense" name="license"><option value="">未設定</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>診療放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
+        <div class="edit-field"><label for="editExperience">経験年数</label><input id="editExperience" name="experience_years"></div>
+        <div class="edit-field"><label for="editArea">希望勤務地</label><input id="editArea" name="preferred_area"></div>
+        <div class="edit-field"><label for="editStyle">希望勤務形態</label><input id="editStyle" name="preferred_style"></div>
+        <div class="edit-field full"><label for="editSkills">スキル（読点区切り）</label><input id="editSkills" name="skills"></div>
+        <div class="edit-field full"><label for="editPr">自己PR</label><textarea id="editPr" name="pr"></textarea></div>
+      </div><p class="modal-message" id="editMessage" role="status"></p></div>
+      <div class="modal-actions"><button class="secondary-btn" type="button" data-close-modal>キャンセル</button><button class="primary-btn" id="saveEditButton" type="submit">変更を保存</button></div></form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <section class="admin-modal small"><div class="modal-head"><h2 id="confirmModalTitle">利用状態の変更</h2><button class="modal-close" type="button" data-close-modal aria-label="閉じる">×</button></div><div class="modal-body"><p class="confirm-copy" id="confirmMessage"></p><p class="modal-message" id="confirmError" role="alert"></p></div><div class="modal-actions"><button class="secondary-btn" type="button" data-close-modal>キャンセル</button><button class="primary-btn" id="confirmStatusButton" type="button">変更する</button></div></section>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script>
     (function () {
+      "use strict";
+
       const config = window.MEDISPOT_SUPABASE || {};
-      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const configured = Boolean(config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY"));
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      const PAGE_SIZE = 10;
+      const BASE_COLUMNS = "id,user_id,name,email,birth_date,phone,license,experience_years,preferred_area,preferred_style,skills,pr,source_path,created_at";
+      const FULL_COLUMNS = BASE_COLUMNS + ",account_status,updated_at";
       let seekers = [];
+      let filteredSeekers = [];
+      let currentPage = 1;
+      let selectedSeekerId = null;
+      let pendingStatus = null;
+      let statusMigrationReady = true;
 
-      function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
-      function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
-      function initial(name) { return (name || "管").trim().charAt(0).toUpperCase() || "管"; }
-      function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
-      function areaText(value) { return Array.isArray(value) ? value.join("、") : (value || "-"); }
+      const element = function (id) { return document.getElementById(id); };
+      function text(id, value) { const node = element(id); if (node) node.textContent = value; }
+      function esc(value) { return String(value ?? "").replace(/[&<>\"]/g, function (char) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[char]; }); }
+      function clean(value) { if (value === null || value === undefined || value === "" || value === "[]") return "-"; return String(value); }
+      function initial(name) { return String(name || "管").trim().charAt(0).toUpperCase() || "管"; }
+      function formatDate(value) { if (!value) return "-"; const date = new Date(value); return Number.isNaN(date.getTime()) ? "-" : new Intl.DateTimeFormat("ja-JP").format(date); }
+      function listValues(value) {
+        if (Array.isArray(value)) return value.filter(Boolean).map(String);
+        if (!value || value === "[]") return [];
+        if (typeof value === "string" && value.trim().startsWith("[")) { try { const parsed = JSON.parse(value); if (Array.isArray(parsed)) return parsed.filter(Boolean).map(String); } catch (error) {} }
+        return String(value).split(/[、,，]/).map(function (item) { return item.trim(); }).filter(Boolean);
+      }
+      function areaText(value) { const values = listValues(value); return values.length ? values.join("、") : clean(value); }
+      function skillsText(value) { const values = listValues(value); return values.length ? values.join("、") : clean(value); }
+      function formatPhone(value) {
+        const raw = clean(value); if (raw === "-") return raw;
+        const digits = raw.replace(/\D/g, "");
+        if (digits.length === 11) return digits.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+        if (digits.length === 10) return digits.replace(/(\d{2,3})(\d{3,4})(\d{4})/, "$1-$2-$3");
+        return raw;
+      }
+      function isProfileComplete(row) { return Boolean(row.name && row.email && row.license && row.phone && listValues(row.preferred_area).length); }
+      function displayStatus(row) {
+        const state = row.account_status || "active";
+        if (state === "suspended") return { key: "suspended", label: "利用停止" };
+        if (state === "withdrawn") return { key: "withdrawn", label: "退会" };
+        if (!isProfileComplete(row)) return { key: "incomplete", label: "未完了" };
+        return { key: "active", label: "有効" };
+      }
+      function experienceGroup(value) {
+        const label = String(value || "");
+        if (!label) return "";
+        if (/10年|5年以上|5-10|10年以上/.test(label)) return "gte5";
+        if (/3.?5/.test(label)) return "3to5";
+        if (/1.?3/.test(label)) return "1to3";
+        if (/1年未満/.test(label)) return "lt1";
+        return "";
+      }
+      function findSeeker(id) { return seekers.find(function (row) { return String(row.id) === String(id); }); }
 
-      function renderSeekers(rows) {
-        const body = document.getElementById("seekerTableBody");
-        text("seekerTableCount", rows.length ? "(" + rows.length + "件)" : "");
-        if (!rows.length) { body.innerHTML = '<tr><td colspan="7" class="table-empty">該当する求職者がいません。</td></tr>'; return; }
-        body.innerHTML = rows.map(function (p) {
-          return "<tr><td class=\"name-cell\">" + esc(p.name || "未設定") + "</td><td>" + esc(p.email || "-") + "</td><td>" + esc(p.license || "-") + "</td><td>" + esc(p.experience_years || "-") + "</td><td>" + esc(p.phone || "-") + "</td><td>" + esc(areaText(p.preferred_area)) + "</td><td>" + esc(formatDate(p.created_at)) + "</td></tr>";
-        }).join("");
+      function renderSummary() {
+        text("summaryTotal", seekers.length.toLocaleString("ja-JP"));
+        text("summaryActive", seekers.filter(function (row) { return (row.account_status || "active") === "active"; }).length.toLocaleString("ja-JP"));
+        text("summarySuspended", seekers.filter(function (row) { return row.account_status === "suspended"; }).length.toLocaleString("ja-JP"));
+        text("summaryIncomplete", seekers.filter(function (row) { return !isProfileComplete(row); }).length.toLocaleString("ja-JP"));
       }
 
-      function applyFilter(rows, query, fields) {
-        const q = query.trim().toLowerCase();
-        if (!q) return rows;
-        return rows.filter(function (row) { return fields.some(function (field) { return String(row[field] || "").toLowerCase().includes(q); }); });
+      function qualificationBadges(value) {
+        const items = listValues(value);
+        if (!items.length) return "-";
+        return '<span class="qualification-list" title="' + esc(items.join("、")) + '">' + items.map(function (item) { return '<span class="qualification-badge">' + esc(item) + '</span>'; }).join("") + '</span>';
       }
 
-      document.getElementById("seekerSearch").addEventListener("input", function (event) {
-        renderSeekers(applyFilter(seekers, event.target.value, ["name", "email", "license"]));
-      });
+      function renderTable() {
+        const body = element("seekerTableBody");
+        const total = filteredSeekers.length;
+        const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        currentPage = Math.min(currentPage, totalPages);
+        const start = total ? (currentPage - 1) * PAGE_SIZE : 0;
+        const pageRows = filteredSeekers.slice(start, start + PAGE_SIZE);
+        text("seekerTableCount", "(" + total.toLocaleString("ja-JP") + "件)");
+
+        if (!pageRows.length) {
+          body.innerHTML = '<tr><td colspan="9" class="table-state">該当する求職者はいません。</td></tr>';
+        } else {
+          body.innerHTML = pageRows.map(function (row) {
+            const status = displayStatus(row);
+            const stateAction = row.account_status === "suspended"
+              ? '<button class="text-btn" type="button" data-action="reactivate" data-id="' + esc(row.id) + '"' + (statusMigrationReady ? "" : " disabled") + '>利用再開</button>'
+              : row.account_status === "withdrawn" ? "" : '<button class="danger-text-btn" type="button" data-action="suspend" data-id="' + esc(row.id) + '"' + (statusMigrationReady ? "" : " disabled") + '>利用停止</button>';
+            return '<tr><td><span class="cell-ellipsis name-cell" title="' + esc(clean(row.name)) + '">' + esc(clean(row.name)) + '</span></td>' +
+              '<td><span class="cell-ellipsis" title="' + esc(clean(row.email)) + '">' + esc(clean(row.email)) + '</span></td>' +
+              '<td>' + qualificationBadges(row.license) + '</td>' +
+              '<td><span class="cell-ellipsis" title="' + esc(clean(row.experience_years)) + '">' + esc(clean(row.experience_years)) + '</span></td>' +
+              '<td><span class="cell-ellipsis" title="' + esc(formatPhone(row.phone)) + '">' + esc(formatPhone(row.phone)) + '</span></td>' +
+              '<td><span class="cell-ellipsis" title="' + esc(areaText(row.preferred_area)) + '">' + esc(areaText(row.preferred_area)) + '</span></td>' +
+              '<td>' + esc(formatDate(row.created_at)) + '</td>' +
+              '<td><span class="status-badge status-' + status.key + '">' + status.label + '</span></td>' +
+              '<td><div class="action-list"><button class="text-btn" type="button" data-action="detail" data-id="' + esc(row.id) + '">詳細</button><button class="text-btn" type="button" data-action="edit" data-id="' + esc(row.id) + '">編集</button>' + stateAction + '</div></td></tr>';
+          }).join("");
+        }
+
+        const end = Math.min(start + PAGE_SIZE, total);
+        text("paginationSummary", total ? (start + 1) + "〜" + end + "件 / 全" + total + "件" : "0件 / 全0件");
+        renderPagination(totalPages);
+      }
+
+      function renderPagination(totalPages) {
+        const buttons = [];
+        buttons.push('<button class="page-btn" type="button" data-page="' + (currentPage - 1) + '"' + (currentPage === 1 ? " disabled" : "") + '>前へ</button>');
+        for (let page = 1; page <= totalPages; page += 1) {
+          if (totalPages > 7 && page > 2 && page < totalPages - 1 && Math.abs(page - currentPage) > 1) {
+            if (buttons[buttons.length - 1] !== '<span aria-hidden="true">…</span>') buttons.push('<span aria-hidden="true">…</span>');
+            continue;
+          }
+          buttons.push('<button class="page-btn' + (page === currentPage ? " active" : "") + '" type="button" data-page="' + page + '" aria-label="' + page + 'ページ">' + page + '</button>');
+        }
+        buttons.push('<button class="page-btn" type="button" data-page="' + (currentPage + 1) + '"' + (currentPage === totalPages ? " disabled" : "") + '>次へ</button>');
+        element("pageButtons").innerHTML = buttons.join("");
+      }
+
+      function applyFilters(resetPage) {
+        const query = element("seekerSearch").value.trim().toLowerCase();
+        const license = element("licenseFilter").value;
+        const experience = element("experienceFilter").value;
+        const status = element("statusFilter").value;
+        const area = element("areaFilter").value.trim().toLowerCase();
+        filteredSeekers = seekers.filter(function (row) {
+          const keywordMatch = !query || [row.name, row.email, row.license, row.phone].some(function (value) { return String(value || "").toLowerCase().includes(query); });
+          const licenseMatch = !license || listValues(row.license).some(function (value) { return value === license; });
+          const experienceMatch = !experience || experienceGroup(row.experience_years) === experience;
+          const statusMatch = !status || displayStatus(row).key === status;
+          const areaMatch = !area || areaText(row.preferred_area).toLowerCase().includes(area);
+          return keywordMatch && licenseMatch && experienceMatch && statusMatch && areaMatch;
+        });
+        if (resetPage) currentPage = 1;
+        renderTable();
+      }
+
+      function openModal(id) { element(id).classList.add("open"); document.body.style.overflow = "hidden"; const focusable = element(id).querySelector("button, input, select, textarea"); if (focusable) focusable.focus(); }
+      function closeModal(modal) { modal.classList.remove("open"); if (!document.querySelector(".modal-backdrop.open")) document.body.style.overflow = ""; }
+      function detailItem(label, value, full) { return '<div class="detail-item' + (full ? " full" : "") + '"><dt>' + esc(label) + '</dt><dd>' + (value || "-") + '</dd></div>'; }
+
+      function showDetail(row) {
+        const status = displayStatus(row);
+        const certificate = '<span style="color:var(--muted)">-（現行スキーマに資格証画像項目はありません）</span>';
+        element("detailGrid").innerHTML =
+          detailItem("氏名", esc(clean(row.name))) + detailItem("メールアドレス", esc(clean(row.email))) +
+          detailItem("電話番号", esc(formatPhone(row.phone))) + detailItem("資格・職種", qualificationBadges(row.license)) +
+          detailItem("経験年数", esc(clean(row.experience_years))) + detailItem("希望勤務地", esc(areaText(row.preferred_area))) +
+          detailItem("スキル", esc(skillsText(row.skills)), true) + detailItem("プロフィール完成状況", isProfileComplete(row) ? "完了" : "未完了") +
+          detailItem("登録日", esc(formatDate(row.created_at))) + detailItem("最終更新日", esc(formatDate(row.updated_at))) +
+          detailItem("アカウントステータス", '<span class="status-badge status-' + status.key + '">' + status.label + '</span>') +
+          detailItem("資格証画像", certificate, true);
+        openModal("detailModal");
+      }
+
+      function showEdit(row) {
+        selectedSeekerId = row.id;
+        element("editName").value = row.name || "";
+        element("editEmail").value = row.email || "";
+        element("editPhone").value = row.phone || "";
+        element("editLicense").value = row.license || "";
+        element("editExperience").value = row.experience_years || "";
+        element("editArea").value = areaText(row.preferred_area) === "-" ? "" : areaText(row.preferred_area);
+        element("editStyle").value = row.preferred_style || "";
+        element("editSkills").value = skillsText(row.skills) === "-" ? "" : skillsText(row.skills);
+        element("editPr").value = row.pr || "";
+        text("editMessage", ""); element("editMessage").className = "modal-message";
+        openModal("editModal");
+      }
+
+      function requestStatusChange(row, nextStatus) {
+        selectedSeekerId = row.id; pendingStatus = nextStatus;
+        const suspend = nextStatus === "suspended";
+        text("confirmMessage", suspend ? "この求職者の利用を停止しますか？" : "この求職者の利用を再開しますか？");
+        text("confirmStatusButton", suspend ? "利用停止する" : "利用再開する");
+        element("confirmStatusButton").className = suspend ? "danger-text-btn" : "primary-btn";
+        text("confirmError", "");
+        openModal("confirmModal");
+      }
+
+      async function saveEdit(event) {
+        event.preventDefault();
+        const saveButton = element("saveEditButton");
+        saveButton.disabled = true; text("editMessage", "更新しています...");
+        const payload = {
+          name: element("editName").value.trim(), email: element("editEmail").value.trim(), phone: element("editPhone").value.trim() || null,
+          license: element("editLicense").value || null, experience_years: element("editExperience").value.trim() || null,
+          preferred_area: element("editArea").value.trim() || null, preferred_style: element("editStyle").value.trim() || null,
+          skills: listValues(element("editSkills").value), pr: element("editPr").value.trim() || null
+        };
+        try {
+          const result = await supabaseClient.from("seeker_profiles").update(payload).eq("id", selectedSeekerId).select(statusMigrationReady ? FULL_COLUMNS : BASE_COLUMNS).maybeSingle();
+          if (result.error) throw result.error;
+          if (!result.data) throw new Error("更新権限を確認できませんでした。");
+          const index = seekers.findIndex(function (row) { return row.id === selectedSeekerId; });
+          seekers[index] = Object.assign({}, seekers[index], result.data);
+          renderSummary(); applyFilters(false);
+          element("editMessage").className = "modal-message"; text("editMessage", "更新しました。");
+        } catch (error) {
+          element("editMessage").className = "modal-message error"; text("editMessage", "更新に失敗しました。" + (error.message ? " " + error.message : "権限と入力内容を確認してください。"));
+        } finally { saveButton.disabled = false; }
+      }
+
+      async function confirmStatusChange() {
+        const button = element("confirmStatusButton"); button.disabled = true; text("confirmError", "");
+        try {
+          const result = await supabaseClient.from("seeker_profiles").update({ account_status: pendingStatus }).eq("id", selectedSeekerId).select(FULL_COLUMNS).maybeSingle();
+          if (result.error) throw result.error;
+          if (!result.data) throw new Error("更新権限を確認できませんでした。");
+          const index = seekers.findIndex(function (row) { return row.id === selectedSeekerId; }); seekers[index] = result.data;
+          renderSummary(); applyFilters(false); closeModal(element("confirmModal"));
+        } catch (error) { text("confirmError", "状態の変更に失敗しました。" + (error.message ? " " + error.message : "しばらくしてから再度お試しください。")); }
+        finally { button.disabled = false; }
+      }
+
+      function csvCell(value) { return '"' + String(value ?? "").replace(/"/g, '""') + '"'; }
+      function exportCsv() {
+        const headers = ["氏名", "メールアドレス", "資格・職種", "経験年数", "電話番号", "希望勤務地", "登録日", "ステータス"];
+        const lines = [headers.map(csvCell).join(",")].concat(filteredSeekers.map(function (row) {
+          return [row.name, row.email, listValues(row.license).join("、"), row.experience_years, formatPhone(row.phone), areaText(row.preferred_area), formatDate(row.created_at), displayStatus(row).label].map(function (value) { return csvCell(value === "-" ? "" : value); }).join(",");
+        }));
+        const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = "求職者一覧_" + new Date().toISOString().slice(0, 10) + ".csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+      }
+
+      async function fetchSeekers() {
+        let result = await supabaseClient.from("seeker_profiles").select(FULL_COLUMNS).order("created_at", { ascending: false });
+        if (result.error) {
+          const missingStatusColumns = result.error.code === "42703" || result.error.code === "PGRST204" || /account_status|updated_at/i.test(result.error.message || "");
+          if (!missingStatusColumns) throw result.error;
+          statusMigrationReady = false; element("schemaNotice").classList.add("show");
+          result = await supabaseClient.from("seeker_profiles").select(BASE_COLUMNS).order("created_at", { ascending: false });
+        }
+        if (result.error) throw result.error;
+        seekers = (result.data || []).map(function (row) { return Object.assign({ account_status: "active", updated_at: null }, row); });
+        filteredSeekers = seekers.slice(); renderSummary(); renderTable();
+      }
 
       async function load() {
-        if (!supabaseClient) { text("topbarName", "運営管理者"); text("topbarInitial", "管"); renderSeekers([]); return; }
+        if (!supabaseClient) throw new Error("Supabaseの接続設定を確認してください。");
         const sessionResult = await supabaseClient.auth.getSession();
-        const user = sessionResult.data.session?.user;
-        if (!user) { window.location.href = "login.html?role=admin"; return; }
+        const user = sessionResult.data.session && sessionResult.data.session.user;
+        if (!user) { window.location.href = "admin-login.html"; return; }
         const adminCheck = await supabaseClient.from("employer_profiles").select("id,contact_name").eq("user_id", user.id).eq("is_admin", true).limit(1).maybeSingle();
         if (adminCheck.error || !adminCheck.data) { window.location.href = "employer-dashboard.html"; return; }
-        const adminName = adminCheck.data.contact_name || "運営管理者";
-        text("topbarName", adminName);
-        text("topbarInitial", initial(adminName));
-
-        const seekersResult = await supabaseClient.from("seeker_profiles").select("name,email,license,experience_years,phone,preferred_area,created_at").order("created_at", { ascending: false });
-        seekers = seekersResult.error ? [] : (seekersResult.data || []);
-        renderSeekers(seekers);
+        const adminName = adminCheck.data.contact_name || "運営管理者"; text("topbarName", adminName); text("topbarInitial", initial(adminName));
+        await fetchSeekers();
       }
 
-      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
-      load().catch(function (error) { console.error(error); renderSeekers([]); });
+      element("filterForm").addEventListener("submit", function (event) { event.preventDefault(); applyFilters(true); });
+      element("seekerSearch").addEventListener("input", function () { applyFilters(true); });
+      element("clearFiltersButton").addEventListener("click", function () { element("filterForm").reset(); applyFilters(true); });
+      element("pageButtons").addEventListener("click", function (event) { const button = event.target.closest("[data-page]"); if (!button || button.disabled) return; currentPage = Number(button.dataset.page); renderTable(); });
+      element("seekerTableBody").addEventListener("click", function (event) { const button = event.target.closest("[data-action]"); if (!button) return; const row = findSeeker(button.dataset.id); if (!row) return; if (button.dataset.action === "detail") showDetail(row); if (button.dataset.action === "edit") showEdit(row); if (button.dataset.action === "suspend") requestStatusChange(row, "suspended"); if (button.dataset.action === "reactivate") requestStatusChange(row, "active"); });
+      document.querySelectorAll("[data-close-modal]").forEach(function (button) { button.addEventListener("click", function () { closeModal(button.closest(".modal-backdrop")); }); });
+      document.querySelectorAll(".modal-backdrop").forEach(function (modal) { modal.addEventListener("click", function (event) { if (event.target === modal) closeModal(modal); }); });
+      document.addEventListener("keydown", function (event) { if (event.key === "Escape") document.querySelectorAll(".modal-backdrop.open").forEach(closeModal); });
+      element("editForm").addEventListener("submit", saveEdit);
+      element("confirmStatusButton").addEventListener("click", confirmStatusChange);
+      element("csvExportButton").addEventListener("click", exportCsv);
+      element("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "admin-login.html"; });
+
+      load().catch(function (error) {
+        console.error("Seeker management loading failed:", error);
+        element("seekerTableBody").innerHTML = '<tr><td colspan="9" class="table-state">求職者情報の取得に失敗しました。<br><button class="retry-btn" id="retryButton" type="button">再読み込み</button></td></tr>';
+        const retry = element("retryButton"); if (retry) retry.addEventListener("click", function () { window.location.reload(); });
+        text("topbarName", "運営管理者"); renderSummary();
+      });
     })();
   </script>
 </body>
