@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>運営管理者ダッシュボード | Medi Job</title>
+  <title>システム設定 | Medi Job 運営管理者</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     body.admin-dashboard-page { color: var(--ink); background: #f5f9fc; }
@@ -23,6 +23,7 @@
     .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
     .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
     .side-nav a.active { color: #fff; background: linear-gradient(120deg, #2b3646, #46566d); box-shadow: 0 8px 18px rgba(43,54,70,.24); }
+    .side-nav a .nav-soon { margin-left: auto; color: var(--muted); background: #eef3f7; border-radius: 999px; padding: 1px 7px; font-size: 9.5px; font-weight: 900; }
 
     .admin-badge-card { margin: 0 2px; padding: 15px; background: linear-gradient(135deg,#2b3646,#3a4658); border-radius: 12px; }
     .admin-badge-card strong { display: block; color: #fff; font-size: 12.5px; font-weight: 900; }
@@ -34,24 +35,17 @@
     .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.6vw,28px); font-weight: 900; }
     .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
-    .stat-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); }
-    .stat-icon { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; border-radius: 10px; }
-    .stat-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-    .stat-card.c-blue .stat-icon { color: var(--blue); background: #e9f3fd; }
-    .stat-card.c-green .stat-icon { color: var(--green-dark); background: #e8fbf0; }
-    .stat-card.c-amber .stat-icon { color: #b5670f; background: #fff3e0; }
-    .stat-card.c-pink .stat-icon { color: #c23b6c; background: #fdeaf1; }
-    .stat-card span.label { display: block; color: var(--muted); font-size: 11.5px; font-weight: 900; }
-    .stat-card strong { display: block; color: #14324c; font-size: 25px; line-height: 1.3; font-weight: 900; }
-
-    .quick-links { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
-    .quick-link { display: flex; flex-direction: column; gap: 8px; padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); transition: transform .15s ease, box-shadow .15s ease; }
-    .quick-link:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(0,63,125,.12); }
-    .quick-link .qa-icon { display: grid; place-items: center; width: 38px; height: 38px; color: #2b3646; background: #eef1f4; border-radius: 10px; }
-    .quick-link .qa-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-    .quick-link strong { color: #14324c; font-size: 14px; font-weight: 900; }
-    .quick-link span { color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.6; }
+    .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); padding: 22px; margin-bottom: 20px; }
+    .panel-card h2 { margin: 0 0 16px; color: var(--blue-dark); font-size: 16px; font-weight: 900; }
+    .info-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+    .info-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 13px 0; border-top: 1px solid #eef3f7; font-size: 13px; }
+    .info-list li:first-child { border-top: 0; }
+    .info-list b { color: var(--muted); font-weight: 900; }
+    .info-list span { color: #263949; font-weight: 700; text-align: right; }
+    .empty-state { padding: 56px 24px; text-align: center; background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; }
+    .empty-state .soon-badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 12px; margin-bottom: 14px; color: var(--muted); background: #eef3f7; border-radius: 999px; font-size: 11.5px; font-weight: 900; }
+    .empty-state strong { display: block; margin-bottom: 8px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .empty-state p { margin: 0 auto; max-width: 480px; color: var(--muted); font-size: 13px; line-height: 1.8; font-weight: 700; }
 
     .admin-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px,5vw,64px); background: #fff; border-top: 1px solid var(--line); }
     .admin-footer-light .brand { color: var(--blue); }
@@ -62,14 +56,10 @@
       .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
       .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
       .side-nav a { white-space: nowrap; }
+      .side-nav a .nav-soon { display: none; }
       .admin-badge-card { display: none; }
-      .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .quick-links { grid-template-columns: 1fr; }
     }
-    @media (max-width: 640px) {
-      .dash-main { padding: 20px 14px 48px; }
-      .stats-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 640px) { .dash-main { padding: 20px 14px 48px; } }
   </style>
 </head>
 <body class="admin-dashboard-page">
@@ -84,41 +74,41 @@
   <div class="dash-body">
     <aside class="dash-sidebar" aria-label="管理者メニュー">
       <ul class="side-nav">
-        <li><a class="active" href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
+        <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
         <li><a href="admin-seekers.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>求職者管理</a></li>
         <li><a href="admin-employers.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>求人者管理</a></li>
         <li><a href="admin-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
         <li><a href="admin-applications.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>応募管理</a></li>
-        <li><a href="admin-payments.html"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>決済管理</a></li>
-        <li><a href="admin-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>システム設定</a></li>
+        <li><a href="admin-payments.html"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>決済管理<span class="nav-soon">準備中</span></a></li>
+        <li><a class="active" href="admin-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>システム設定<span class="nav-soon">準備中</span></a></li>
       </ul>
-
       <div class="admin-badge-card">
         <strong>運営管理者モード</strong>
-        <span>プラットフォーム全体のデータを横断的に確認できます。</span>
+        <span>プラットフォーム共通設定の変更機能は現バージョンでは未対応です。</span>
       </div>
     </aside>
 
     <main class="dash-main">
       <section class="admin-hero">
-        <h1>運営管理者ダッシュボード</h1>
-        <p>プラットフォーム全体の登録者数と稼働状況の概要です。</p>
+        <h1>システム設定</h1>
+        <p>プラットフォーム共通の設定を管理する画面です。</p>
       </section>
 
-      <section class="stats-grid" aria-label="プラットフォーム概況">
-        <article class="stat-card c-blue"><span class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg></span><span><span class="label">求職者数</span><strong id="seekerCount">-</strong></span></article>
-        <article class="stat-card c-green"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/></svg></span><span><span class="label">求人者数</span><strong id="employerCount">-</strong></span></article>
-        <article class="stat-card c-amber"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span><span><span class="label">掲載中の求人</span><strong id="jobCount">-</strong></span></article>
-        <article class="stat-card c-pink"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg></span><span><span class="label">応募総数</span><strong id="applicationCount">-</strong></span></article>
+      <section class="panel-card">
+        <h2>現在のログイン情報</h2>
+        <ul class="info-list">
+          <li><b>ログイン中のアカウント</b><span id="settingsAdminName">-</span></li>
+          <li><b>メールアドレス</b><span id="settingsAdminEmail">-</span></li>
+          <li><b>権限</b><span>運営管理者（is_admin = true）</span></li>
+        </ul>
       </section>
 
-      <section class="quick-links" aria-label="管理メニュー">
-        <a class="quick-link" href="admin-seekers.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg></span><strong>求職者管理</strong><span>登録済みの求職者アカウントを一覧・検索します。</span></a>
-        <a class="quick-link" href="admin-employers.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/></svg></span><strong>求人者管理</strong><span>登録済みの医療機関アカウントを一覧・検索します。</span></a>
-        <a class="quick-link" href="admin-jobs.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span><strong>求人管理</strong><span>全求人を確認し、募集中／終了を切り替えます。</span></a>
-        <a class="quick-link" href="admin-applications.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/></svg></span><strong>応募管理</strong><span>プラットフォーム全体の応募状況を確認します。</span></a>
-        <a class="quick-link" href="admin-payments.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span><strong>決済管理</strong><span>成功報酬・請求状況を確認します。</span></a>
-        <a class="quick-link" href="admin-settings.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3"/></svg></span><strong>システム設定</strong><span>プラットフォーム共通の設定を管理します。</span></a>
+      <section class="panel-card">
+        <div class="empty-state">
+          <span class="soon-badge">準備中</span>
+          <strong>設定変更機能は現在準備中です</strong>
+          <p>料金プランの初期値、通知テンプレート、他の運営管理者アカウントの招待・権限管理など、プラットフォーム共通の設定を変更する機能はまだ実装されていません。管理者アカウントの追加は、現在は Supabase の SQL Editor から手動で行う運用となっています。</p>
+        </div>
       </section>
     </main>
   </div>
@@ -139,36 +129,22 @@
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
       function initial(name) { return (name || "管").trim().charAt(0).toUpperCase() || "管"; }
 
-      async function loadDashboard() {
+      async function load() {
         if (!supabaseClient) { text("topbarName", "運営管理者"); text("topbarInitial", "管"); return; }
         const sessionResult = await supabaseClient.auth.getSession();
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "login.html?role=admin"; return; }
-
         const adminCheck = await supabaseClient.from("employer_profiles").select("id,contact_name").eq("user_id", user.id).eq("is_admin", true).limit(1).maybeSingle();
-        if (adminCheck.error || !adminCheck.data) {
-          window.location.href = "employer-dashboard.html";
-          return;
-        }
+        if (adminCheck.error || !adminCheck.data) { window.location.href = "employer-dashboard.html"; return; }
         const adminName = adminCheck.data.contact_name || "運営管理者";
         text("topbarName", adminName);
         text("topbarInitial", initial(adminName));
-
-        const [seekersResult, employersResult, jobsResult, applicationsResult] = await Promise.all([
-          supabaseClient.from("seeker_profiles").select("id", { count: "exact", head: true }),
-          supabaseClient.from("employer_profiles").select("id", { count: "exact", head: true }),
-          supabaseClient.from("jobs").select("id", { count: "exact", head: true }).eq("status", "open"),
-          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true })
-        ]);
-
-        text("seekerCount", String(seekersResult.count || 0));
-        text("employerCount", String(employersResult.count || 0));
-        text("jobCount", String(jobsResult.count || 0));
-        text("applicationCount", String(applicationsResult.count || 0));
+        text("settingsAdminName", adminName);
+        text("settingsAdminEmail", user.email);
       }
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
-      loadDashboard().catch(function (error) { console.error(error); });
+      load().catch(function (error) { console.error(error); });
     })();
   </script>
 </body>
