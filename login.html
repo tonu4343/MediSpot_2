@@ -187,17 +187,18 @@
 
     .role-tabs {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 22px;
     }
     .role-tab {
       min-height: 44px;
+      padding: 0 6px;
       color: var(--blue);
       background: #f4fbff;
       border: 1px solid #acd3f1;
       border-radius: 999px;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 900;
       cursor: pointer;
     }
@@ -210,6 +211,11 @@
       color: #fff;
       background: var(--green);
       border-color: var(--green);
+    }
+    .role-tab.active.admin {
+      color: #fff;
+      background: #2b3646;
+      border-color: #2b3646;
     }
 
     .field { margin-bottom: 18px; }
@@ -267,6 +273,10 @@
     .submit-btn.employer {
       background: linear-gradient(180deg, #28c975, var(--green));
       box-shadow: 0 10px 22px rgba(33, 183, 97, 0.22);
+    }
+    .submit-btn.admin {
+      background: linear-gradient(180deg, #3a4658, #2b3646);
+      box-shadow: 0 10px 22px rgba(43, 54, 70, 0.24);
     }
     .form-links {
       display: flex;
@@ -344,6 +354,7 @@
       <div class="role-tabs" role="tablist" aria-label="ログイン種別">
         <button class="role-tab seeker active" type="button" data-role="seeker">求職者</button>
         <button class="role-tab employer" type="button" data-role="employer">求人者</button>
+        <button class="role-tab admin" type="button" data-role="admin">運営管理者</button>
       </div>
 
       <form action="#" method="post" id="loginForm">

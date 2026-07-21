@@ -49,7 +49,10 @@
       tab.classList.toggle("active", tab.dataset.role === role);
     });
     if (roleInput) roleInput.value = role;
-    if (submitBtn) submitBtn.classList.toggle("employer", role === "employer");
+    if (submitBtn) {
+      submitBtn.classList.toggle("employer", role === "employer");
+      submitBtn.classList.toggle("admin", role === "admin");
+    }
   }
 
   tabs.forEach((tab) => tab.addEventListener("click", () => setRole(tab.dataset.role)));
@@ -68,7 +71,7 @@
 
     const email = document.querySelector("#email").value.trim();
     const password = document.querySelector("#password").value;
-    const selectedRole = roleInput.value === "employer" ? "employer" : "seeker";
+    const selectedRole = roleInput.value === "employer" ? "employer" : roleInput.value === "admin" ? "admin" : "seeker";
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -80,13 +83,20 @@
       return;
     }
 
-    const profileTable = selectedRole === "employer" ? "employer_profiles" : "seeker_profiles";
-    const profileResult = await supabaseClient
-      .from(profileTable)
-      .select("id")
-      .eq("user_id", data.user.id)
-      .limit(1)
-      .maybeSingle();
+    const profileResult = selectedRole === "admin"
+      ? await supabaseClient
+          .from("employer_profiles")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .eq("is_admin", true)
+          .limit(1)
+          .maybeSingle()
+      : await supabaseClient
+          .from(selectedRole === "employer" ? "employer_profiles" : "seeker_profiles")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .limit(1)
+          .maybeSingle();
 
     submitBtn.disabled = false;
     submitBtn.style.opacity = "";
@@ -94,22 +104,23 @@
 
     if (profileResult.error || !profileResult.data) {
       await supabaseClient.auth.signOut();
-      showNotice(
-        selectedRole === "employer"
-          ? "\u3053\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306f\u6c42\u4eba\u8005\u30a2\u30ab\u30a6\u30f3\u30c8\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u6c42\u8077\u8005\u3068\u3057\u3066\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
-          : "\u3053\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306f\u6c42\u8077\u8005\u30a2\u30ab\u30a6\u30f3\u30c8\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u6c42\u4eba\u8005\u3068\u3057\u3066\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
-        true
-      );
+      const roleErrorMessages = {
+        employer: "\u3053\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306f\u6c42\u4eba\u8005\u30a2\u30ab\u30a6\u30f3\u30c8\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u6c42\u8077\u8005\u3068\u3057\u3066\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
+        seeker: "\u3053\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306f\u6c42\u8077\u8005\u30a2\u30ab\u30a6\u30f3\u30c8\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u6c42\u4eba\u8005\u3068\u3057\u3066\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
+        admin: "\u3053\u306e\u30a2\u30ab\u30a6\u30f3\u30c8\u306b\u306f\u904b\u55b6\u7ba1\u7406\u8005\u6a29\u9650\u304c\u3042\u308a\u307e\u305b\u3093\u3002"
+      };
+      showNotice(roleErrorMessages[selectedRole], true);
       return;
     }
 
     showNotice("\u30ed\u30b0\u30a4\u30f3\u3057\u307e\u3057\u305f\u3002\u30de\u30a4\u30da\u30fc\u30b8\u3078\u79fb\u52d5\u3057\u307e\u3059\u3002", false);
+    const redirectTargets = { seeker: "seeker-dashboard.html", employer: "employer-dashboard.html", admin: "admin-dashboard.html" };
     setTimeout(function () {
-      window.location.href = selectedRole === "seeker" ? "seeker-dashboard.html" : "employer-dashboard.html";
+      window.location.href = redirectTargets[selectedRole];
     }, 600);
   });
 
-  setRole(params.get("role") === "employer" ? "employer" : "seeker");
+  setRole(params.get("role") === "employer" ? "employer" : params.get("role") === "admin" ? "admin" : "seeker");
   if (params.get("roleError") === "1") {
     showNotice("\u30a2\u30ab\u30a6\u30f3\u30c8\u7a2e\u5225\u304c\u9055\u3044\u307e\u3059\u3002\u6b63\u3057\u3044\u30ed\u30b0\u30a4\u30f3\u7a2e\u5225\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
   } else if (params.get("registered") === "1") {
