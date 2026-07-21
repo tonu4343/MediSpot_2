@@ -49,10 +49,7 @@
       tab.classList.toggle("active", tab.dataset.role === role);
     });
     if (roleInput) roleInput.value = role;
-    if (submitBtn) {
-      submitBtn.classList.toggle("employer", role === "employer");
-      submitBtn.classList.toggle("admin", role === "admin");
-    }
+    if (submitBtn) submitBtn.classList.toggle("employer", role === "employer");
   }
 
   tabs.forEach((tab) => tab.addEventListener("click", () => setRole(tab.dataset.role)));
@@ -71,7 +68,7 @@
 
     const email = document.querySelector("#email").value.trim();
     const password = document.querySelector("#password").value;
-    const selectedRole = roleInput.value === "employer" ? "employer" : roleInput.value === "admin" ? "admin" : "seeker";
+    const selectedRole = roleInput.value === "employer" ? "employer" : "seeker";
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -83,20 +80,13 @@
       return;
     }
 
-    const profileResult = selectedRole === "admin"
-      ? await supabaseClient
-          .from("employer_profiles")
-          .select("id")
-          .eq("user_id", data.user.id)
-          .eq("is_admin", true)
-          .limit(1)
-          .maybeSingle()
-      : await supabaseClient
-          .from(selectedRole === "employer" ? "employer_profiles" : "seeker_profiles")
-          .select("id")
-          .eq("user_id", data.user.id)
-          .limit(1)
-          .maybeSingle();
+    const profileTable = selectedRole === "employer" ? "employer_profiles" : "seeker_profiles";
+    const profileResult = await supabaseClient
+      .from(profileTable)
+      .select("id")
+      .eq("user_id", data.user.id)
+      .limit(1)
+      .maybeSingle();
 
     submitBtn.disabled = false;
     submitBtn.style.opacity = "";
@@ -104,26 +94,25 @@
 
     if (profileResult.error || !profileResult.data) {
       await supabaseClient.auth.signOut();
-      const roleErrorMessages = {
-        employer: "\u3053\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306f\u6c42\u4eba\u8005\u30a2\u30ab\u30a6\u30f3\u30c8\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u6c42\u8077\u8005\u3068\u3057\u3066\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
-        seeker: "\u3053\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306f\u6c42\u8077\u8005\u30a2\u30ab\u30a6\u30f3\u30c8\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u6c42\u4eba\u8005\u3068\u3057\u3066\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
-        admin: "\u3053\u306e\u30a2\u30ab\u30a6\u30f3\u30c8\u306b\u306f\u904b\u55b6\u7ba1\u7406\u8005\u6a29\u9650\u304c\u3042\u308a\u307e\u305b\u3093\u3002"
-      };
-      showNotice(roleErrorMessages[selectedRole], true);
+      showNotice(
+        selectedRole === "employer"
+          ? "このメールアドレスは求人者アカウントではありません。求職者としてログインしてください。"
+          : "このメールアドレスは求職者アカウントではありません。求人者としてログインしてください。",
+        true
+      );
       return;
     }
 
-    showNotice("\u30ed\u30b0\u30a4\u30f3\u3057\u307e\u3057\u305f\u3002\u30de\u30a4\u30da\u30fc\u30b8\u3078\u79fb\u52d5\u3057\u307e\u3059\u3002", false);
-    const redirectTargets = { seeker: "seeker-dashboard.html", employer: "employer-dashboard.html", admin: "admin-dashboard.html" };
+    showNotice("ログインしました。マイページへ移動します。", false);
     setTimeout(function () {
-      window.location.href = redirectTargets[selectedRole];
+      window.location.href = selectedRole === "seeker" ? "seeker-dashboard.html" : "employer-dashboard.html";
     }, 600);
   });
 
-  setRole(params.get("role") === "employer" ? "employer" : params.get("role") === "admin" ? "admin" : "seeker");
+  setRole(params.get("role") === "employer" ? "employer" : "seeker");
   if (params.get("roleError") === "1") {
-    showNotice("\u30a2\u30ab\u30a6\u30f3\u30c8\u7a2e\u5225\u304c\u9055\u3044\u307e\u3059\u3002\u6b63\u3057\u3044\u30ed\u30b0\u30a4\u30f3\u7a2e\u5225\u3092\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044\u3002", true);
+    showNotice("アカウント種別が違います。正しいログイン種別を選択してください。", true);
   } else if (params.get("registered") === "1") {
-    showNotice("\u767b\u9332\u304c\u5b8c\u4e86\u3057\u307e\u3057\u305f\u3002\u30e1\u30fc\u30eb\u8a8d\u8a3c\u304c\u5fc5\u8981\u306a\u5834\u5408\u306f\u3001\u78ba\u8a8d\u30e1\u30fc\u30eb\u3092\u958b\u3044\u3066\u304b\u3089\u30ed\u30b0\u30a4\u30f3\u3057\u3066\u304f\u3060\u3055\u3044\u3002", false);
+    showNotice("登録が完了しました。メール認証が必要な場合は、確認メールを開いてからログインしてください。", false);
   }
 })();
