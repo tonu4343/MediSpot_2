@@ -68,6 +68,7 @@
     .preview-item dd { margin: 0; color: #153e61; font-size: 14px; line-height: 1.7; font-weight: 900; white-space: pre-line; overflow-wrap: anywhere; }
     .preview-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
     .preview-actions .btn { min-width: 170px; border: 0; cursor: pointer; }
+    @media (max-width: 960px) { .site-header { flex-wrap: wrap; } .main-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
     @media (max-width: 860px) { .form-layout { grid-template-columns: 1fr; } .guide-card { position: static; } }
     @media (max-width: 620px) { .job-new-shell { width: calc(100% - 28px); padding-top: 24px; } .form-grid, .preview-summary { grid-template-columns: 1fr; } .field.full, .preview-item.full { grid-column: auto; } .form-actions, .preview-actions { flex-direction: column-reverse; } .form-actions .btn, .preview-actions .btn { width: 100%; } .preview-modal { padding: 10px; } .preview-dialog { max-height: calc(100vh - 20px); } }
   </style>
