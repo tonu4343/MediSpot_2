@@ -12,6 +12,16 @@
     { id:'demo-pt', title:t.pt, facility_name:t.ptFacility, category:t.pt, type:t.spot, location:t.chiba, work_date:t.ptSaturday, salary:t.ptPay, description:t.ptDesc, requirements:t.ptReq, image:'assets/04_physical_therapist_real_photo_512.png' }
   ];
   function esc(v) { return String(v || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+  // Salary is free text entered by the employer (e.g. "時給 2,200円〜2,600円"),
+  // but some employers just type a bare number like "2200". Only reformat
+  // bare numbers into "時給X,XXX円" — anything already containing text
+  // (時給/月給/円/a range, etc.) is left exactly as entered.
+  function formatSalary(value) {
+    const trimmed = String(value || '').trim();
+    if (!trimmed) return '';
+    if (/^[\d,]+$/.test(trimmed)) { return '時給' + Number(trimmed.replace(/,/g, '')).toLocaleString('ja-JP') + '円'; }
+    return trimmed;
+  }
   function looksSensitive(text) { return /(0\d{1,4}[-−ー－]?\d{1,4}[-−ー－]?\d{3,4})|(\d{10,11})/.test(text) || /(パスワード|password|暗証番号|マイナンバー|口座番号)/i.test(text); }
   function getParam(name) { return new URLSearchParams(location.search).get(name); }
   function localApps() { try { return JSON.parse(localStorage.getItem('medispot_applications') || '[]'); } catch { return []; } }
@@ -36,7 +46,7 @@
           + '<span class="sj-meta-item">' + pinIcon + esc(job.location || '-') + '</span>'
           + '<span class="sj-meta-item">' + clockIcon + esc(job.work_date || '-') + '</span>'
         + '</div>'
-        + '<div class="sj-job-card-footer"><div class="sj-job-card-salary">' + esc(job.salary || t.salaryAsk) + '</div><span class="btn btn-outline sj-job-card-cta">' + t.detail + '</span></div>'
+        + '<div class="sj-job-card-footer"><div class="sj-job-card-salary">' + esc(formatSalary(job.salary) || t.salaryAsk) + '</div><span class="btn btn-outline sj-job-card-cta">' + t.detail + '</span></div>'
       + '</div>'
       + '</article>';
   }
@@ -67,7 +77,7 @@
 
     title.textContent = job.title || t.detailTitle;
     document.getElementById('jobType').textContent = job.type || t.spot;
-    document.getElementById('jobSalary').textContent = job.salary || t.salaryAsk;
+    document.getElementById('jobSalary').textContent = formatSalary(job.salary) || t.salaryAsk;
     document.getElementById('locationText').textContent = job.location || '-';
     document.getElementById('workDateText').textContent = job.work_date || '-';
     document.getElementById('requirements').textContent = job.requirements || job.category || '-';
@@ -210,9 +220,10 @@
         appDetailRow('応募日', formatJaDate(a.created_at)),
         appDetailRow('勤務日', job.work_date),
         appDetailRow('勤務地', job.location),
-        appDetailRow('給与', job.salary)
+        appDetailRow('給与', formatSalary(job.salary))
       ].join('');
-      return '<article class="job-card"><div class="job-card-main"><span class="status ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span><h3>' + esc(a.job_title || t.appJob) + '</h3><p class="job-facility">' + esc(a.facility_name || t.facility) + '</p><dl class="app-detail-list">' + details + '</dl></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id=' + encodeURIComponent(a.job_id || '') + '">' + t.detail + '</a>' + (canChat ? '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>' : '') + '</div></article>';
+      const chatHint = !canChat && a.status === 'applied' ? '<span class="chat-hint">選考開始後にメッセージできます</span>' : '';
+      return '<article class="job-card"><div class="job-card-main"><span class="status ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span><h3>' + esc(a.job_title || t.appJob) + '</h3><p class="job-facility">' + esc(a.facility_name || t.facility) + '</p><dl class="app-detail-list">' + details + '</dl></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id=' + encodeURIComponent(a.job_id || '') + '">' + t.detail + '</a>' + (canChat ? '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>' : chatHint) + '</div></article>';
     }).join('') : '<div class="panel">' + t.noApps + '</div>';
   }
   logoutWire(); loadJobsPage(); loadDetailPage(); loadApplicationsPage();
