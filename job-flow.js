@@ -51,19 +51,31 @@
       + '</article>';
   }
   async function loadJobsPage() { const list = document.getElementById('jobsList'); if (!list) return; let jobs = demoJobs; if (supabaseClient) { const r = await supabaseClient.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false}); if (!r.error && r.data && r.data.length) jobs = r.data; } const render = () => { const cat = document.getElementById('category').value; const loc = document.getElementById('location').value; const type = document.getElementById('type').value; const day = document.getElementById('workDate').value; const filtered = jobs.filter(j => (!cat || j.category === cat) && (!loc || String(j.location || '').includes(loc)) && (!type || j.type === type) && (!day || String(j.work_date || '').includes(day))); document.getElementById('jobCount').textContent = filtered.length + t.count; list.innerHTML = filtered.length ? filtered.map(card).join('') : '<div class="sj-jobs-empty">'+t.none+'</div>'; }; document.getElementById('searchButton').addEventListener('click', render); render(); }
-  async function findJob(id) {
+  async function findJob(id, currentUser) {
     if (!id) return demoJobs[0];
     if (id.startsWith('demo-')) return demoJobs.find(j => j.id === id) || demoJobs[0];
     if (!supabaseClient) return demoJobs[0];
     const r = await supabaseClient.from('jobs').select('*').eq('id', id).maybeSingle();
-    return (!r.error && r.data) ? r.data : null;
+    if (!r.error && r.data) return r.data;
+    // The job may have been closed or deleted since this seeker applied — RLS
+    // hides non-open jobs from anyone but the posting employer, so the lookup
+    // above returns nothing even though the row may still exist. Fall back to
+    // the title/facility snapshot already stored on their own application so
+    // this doesn't read as a bare, unexplained "not found".
+    if (currentUser) {
+      const snapshot = await supabaseClient.from('seeker_applications').select('job_title,facility_name').eq('job_id', id).eq('user_id', currentUser.id).maybeSingle();
+      if (!snapshot.error && snapshot.data) return { id: id, title: snapshot.data.job_title, facility_name: snapshot.data.facility_name, _closed: true };
+    }
+    return null;
   }
   function showApplied(app) { const applySection = document.getElementById('applySection'); const appliedSection = document.getElementById('appliedSection'); if (!appliedSection) return; applySection.style.display = 'none'; appliedSection.style.display = 'block'; const statusEl = document.getElementById('appliedStatus'); statusEl.textContent = window.MEDISPOT_STATUS.label(app.status); statusEl.className = 'status ' + window.MEDISPOT_STATUS.cssClass(app.status); const canChat = window.MEDISPOT_STATUS.isChatOpen(app.status); const note = document.getElementById('appliedNote'); const link = document.getElementById('appliedLink'); if (canChat) { note.textContent = '選考が進んでいます。チャットで医療機関とやり取りできます。'; link.textContent = 'メッセージを確認する'; link.href = 'application-chat.html?id=' + encodeURIComponent(app.id); } else { note.textContent = 'この求人にはすでに応募済みです。選考状況は応募管理から確認できます。'; link.textContent = '応募管理を見る'; link.href = 'seeker-applications.html'; } }
   function profileComplete(p) { return !!(p && p.name && p.license && p.birth_date && p.experience_years && p.preferred_style); }
   async function loadDetailPage() {
     const title = document.getElementById('jobTitle');
     if (!title) return;
-    const job = await findJob(getParam('id'));
+    let currentUser = null;
+    if (supabaseClient) { const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user || null; }
+    const job = await findJob(getParam('id'), currentUser);
     if (!job) {
       title.textContent = '求人が見つかりません';
       document.getElementById('jobLead').textContent = 'この求人は募集を終了しているか、削除された可能性があります。';
@@ -71,8 +83,6 @@
       if (layout) layout.style.display = 'none';
       return;
     }
-    let currentUser = null;
-    if (supabaseClient) { const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user || null; }
     const isPublicVisitor = !!supabaseClient && !currentUser;
 
     title.textContent = job.title || t.detailTitle;
@@ -81,13 +91,16 @@
     document.getElementById('locationText').textContent = job.location || '-';
     document.getElementById('workDateText').textContent = job.work_date || '-';
     document.getElementById('requirements').textContent = job.requirements || job.category || '-';
-    document.getElementById('description').textContent = job.description || t.defaultDesc;
+    document.getElementById('description').textContent = job._closed ? 'この求人はすでに募集を終了しているため、詳細情報は表示できません。選考状況は下記でご確認いただけます。' : (job.description || t.defaultDesc);
     document.getElementById('confirmJobTitle').textContent = job.title || t.detailTitle;
     document.getElementById('confirmLocation').textContent = job.location || '-';
     document.getElementById('confirmWorkDate').textContent = job.work_date || '-';
     if (isPublicVisitor) {
       document.getElementById('jobLead').textContent = job.location || '';
       document.getElementById('facility').textContent = '登録後に表示されます';
+    } else if (job._closed) {
+      document.getElementById('jobLead').textContent = (job.facility_name || t.facility) + ' ／ 募集終了';
+      document.getElementById('facility').textContent = job.facility_name || t.facility;
     } else {
       document.getElementById('jobLead').textContent = (job.facility_name || t.facility) + ' / ' + (job.location || '');
       document.getElementById('facility').textContent = job.facility_name || t.facility;
