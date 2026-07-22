@@ -47,6 +47,7 @@
     .status.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
     .status.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
     .status.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
+    .status.status-rejected { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
     .applied-date { color: var(--muted); font-size: 12px; font-weight: 800; }
     .app-card h3 { margin: 0 0 6px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
     .app-card h3 small { color: var(--muted); font-size: 13px; font-weight: 800; }
@@ -106,6 +107,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="application-status.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -122,29 +124,26 @@
         seeker_name: "山田 花子",
         seeker_email: "hanako@example.com",
         seeker_profession: "看護師",
-        status: "応募済み",
+        status: "applied",
         message: "外来経験があります。勤務条件について相談を希望します。",
         created_at: new Date().toISOString()
       }];
 
       function esc(v) { return String(v || "").replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]; }); }
       function initial(name) { return (name || "求").trim().charAt(0).toUpperCase() || "求"; }
-      function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : status === "勤務開始" ? "status-working" : status === "完了" ? "status-completed" : ""; }
-      function isHiredStatus(status) { return status === "採用決定" || status === "勤務開始" || status === "完了"; }
-
       function counts() {
-        document.getElementById("newCount").textContent = apps.filter(function (a) { return a.status === "応募済み"; }).length;
-        document.getElementById("selectionCount").textContent = apps.filter(function (a) { return a.status === "選考中"; }).length;
-        document.getElementById("hiredCount").textContent = apps.filter(function (a) { return isHiredStatus(a.status); }).length;
+        document.getElementById("newCount").textContent = apps.filter(function (a) { return a.status === "applied"; }).length;
+        document.getElementById("selectionCount").textContent = apps.filter(function (a) { return window.MEDISPOT_STATUS.isPreHire(a.status) && a.status !== "applied"; }).length;
+        document.getElementById("hiredCount").textContent = apps.filter(function (a) { return window.MEDISPOT_STATUS.isHiredOrLater(a.status); }).length;
       }
 
       function render() {
         counts();
         list.innerHTML = apps.length ? apps.map(function (a) {
-          const fresh = a.status === "応募済み";
+          const fresh = a.status === "applied";
           return '<article class="app-card">'
             + '<span class="app-avatar">' + esc(initial(a.seeker_name)) + '</span>'
-            + '<div><div class="app-card-top"><span class="status ' + statusClass(a.status) + '">' + esc(a.status) + '</span><span class="applied-date">応募日：' + esc((a.created_at || "").slice(0, 10)) + '</span></div>'
+            + '<div><div class="app-card-top"><span class="status ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span><span class="applied-date">応募日：' + esc((a.created_at || "").slice(0, 10)) + '</span></div>'
             + '<h3>' + esc(a.seeker_name || "求職者") + ' <small>／ ' + esc(a.seeker_profession || "医療資格者") + '</small></h3>'
             + '<p class="meta">応募求人：' + esc(a.job_title || "医療求人") + '</p>'
             + (a.message ? '<p class="app-message">' + esc(a.message) + '</p>' : '')
@@ -159,14 +158,14 @@
       async function start(id, button) {
         if (!client || !user) {
           const a = apps.find(function (x) { return x.id === id; });
-          if (a) a.status = "選考中";
+          if (a) a.status = "screening";
           render();
           location.href = "application-chat.html?id=" + encodeURIComponent(id);
           return;
         }
         button.disabled = true;
         button.textContent = "開始しています…";
-        const r = await client.from("seeker_applications").update({ status: "選考中" }).eq("id", id).eq("employer_id", user.id).select().single();
+        const r = await client.from("seeker_applications").update({ status: "screening" }).eq("id", id).eq("employer_id", user.id).select().single();
         if (r.error) {
           console.error(r.error);
           button.disabled = false;
