@@ -278,33 +278,6 @@
       font-size: 13px;
       font-weight: 900;
     }
-    .login-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .login-divider::before,
-    .login-divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--line);
-    }
-    .admin-login-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: var(--blue);
-      font-size: 13.5px;
-      font-weight: 800;
-    }
-    .admin-login-link:hover { text-decoration: underline; }
-    .admin-login-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; flex: none; }
 
     @media (max-width: 820px) {
       .header-inner {
@@ -387,9 +360,6 @@
         </div>
         <button class="submit-btn" type="submit">ログインする</button>
       </form>
-
-      <div class="login-divider" role="separator"></div>
-      <a class="admin-login-link" href="admin-login.html"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>運営管理者ログイン</a>
 
       <div class="form-links">
         <a href="register-seeker.html">求職者として登録</a>
