@@ -102,6 +102,11 @@
     .pay-modal .btn { width: 100%; cursor: pointer; }
     .pay-modal .btn-green { margin-bottom: 10px; }
     .pay-modal .btn-outline { border: 1px solid var(--blue); }
+
+    .success-toast { position: fixed; z-index: 1100; top: 24px; left: 50%; transform: translate(-50%, -16px); display: flex; align-items: center; gap: 10px; max-width: min(420px, calc(100% - 32px)); padding: 14px 20px; background: #fff; border: 1px solid #b8ebcf; border-radius: 12px; box-shadow: 0 20px 44px rgba(0,63,125,.18); opacity: 0; transition: opacity .22s ease, transform .22s ease; pointer-events: none; }
+    .success-toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .success-toast-icon { display: grid; place-items: center; flex: none; width: 26px; height: 26px; color: #fff; background: var(--green); border-radius: 50%; font-size: 15px; font-weight: 900; }
+    .success-toast-text { color: #14324c; font-size: 13.5px; font-weight: 800; line-height: 1.6; }
   </style>
 </head>
 <body class="employer-dashboard-page">
@@ -198,6 +203,11 @@
     <button type="button" class="btn btn-outline" id="payModalCancel">キャンセル</button>
   </div>
 
+  <div class="success-toast" id="successToast" role="status" aria-live="polite">
+    <span class="success-toast-icon" aria-hidden="true">✓</span>
+    <span class="success-toast-text" id="successToastText"></span>
+  </div>
+
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -282,6 +292,15 @@
       function showPayError(text) { const el = document.getElementById("payModalError"); el.textContent = text; el.classList.add("show"); }
       function hidePayError() { document.getElementById("payModalError").classList.remove("show"); }
 
+      let successToastTimer = null;
+      function showSuccessToast(text) {
+        const toast = document.getElementById("successToast");
+        document.getElementById("successToastText").textContent = text;
+        toast.classList.add("show");
+        clearTimeout(successToastTimer);
+        successToastTimer = setTimeout(function () { toast.classList.remove("show"); }, 2600);
+      }
+
       function openPayModal(invoiceId) {
         if (!payjp) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
         pendingInvoiceId = invoiceId;
@@ -323,9 +342,13 @@
             body: JSON.stringify({ invoiceId: pendingInvoiceId, cardToken: tokenResult.id })
           });
           const result = await chargeResponse.json();
-          closePayModal();
-          window.alert(result.message || (result.success ? "お支払いが完了しました。" : "決済に失敗しました。"));
-          load().catch(function (error) { console.error(error); });
+          if (result.success) {
+            closePayModal();
+            showSuccessToast(result.message || "お支払いが完了しました。");
+            load().catch(function (error) { console.error(error); });
+          } else {
+            showPayError(result.message || "決済に失敗しました。");
+          }
         } catch (error) {
           console.error(error);
           showPayError("通信エラーが発生しました。時間をおいて再度お試しください。");
