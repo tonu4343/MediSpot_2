@@ -93,11 +93,15 @@
     }
 
     .pay-modal-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(7,31,55,.62); backdrop-filter: blur(3px); }
-    .pay-modal { position: fixed; z-index: 1001; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(360px, calc(100% - 40px)); padding: 26px; background: #fff; border-radius: 16px; box-shadow: 0 28px 80px rgba(0,31,67,.3); text-align: center; }
+    .pay-modal { position: fixed; z-index: 1001; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(380px, calc(100% - 40px)); padding: 26px; background: #fff; border-radius: 16px; box-shadow: 0 28px 80px rgba(0,31,67,.3); text-align: center; }
     .pay-modal h3 { margin: 0 0 8px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
     .pay-modal p { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.7; font-weight: 700; }
-    .pay-modal-button-slot { margin-bottom: 14px; min-height: 40px; }
-    .pay-modal .btn-outline { width: 100%; border: 1px solid var(--blue); cursor: pointer; }
+    .pay-modal-card-element { min-height: 44px; padding: 12px 14px; margin-bottom: 8px; background: #fff; border: 1px solid #cfdfe9; border-radius: 8px; text-align: left; }
+    .pay-modal-error { display: none; margin: 0 0 14px; color: #b3261e; font-size: 12.5px; font-weight: 800; text-align: left; }
+    .pay-modal-error.show { display: block; }
+    .pay-modal .btn { width: 100%; cursor: pointer; }
+    .pay-modal .btn-green { margin-bottom: 10px; }
+    .pay-modal .btn-outline { border: 1px solid var(--blue); }
   </style>
 </head>
 <body class="employer-dashboard-page">
@@ -182,23 +186,15 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="payjp-config.js"></script>
-
-  <form id="payjpForm" style="position:absolute; left:-9999px" aria-hidden="true">
-    <script>
-      // pay.jp Checkout requires its <script class="payjp-button"> tag to exist in the
-      // document as it's parsed (dynamically creating it later via createElement never
-      // renders a button, per pay.jp's own docs) — document.write here runs synchronously
-      // during the initial parse, so this behaves exactly like a static tag while still
-      // reading the public key from payjp-config.js above.
-      document.write('<script class="payjp-button" src="https://checkout.pay.jp/" data-payjp-key="' + ((window.MEDISPOT_PAYJP && window.MEDISPOT_PAYJP.publicKey) || '') + '" data-payjp-partial="true" data-payjp-text="お支払い" data-payjp-on-created="handlePayjpTokenCreated"><\/script>');
-    </script>
-  </form>
+  <script src="https://js.pay.jp/v2/pay.js"></script>
 
   <div class="pay-modal-backdrop" id="payModalBackdrop" hidden></div>
   <div class="pay-modal" id="payModal" hidden role="dialog" aria-modal="true" aria-label="お支払い">
     <h3>お支払い（3,300円・税込）</h3>
-    <p>下のボタンからカード情報を入力してください。</p>
-    <div class="pay-modal-button-slot" id="payModalButtonSlot"></div>
+    <p>カード情報を入力してください。</p>
+    <div class="pay-modal-card-element" id="payModalCardElement"></div>
+    <p class="pay-modal-error" id="payModalError"></p>
+    <button type="button" class="btn btn-green" id="payModalSubmit">この内容で支払う</button>
     <button type="button" class="btn btn-outline" id="payModalCancel">キャンセル</button>
   </div>
 
@@ -269,68 +265,80 @@
         renderInvoices(invoices);
       }
 
-      // pay.jp Checkout: the button itself is rendered by the static document.write'd
-      // <script class="payjp-button"> in #payjpForm (see above the markup — pay.jp's own
-      // docs say the tag must exist as the page is parsed, not be added dynamically
-      // afterward). Clicking it programmatically via .click() dispatches a synthetic,
-      // non-trusted click — pay.jp's own handler silently ignores that, which is why
-      // nothing happened before. Instead, when a row's own "支払う" button is clicked,
-      // we physically move the real pay.jp button into a visible modal (a genuine
-      // DOM reparent, so its internal listeners stay attached) so the user's next
-      // click on it is a real, trusted user gesture. data-payjp-partial="true" stops
-      // pay.jp from auto-submitting the form; data-payjp-on-created calls our callback
-      // with the created token instead, once the user finishes entering their card.
+      // pay.jp payjp.js (Elements) — a normal script include, not document.write. The
+      // Checkout auto-button widget requires document.write to inject its script tag,
+      // which Chrome can deprioritize/block for cross-site scripts depending on the
+      // measured connection ("A parser-blocking, cross site... script is invoked via
+      // document.write" warning) — that's what made the button intermittently fail to
+      // render. payjp.js avoids this entirely: it's a regular <script src> tag, and we
+      // mount our own card Element and use our own real "支払う" button, so every click
+      // is genuinely user-triggered.
       const payjpConfig = window.MEDISPOT_PAYJP || {};
+      const payjpReady = window.Payjp && payjpConfig.publicKey && !payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY");
+      const payjp = payjpReady ? Payjp(payjpConfig.publicKey) : null;
+      let cardElement = null;
       let pendingInvoiceId = null;
 
-      function openPayModal() {
-        const payjpButton = document.querySelector("#payjpForm .payjp-button, #payjpForm button");
-        if (!payjpButton) { window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。"); return; }
-        document.getElementById("payModalButtonSlot").appendChild(payjpButton);
+      function showPayError(text) { const el = document.getElementById("payModalError"); el.textContent = text; el.classList.add("show"); }
+      function hidePayError() { document.getElementById("payModalError").classList.remove("show"); }
+
+      function openPayModal(invoiceId) {
+        if (!payjp) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
+        pendingInvoiceId = invoiceId;
+        hidePayError();
         document.getElementById("payModalBackdrop").hidden = false;
         document.getElementById("payModal").hidden = false;
+        // Mount after the modal is visible — mounting into a hidden container can
+        // leave the card iframe at zero height in some browsers.
+        if (!cardElement) { cardElement = payjp.elements().create("card"); cardElement.mount("#payModalCardElement"); }
       }
 
       function closePayModal() {
-        const payjpButton = document.querySelector("#payModalButtonSlot .payjp-button, #payModalButtonSlot button");
-        if (payjpButton) document.getElementById("payjpForm").appendChild(payjpButton);
+        pendingInvoiceId = null;
         document.getElementById("payModalBackdrop").hidden = true;
         document.getElementById("payModal").hidden = true;
       }
 
-      document.getElementById("payModalCancel").addEventListener("click", function () { pendingInvoiceId = null; closePayModal(); });
-      document.getElementById("payModalBackdrop").addEventListener("click", function () { pendingInvoiceId = null; closePayModal(); });
+      document.getElementById("payModalCancel").addEventListener("click", closePayModal);
+      document.getElementById("payModalBackdrop").addEventListener("click", closePayModal);
 
-      window.handlePayjpTokenCreated = async function (response) {
-        const cardToken = response && response.id;
-        const invoiceId = pendingInvoiceId;
-        pendingInvoiceId = null;
-        closePayModal();
-        if (!cardToken || !invoiceId || !supabaseClient) return;
-        const sessionResult = await supabaseClient.auth.getSession();
-        const accessToken = sessionResult.data.session?.access_token;
-        if (!accessToken) { window.alert("セッションが切れています。再度ログインしてください。"); return; }
+      document.getElementById("payModalSubmit").addEventListener("click", async function () {
+        if (!pendingInvoiceId || !payjp || !cardElement || !supabaseClient) return;
+        const submitButton = this;
+        hidePayError();
+        submitButton.disabled = true;
+        submitButton.textContent = "処理中…";
         try {
+          const tokenResult = await payjp.createToken(cardElement);
+          if (tokenResult.error) {
+            showPayError(tokenResult.error.message || "カード情報を確認してください。");
+            return;
+          }
+          const sessionResult = await supabaseClient.auth.getSession();
+          const accessToken = sessionResult.data.session?.access_token;
+          if (!accessToken) { showPayError("セッションが切れています。再度ログインしてください。"); return; }
           const chargeResponse = await fetch("/api/charge", {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: "Bearer " + accessToken },
-            body: JSON.stringify({ invoiceId: invoiceId, cardToken: cardToken })
+            body: JSON.stringify({ invoiceId: pendingInvoiceId, cardToken: tokenResult.id })
           });
           const result = await chargeResponse.json();
+          closePayModal();
           window.alert(result.message || (result.success ? "お支払いが完了しました。" : "決済に失敗しました。"));
+          load().catch(function (error) { console.error(error); });
         } catch (error) {
           console.error(error);
-          window.alert("通信エラーが発生しました。時間をおいて再度お試しください。");
+          showPayError("通信エラーが発生しました。時間をおいて再度お試しください。");
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "この内容で支払う";
         }
-        load().catch(function (error) { console.error(error); });
-      };
+      });
 
       document.getElementById("invoiceTableBody").addEventListener("click", function (event) {
         const button = event.target.closest(".pay-invoice-btn");
         if (!button) return;
-        if (!payjpConfig.publicKey || payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
-        pendingInvoiceId = button.getAttribute("data-id");
-        openPayModal();
+        openPayModal(button.getAttribute("data-id"));
       });
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
