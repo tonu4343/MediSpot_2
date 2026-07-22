@@ -51,6 +51,7 @@
     .inbox-top strong { color: var(--blue-dark); font-size: 14.5px; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .inbox-top time { flex: 0 0 auto; color: var(--muted); font-size: 11px; font-weight: 700; }
     .inbox-job { margin: 2px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .inbox-schedule { margin: 4px 0 0; color: var(--blue-dark); font-size: 12px; font-weight: 900; }
     .inbox-preview { margin: 6px 0 0; color: #4e6578; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .inbox-item.unread .inbox-preview { color: #14324c; font-weight: 900; }
     .inbox-status { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 24px; margin-top: 2px; padding: 0 10px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 10.5px; font-weight: 900; white-space: nowrap; }
@@ -128,6 +129,11 @@
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
       function initial(name) { return (name || "医").trim().charAt(0).toUpperCase() || "医"; }
       function formatTime(value) { return value ? new Date(value).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""; }
+      function formatInterviewAt(value) { return value ? new Date(value).toLocaleString("ja-JP", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : null; }
+      // work_start_at is a bare "date" column; parsing with `new Date(string)`
+      // treats it as UTC midnight and can shift the day depending on the
+      // browser's timezone, so build the local date explicitly.
+      function formatWorkStartAt(value) { if (!value) return null; const parts = String(value).split("-").map(Number); const d = new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1); return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" }); }
 
       function renderInbox(conversations) {
         const list = document.getElementById("inboxList");
@@ -136,11 +142,17 @@
           const unread = c.unreadCount > 0;
           const preview = c.lastMessage ? esc(c.lastMessage.body) : "まだメッセージはありません。";
           const time = c.lastMessage ? formatTime(c.lastMessage.created_at) : "";
+          const scheduleParts = [];
+          const interviewAt = formatInterviewAt(c.interview_at);
+          const workStartAt = formatWorkStartAt(c.work_start_at);
+          if (interviewAt) scheduleParts.push("面接日時：" + interviewAt);
+          if (workStartAt) scheduleParts.push("勤務開始日：" + workStartAt);
           return '<a class="inbox-item' + (unread ? ' unread' : '') + '" href="application-chat.html?id=' + encodeURIComponent(c.id) + '">'
             + '<span class="inbox-avatar">' + esc(initial(c.facility_name)) + (unread ? '<span class="unread-dot"></span>' : '') + '</span>'
             + '<span class="inbox-body">'
               + '<span class="inbox-top"><strong>' + esc(c.facility_name || "医療機関") + '</strong><time>' + esc(time) + '</time></span>'
               + '<p class="inbox-job">' + esc(c.job_title || "応募求人") + '</p>'
+              + (scheduleParts.length ? '<p class="inbox-schedule">' + esc(scheduleParts.join("　／　")) + '</p>' : '')
               + '<p class="inbox-preview">' + preview + '</p>'
             + '</span>'
             + '<span class="inbox-status ' + window.MEDISPOT_STATUS.cssClass(c.status) + '">' + esc(window.MEDISPOT_STATUS.label(c.status)) + '</span>'
@@ -158,7 +170,7 @@
         text("topbarName", profileResult.data.name || "求職者");
         text("topbarInitial", initial(profileResult.data.name));
 
-        const appsResult = await supabaseClient.from("seeker_applications").select("id,job_title,facility_name,status").eq("user_id", user.id).not("status", "in", "(" + window.MEDISPOT_STATUS.CLOSED.join(",") + ")");
+        const appsResult = await supabaseClient.from("seeker_applications").select("id,job_title,facility_name,status,interview_at,work_start_at").eq("user_id", user.id).not("status", "in", "(" + window.MEDISPOT_STATUS.CLOSED.join(",") + ")");
         const apps = appsResult.error ? [] : (appsResult.data || []);
         if (!apps.length) { renderInbox([]); return; }
 
