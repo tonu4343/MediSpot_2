@@ -91,6 +91,13 @@
       .billing-summary { grid-template-columns: 1fr 1fr; }
       .employer-footer { grid-template-columns: 1fr; }
     }
+
+    .pay-modal-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(7,31,55,.62); backdrop-filter: blur(3px); }
+    .pay-modal { position: fixed; z-index: 1001; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(360px, calc(100% - 40px)); padding: 26px; background: #fff; border-radius: 16px; box-shadow: 0 28px 80px rgba(0,31,67,.3); text-align: center; }
+    .pay-modal h3 { margin: 0 0 8px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
+    .pay-modal p { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.7; font-weight: 700; }
+    .pay-modal-button-slot { margin-bottom: 14px; min-height: 40px; }
+    .pay-modal .btn-outline { width: 100%; border: 1px solid var(--blue); cursor: pointer; }
   </style>
 </head>
 <body class="employer-dashboard-page">
@@ -187,6 +194,14 @@
     </script>
   </form>
 
+  <div class="pay-modal-backdrop" id="payModalBackdrop" hidden></div>
+  <div class="pay-modal" id="payModal" hidden role="dialog" aria-modal="true" aria-label="お支払い">
+    <h3>お支払い（3,300円・税込）</h3>
+    <p>下のボタンからカード情報を入力してください。</p>
+    <div class="pay-modal-button-slot" id="payModalButtonSlot"></div>
+    <button type="button" class="btn btn-outline" id="payModalCancel">キャンセル</button>
+  </div>
+
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -257,18 +272,40 @@
       // pay.jp Checkout: the button itself is rendered by the static document.write'd
       // <script class="payjp-button"> in #payjpForm (see above the markup — pay.jp's own
       // docs say the tag must exist as the page is parsed, not be added dynamically
-      // afterward). One reusable button serves every row: clicking a row's own "支払う"
-      // button records which invoice is pending, then programmatically clicks the
-      // pay.jp-rendered button to open its card modal. data-payjp-partial="true" stops
+      // afterward). Clicking it programmatically via .click() dispatches a synthetic,
+      // non-trusted click — pay.jp's own handler silently ignores that, which is why
+      // nothing happened before. Instead, when a row's own "支払う" button is clicked,
+      // we physically move the real pay.jp button into a visible modal (a genuine
+      // DOM reparent, so its internal listeners stay attached) so the user's next
+      // click on it is a real, trusted user gesture. data-payjp-partial="true" stops
       // pay.jp from auto-submitting the form; data-payjp-on-created calls our callback
       // with the created token instead, once the user finishes entering their card.
       const payjpConfig = window.MEDISPOT_PAYJP || {};
       let pendingInvoiceId = null;
 
+      function openPayModal() {
+        const payjpButton = document.querySelector("#payjpForm .payjp-button, #payjpForm button");
+        if (!payjpButton) { window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。"); return; }
+        document.getElementById("payModalButtonSlot").appendChild(payjpButton);
+        document.getElementById("payModalBackdrop").hidden = false;
+        document.getElementById("payModal").hidden = false;
+      }
+
+      function closePayModal() {
+        const payjpButton = document.querySelector("#payModalButtonSlot .payjp-button, #payModalButtonSlot button");
+        if (payjpButton) document.getElementById("payjpForm").appendChild(payjpButton);
+        document.getElementById("payModalBackdrop").hidden = true;
+        document.getElementById("payModal").hidden = true;
+      }
+
+      document.getElementById("payModalCancel").addEventListener("click", function () { pendingInvoiceId = null; closePayModal(); });
+      document.getElementById("payModalBackdrop").addEventListener("click", function () { pendingInvoiceId = null; closePayModal(); });
+
       window.handlePayjpTokenCreated = async function (response) {
         const cardToken = response && response.id;
         const invoiceId = pendingInvoiceId;
         pendingInvoiceId = null;
+        closePayModal();
         if (!cardToken || !invoiceId || !supabaseClient) return;
         const sessionResult = await supabaseClient.auth.getSession();
         const accessToken = sessionResult.data.session?.access_token;
@@ -293,8 +330,7 @@
         if (!button) return;
         if (!payjpConfig.publicKey || payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
         pendingInvoiceId = button.getAttribute("data-id");
-        const payjpButton = document.querySelector("#payjpForm .payjp-button, #payjpForm button");
-        if (payjpButton) payjpButton.click(); else window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。");
+        openPayModal();
       });
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
