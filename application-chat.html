@@ -14,6 +14,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 .chat-head{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap;padding:22px 24px;background:linear-gradient(105deg,#f2f9ff,#effff6);border-bottom:1px solid #d9e8f2}
 .chat-head h1{margin:5px 0;color:var(--blue-dark);font-size:22px}
 .chat-head p{margin:0;color:var(--muted);font-size:12px;font-weight:800}
+#scheduleInfo{margin-top:6px!important;color:var(--blue-dark)!important;font-weight:900!important}
 .status{display:inline-flex;min-height:26px;align-items:center;padding:0 11px;color:var(--blue);background:#fff;border:1px solid #b9dbf5;border-radius:999px;font-size:11px;font-weight:900}
 .status.status-selection{color:#b5670f;background:#fff6e9;border-color:#f2cf9c}
 .status.status-hired{color:var(--green-dark);background:#ecfff5;border-color:#b8ebcf}
@@ -53,7 +54,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 <main class="chat-shell">
   <article class="chat-card">
     <header class="chat-head">
-      <div><span class="status" id="applicationStatus">読み込み中</span><h1 id="chatTitle">メッセージ</h1><p id="participantText">応募情報を確認しています…</p></div>
+      <div><span class="status" id="applicationStatus">読み込み中</span><h1 id="chatTitle">メッセージ</h1><p id="participantText">応募情報を確認しています…</p><p id="scheduleInfo" style="display:none;"></p></div>
       <div class="chat-actions" id="chatActions"></div>
     </header>
     <section class="conversation" id="conversation" aria-live="polite"><div class="empty">メッセージを読み込んでいます…</div></section>
@@ -175,6 +176,11 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     statusEl.className = 'status ' + window.MEDISPOT_STATUS.cssClass(app.status);
     document.getElementById('chatTitle').textContent = app.job_title || '応募メッセージ';
     document.getElementById('participantText').textContent = role === 'employer' ? (app.seeker_name || '求職者') + 'さんとのメッセージ' : (app.facility_name || '医療機関') + 'とのメッセージ';
+    const scheduleEl = document.getElementById('scheduleInfo');
+    const scheduleParts = [];
+    if (app.interview_at) scheduleParts.push('面接日時：' + new Date(app.interview_at).toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+    if (app.work_start_at) scheduleParts.push('勤務開始日：' + new Date(app.work_start_at + 'T00:00:00').toLocaleDateString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' }));
+    if (scheduleParts.length) { scheduleEl.textContent = scheduleParts.join('　／　'); scheduleEl.style.display = ''; } else { scheduleEl.style.display = 'none'; }
     document.getElementById('roleNav').innerHTML = role === 'employer' ? '<a href="employer-dashboard.html">ダッシュボード</a><a href="employer-applications.html">応募者管理</a>' : '<a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-applications.html">応募管理</a>';
 
     document.getElementById('chatActions').innerHTML = buildActions(app);
