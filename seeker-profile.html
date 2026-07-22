@@ -169,7 +169,8 @@
       }
       function computeAge(dateStr) {
         if (!dateStr) return null;
-        const birth = new Date(dateStr);
+        const parts = String(dateStr).split('-').map(Number);
+        const birth = new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1);
         if (Number.isNaN(birth.getTime())) return null;
         const today = new Date();
         let age = today.getFullYear() - birth.getFullYear();
