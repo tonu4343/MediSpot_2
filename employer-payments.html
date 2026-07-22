@@ -163,10 +163,6 @@
     </main>
   </div>
 
-  <form id="payjpForm" style="position:absolute; left:-9999px" aria-hidden="true">
-    <input type="hidden" id="payjpInvoiceId" name="invoiceId">
-  </form>
-
   <footer class="employer-footer">
     <div class="footer-brand"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
     <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-payments.html">料金・プラン</a></div>
@@ -179,6 +175,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="payjp-config.js"></script>
+
+  <form id="payjpForm" style="position:absolute; left:-9999px" aria-hidden="true">
+    <script>
+      // pay.jp Checkout requires its <script class="payjp-button"> tag to exist in the
+      // document as it's parsed (dynamically creating it later via createElement never
+      // renders a button, per pay.jp's own docs) — document.write here runs synchronously
+      // during the initial parse, so this behaves exactly like a static tag while still
+      // reading the public key from payjp-config.js above.
+      document.write('<script class="payjp-button" src="https://checkout.pay.jp/" data-payjp-key="' + ((window.MEDISPOT_PAYJP && window.MEDISPOT_PAYJP.publicKey) || '') + '" data-payjp-partial="true" data-payjp-text="お支払い" data-payjp-on-created="handlePayjpTokenCreated"><\/script>');
+    </script>
+  </form>
+
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -246,55 +254,47 @@
         renderInvoices(invoices);
       }
 
-      // pay.jp Checkout: build the auto-button via a real createElement + appendChild
-      // (not innerHTML) so the browser actually executes it, using the public key
-      // from payjp-config.js. One reusable hidden form/button serves every row —
-      // clicking a row's own "支払う" button just sets which invoice is pending
-      // and programmatically clicks the pay.jp-rendered button to open its card modal.
+      // pay.jp Checkout: the button itself is rendered by the static document.write'd
+      // <script class="payjp-button"> in #payjpForm (see above the markup — pay.jp's own
+      // docs say the tag must exist as the page is parsed, not be added dynamically
+      // afterward). One reusable button serves every row: clicking a row's own "支払う"
+      // button records which invoice is pending, then programmatically clicks the
+      // pay.jp-rendered button to open its card modal. data-payjp-partial="true" stops
+      // pay.jp from auto-submitting the form; data-payjp-on-created calls our callback
+      // with the created token instead, once the user finishes entering their card.
       const payjpConfig = window.MEDISPOT_PAYJP || {};
-      if (payjpConfig.publicKey && !payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) {
-        const payjpScript = document.createElement("script");
-        payjpScript.src = "https://checkout.pay.jp/";
-        payjpScript.className = "payjp-button";
-        payjpScript.dataset.key = payjpConfig.publicKey;
-        payjpScript.dataset.amount = "3300";
-        payjpScript.dataset.currency = "jpy";
-        payjpScript.dataset.text = "お支払い";
-        document.getElementById("payjpForm").appendChild(payjpScript);
-      }
+      let pendingInvoiceId = null;
 
-      document.getElementById("invoiceTableBody").addEventListener("click", function (event) {
-        const button = event.target.closest(".pay-invoice-btn");
-        if (!button) return;
-        if (!payjpConfig.publicKey || payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
-        document.getElementById("payjpInvoiceId").value = button.getAttribute("data-id");
-        const payjpButton = document.querySelector("#payjpForm button");
-        if (payjpButton) payjpButton.click(); else window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。");
-      });
-
-      document.getElementById("payjpForm").addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
-        const cardToken = formData.get("payjp-token");
-        const invoiceId = formData.get("invoiceId");
+      window.handlePayjpTokenCreated = async function (response) {
+        const cardToken = response && response.id;
+        const invoiceId = pendingInvoiceId;
+        pendingInvoiceId = null;
         if (!cardToken || !invoiceId || !supabaseClient) return;
         const sessionResult = await supabaseClient.auth.getSession();
         const accessToken = sessionResult.data.session?.access_token;
         if (!accessToken) { window.alert("セッションが切れています。再度ログインしてください。"); return; }
         try {
-          const response = await fetch("/api/charge", {
+          const chargeResponse = await fetch("/api/charge", {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: "Bearer " + accessToken },
             body: JSON.stringify({ invoiceId: invoiceId, cardToken: cardToken })
           });
-          const result = await response.json();
+          const result = await chargeResponse.json();
           window.alert(result.message || (result.success ? "お支払いが完了しました。" : "決済に失敗しました。"));
         } catch (error) {
           console.error(error);
           window.alert("通信エラーが発生しました。時間をおいて再度お試しください。");
         }
         load().catch(function (error) { console.error(error); });
+      };
+
+      document.getElementById("invoiceTableBody").addEventListener("click", function (event) {
+        const button = event.target.closest(".pay-invoice-btn");
+        if (!button) return;
+        if (!payjpConfig.publicKey || payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
+        pendingInvoiceId = button.getAttribute("data-id");
+        const payjpButton = document.querySelector("#payjpForm .payjp-button, #payjpForm button");
+        if (payjpButton) payjpButton.click(); else window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。");
       });
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
