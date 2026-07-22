@@ -155,13 +155,17 @@
         <div class="panel-head"><h2>請求履歴 <span class="count" id="invoiceCount"></span></h2></div>
         <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead><tr><th>求職者</th><th>求人</th><th>採用日</th><th>金額</th><th>支払いステータス</th></tr></thead>
-            <tbody id="invoiceTableBody"><tr><td colspan="5" class="table-empty">読み込んでいます…</td></tr></tbody>
+            <thead><tr><th>求職者</th><th>求人</th><th>採用日</th><th>金額</th><th>支払いステータス</th><th>操作</th></tr></thead>
+            <tbody id="invoiceTableBody"><tr><td colspan="6" class="table-empty">読み込んでいます…</td></tr></tbody>
           </table>
         </div>
       </section>
     </main>
   </div>
+
+  <form id="payjpForm" style="position:absolute; left:-9999px" aria-hidden="true">
+    <input type="hidden" id="payjpInvoiceId" name="invoiceId">
+  </form>
 
   <footer class="employer-footer">
     <div class="footer-brand"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
@@ -174,6 +178,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="payjp-config.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -214,9 +219,11 @@
       function renderInvoices(rows) {
         const body = document.getElementById("invoiceTableBody");
         text("invoiceCount", rows.length ? "(" + rows.length + "件)" : "");
-        if (!rows.length) { body.innerHTML = '<tr><td colspan="5" class="table-empty">まだ採用成立による請求はありません。</td></tr>'; return; }
+        if (!rows.length) { body.innerHTML = '<tr><td colspan="6" class="table-empty">まだ採用成立による請求はありません。</td></tr>'; return; }
         body.innerHTML = rows.map(function (row) {
-          return "<tr><td class=\"name-cell\">" + esc(row.seeker_name || "求職者") + "</td><td>" + esc(row.job_title || "-") + "</td><td>" + esc(formatDate(row.created_at)) + "</td><td>" + yen(row.total_amount) + "</td><td><span class=\"status-pill " + statusClass(row.payment_status) + "\">" + esc(row.payment_status || "未払い") + "</span></td></tr>";
+          const payable = row.payment_status === "未払い" || row.payment_status === "決済エラー";
+          const action = payable ? "<button type=\"button\" class=\"btn btn-green pay-invoice-btn\" data-id=\"" + esc(row.id) + "\">支払う</button>" : "-";
+          return "<tr><td class=\"name-cell\">" + esc(row.seeker_name || "求職者") + "</td><td>" + esc(row.job_title || "-") + "</td><td>" + esc(formatDate(row.created_at)) + "</td><td>" + yen(row.total_amount) + "</td><td><span class=\"status-pill " + statusClass(row.payment_status) + "\">" + esc(row.payment_status || "未払い") + "</span></td><td>" + action + "</td></tr>";
         }).join("");
       }
 
@@ -238,6 +245,57 @@
         renderSummary(invoices);
         renderInvoices(invoices);
       }
+
+      // pay.jp Checkout: build the auto-button via a real createElement + appendChild
+      // (not innerHTML) so the browser actually executes it, using the public key
+      // from payjp-config.js. One reusable hidden form/button serves every row —
+      // clicking a row's own "支払う" button just sets which invoice is pending
+      // and programmatically clicks the pay.jp-rendered button to open its card modal.
+      const payjpConfig = window.MEDISPOT_PAYJP || {};
+      if (payjpConfig.publicKey && !payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) {
+        const payjpScript = document.createElement("script");
+        payjpScript.src = "https://checkout.pay.jp/";
+        payjpScript.className = "payjp-button";
+        payjpScript.dataset.key = payjpConfig.publicKey;
+        payjpScript.dataset.amount = "3300";
+        payjpScript.dataset.currency = "jpy";
+        payjpScript.dataset.text = "お支払い";
+        document.getElementById("payjpForm").appendChild(payjpScript);
+      }
+
+      document.getElementById("invoiceTableBody").addEventListener("click", function (event) {
+        const button = event.target.closest(".pay-invoice-btn");
+        if (!button) return;
+        if (!payjpConfig.publicKey || payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
+        document.getElementById("payjpInvoiceId").value = button.getAttribute("data-id");
+        const payjpButton = document.querySelector("#payjpForm button");
+        if (payjpButton) payjpButton.click(); else window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。");
+      });
+
+      document.getElementById("payjpForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const cardToken = formData.get("payjp-token");
+        const invoiceId = formData.get("invoiceId");
+        if (!cardToken || !invoiceId || !supabaseClient) return;
+        const sessionResult = await supabaseClient.auth.getSession();
+        const accessToken = sessionResult.data.session?.access_token;
+        if (!accessToken) { window.alert("セッションが切れています。再度ログインしてください。"); return; }
+        try {
+          const response = await fetch("/api/charge", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + accessToken },
+            body: JSON.stringify({ invoiceId: invoiceId, cardToken: cardToken })
+          });
+          const result = await response.json();
+          window.alert(result.message || (result.success ? "お支払いが完了しました。" : "決済に失敗しました。"));
+        } catch (error) {
+          console.error(error);
+          window.alert("通信エラーが発生しました。時間をおいて再度お試しください。");
+        }
+        load().catch(function (error) { console.error(error); });
+      });
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
       load().catch(function (error) { console.error(error); renderSummary([]); renderInvoices([]); });
