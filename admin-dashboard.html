@@ -255,7 +255,7 @@
 
       function pillClass(status) {
         const value = String(status || "").toLowerCase();
-        if (["open", "paid", "completed", "hired", "採用決定", "支払済み", "公開中"].includes(value)) return "green";
+        if (["open", "paid", "completed", "hired", "採用決定", "勤務開始", "完了", "支払済み", "公開中"].includes(value)) return "green";
         if (["pending", "reviewing", "selection", "選考中", "確認中", "未払い"].includes(value)) return "amber";
         if (["failed", "cancelled", "rejected", "失敗", "不採用"].includes(value)) return "red";
         return "gray";
@@ -310,7 +310,7 @@
           supabaseClient.from("seeker_profiles").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
           supabaseClient.from("employer_profiles").select("id", { count: "exact", head: true }).eq("is_admin", false).gte("created_at", todayIso),
           supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
-          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).eq("status", "採用決定").gte("created_at", monthIso),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).in("status", ["採用決定", "勤務開始", "完了"]).gte("created_at", monthIso),
           supabaseClient.from("seeker_profiles").select("name,license,created_at").order("created_at", { ascending: false }).limit(5),
           supabaseClient.from("employer_profiles").select("facility_name,facility_type,created_at").eq("is_admin", false).order("created_at", { ascending: false }).limit(5),
           supabaseClient.from("jobs").select("title,facility_name,status,created_at").order("created_at", { ascending: false }).limit(5),

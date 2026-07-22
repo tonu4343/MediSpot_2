@@ -153,6 +153,8 @@
     .app-status { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 11px; font-weight: 900; }
     .app-status.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
     .app-status.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .app-status.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
+    .app-status.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
 
     .recent-jobs-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
     .recent-job-card { display: block; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; overflow: hidden; }
@@ -395,9 +397,9 @@
         const inProgress = apps.filter(function (a) { return a.status !== "採用決定"; });
         document.getElementById("heroStatApps").innerHTML = inProgress.length + "<small>件</small>";
         if (!apps.length) { list.innerHTML = '<div class="panel-empty">まだ応募はありません。求人検索から応募できます。</div>'; return; }
-        function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : ""; }
+        function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : status === "勤務開始" ? "status-working" : status === "完了" ? "status-completed" : ""; }
         list.innerHTML = apps.slice(0, 5).map(function (a) {
-          const canChat = a.status === "選考中" || a.status === "採用決定";
+          const canChat = a.status === "選考中" || a.status === "採用決定" || a.status === "勤務開始" || a.status === "完了";
           const href = canChat ? "application-chat.html?id=" + encodeURIComponent(a.id) : "job-detail.html?id=" + encodeURIComponent(a.job_id || "");
           return '<a class="app-item" href="' + href + '"><span class="app-item-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg></span><span class="app-item-body"><h3>' + esc(a.job_title || "応募求人") + '</h3><p>' + esc(a.facility_name || "医療機関") + ' ・ 応募日：' + esc((a.created_at || "").slice(0, 10)) + '</p></span><span class="app-status ' + statusClass(a.status) + '">' + esc(a.status || "応募済み") + '</span></a>';
         }).join("");

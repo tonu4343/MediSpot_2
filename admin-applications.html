@@ -51,6 +51,8 @@
     .status-pill { display: inline-flex; align-items: center; min-height: 22px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; }
     .status-pill.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
     .status-pill.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .status-pill.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
+    .status-pill.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
     .table-empty { padding: 30px 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
 
     .admin-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px,5vw,64px); background: #fff; border-top: 1px solid var(--line); }
@@ -132,7 +134,7 @@
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
       function initial(name) { return (name || "管").trim().charAt(0).toUpperCase() || "管"; }
       function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
-      function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : ""; }
+      function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : status === "勤務開始" ? "status-working" : status === "完了" ? "status-completed" : ""; }
 
       function renderApplications(rows) {
         const body = document.getElementById("appTableBody");

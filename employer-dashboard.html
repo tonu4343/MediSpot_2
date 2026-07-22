@@ -343,7 +343,7 @@
         const items = applications || [];
         const applied = items.filter(function (a) { return a.status === "応募済み"; }).length;
         const selection = items.filter(function (a) { return a.status === "選考中"; }).length;
-        const hired = items.filter(function (a) { return a.status === "採用決定"; }).length;
+        const hired = items.filter(function (a) { return a.status === "採用決定" || a.status === "勤務開始" || a.status === "完了"; }).length;
         const max = Math.max(applied, selection, hired, 1);
         text("sumAppliedCount", applied + "名"); text("sumSelectionCount", selection + "名"); text("sumHiredCount", hired + "名");
         text("statusApplied", applied + "名"); text("statusSelection", selection + "名"); text("statusHired", hired + "名");
@@ -368,7 +368,7 @@
         const applicationsResult = await supabaseClient.from("seeker_applications").select("id,job_id,status,job_title,seeker_name").eq("employer_id", user.id);
         const applications = applicationsResult.error ? [] : (applicationsResult.data || []);
         if (applicationsResult.error) console.error(applicationsResult.error);
-        text("hiredApplications", String(applications.filter(function (app) { return app.status === "採用決定"; }).length));
+        text("hiredApplications", String(applications.filter(function (app) { return app.status === "採用決定" || app.status === "勤務開始" || app.status === "完了"; }).length));
         renderStatusSummary(applications);
         const jobsResult = await supabaseClient.from("jobs").select("*").eq("employer_id", user.id).order("created_at", { ascending: false }).limit(20);
         if (jobsResult.error) { console.error(jobsResult.error); renderJobs([], applications); }
