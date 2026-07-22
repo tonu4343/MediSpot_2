@@ -49,7 +49,7 @@
     .welcome-photo { position: absolute; z-index: 1; top: 0; right: 0; bottom: 0; width: 56%; pointer-events: none; }
     .welcome-photo img { width: 100%; height: 100%; object-fit: cover; object-position: right center; -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.5) 20%, #000 42%); mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.5) 20%, #000 42%); }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 22px; }
     .stat-card { display: flex; flex-direction: column; gap: 10px; padding: 18px 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); transition: transform .15s ease, box-shadow .15s ease; }
     a.stat-card:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(0,63,125,.12); }
     .stat-card.soon { opacity: .72; }
@@ -104,7 +104,7 @@
     .job-empty strong { display: block; color: var(--blue-dark); font-size: 15px; }
     .job-empty span { display: block; margin: 6px 0 16px; color: var(--muted); font-size: 12.5px; font-weight: 700; }
 
-    .quick-actions { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
+    .quick-actions { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
     .quick-action { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 18px 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); transition: transform .15s ease, box-shadow .15s ease; }
     .quick-action:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(0,63,125,.12); }
     .quick-action .qa-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; }
@@ -144,7 +144,7 @@
     .employer-footer .copyright { grid-column: 1 / -1; margin: 8px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
     @media (max-width: 960px) { .employer-footer { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 
-    @media (max-width: 1180px) { .stats-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } .quick-actions { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    @media (max-width: 1180px) { .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .quick-actions { grid-template-columns: repeat(3, minmax(0,1fr)); } }
     @media (max-width: 960px) {
       .dash-body { grid-template-columns: 1fr; }
       .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
@@ -218,9 +218,7 @@
         <a class="stat-card c-blue" href="#jobs"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span></div><span class="label">掲載中の求人</span><strong id="openJobs">0</strong><small class="hint" id="openJobsHint">-</small></a>
         <a class="stat-card c-blue" href="employer-applications.html"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg></span></div><span class="label">応募者総数</span><strong id="totalApplicants">0</strong><small class="hint" id="totalApplicantsHint">-</small></a>
         <a class="stat-card c-amber" href="employer-dashboard.html#messages"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span></div><span class="label">未読メッセージ</span><strong id="receivedMessages">0</strong><small class="hint">全体</small></a>
-        <a class="stat-card c-green" href="employer-applications.html"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9.5-8.7C1 8.3 2.6 5 6 5c2 0 3.3 1.1 4 2.2C10.7 6.1 12 5 14 5c3.4 0 5 3.3 3.5 6.3C19 15.7 12 20 12 20z"/></svg></span></div><span class="label">採用成立数</span><strong id="hiredApplications">0</strong><small class="hint">累計</small></a>
-        <article class="stat-card c-teal soon"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></span><span class="soon-tag">準備中</span></div><span class="label">スカウト送信数</span><strong>-</strong><small class="hint">近日公開</small></article>
-        <article class="stat-card c-pink soon"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg></span><span class="soon-tag">準備中</span></div><span class="label">お気に入り登録</span><strong>-</strong><small class="hint">近日公開</small></article>
+        <a class="stat-card c-green" href="employer-hires.html"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9.5-8.7C1 8.3 2.6 5 6 5c2 0 3.3 1.1 4 2.2C10.7 6.1 12 5 14 5c3.4 0 5 3.3 3.5 6.3C19 15.7 12 20 12 20z"/></svg></span></div><span class="label">採用成立数</span><strong id="hiredApplications">0</strong><small class="hint">累計</small></a>
       </section>
 
       <section class="row-2col">
@@ -256,8 +254,7 @@
       <section class="quick-actions" aria-label="クイックアクション">
         <a class="quick-action qa-blue" href="employer-job-new.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><strong>求人を新規作成</strong><span>新しい求人を掲載します</span></a>
         <a class="quick-action qa-green" href="employer-applications.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg></span><strong>応募者を検索</strong><span>条件を指定して応募者を検索</span></a>
-        <a class="quick-action qa-amber" href="#"><span class="soon-tag">準備中</span><span class="qa-icon"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></span><strong>スカウトを送信</strong><span>求職者へ直接アプローチします</span></a>
-        <a class="quick-action qa-purple" href="employer-payments.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg></span><strong>料金プランを確認</strong><span>現在のプランと利用状況を確認</span></a>
+        <a class="quick-action qa-purple" href="employer-payments.html"><span class="qa-icon"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg></span><strong>料金・お支払いを確認</strong><span>成功報酬の請求状況を確認</span></a>
         <a class="quick-action qa-teal" href="#"><span class="soon-tag">準備中</span><span class="qa-icon"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="3" width="3" height="17"/></svg></span><strong>分析レポート</strong><span>採用活動の状況を分析・確認</span></a>
       </section>
 
