@@ -58,6 +58,7 @@
     .inbox-status.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
     .inbox-status.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
     .inbox-status.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
+    .inbox-status.status-rejected { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
     .panel-empty { padding: 40px 20px; text-align: center; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 12px; font-size: 13px; font-weight: 800; }
 
     @media (max-width: 960px) {
@@ -117,23 +118,15 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="application-status.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
       const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
-      const CHAT_OPEN_STATUSES = ["選考中", "採用決定", "勤務開始", "完了"];
-
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
       function initial(name) { return (name || "医").trim().charAt(0).toUpperCase() || "医"; }
-      function statusClass(status) {
-        return status === "選考中" ? "status-selection"
-          : status === "採用決定" ? "status-hired"
-          : status === "勤務開始" ? "status-working"
-          : status === "完了" ? "status-completed"
-          : "";
-      }
       function formatTime(value) { return value ? new Date(value).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""; }
 
       function renderInbox(conversations) {
@@ -150,7 +143,7 @@
               + '<p class="inbox-job">' + esc(c.job_title || "応募求人") + '</p>'
               + '<p class="inbox-preview">' + preview + '</p>'
             + '</span>'
-            + '<span class="inbox-status ' + statusClass(c.status) + '">' + esc(c.status || "選考中") + '</span>'
+            + '<span class="inbox-status ' + window.MEDISPOT_STATUS.cssClass(c.status) + '">' + esc(window.MEDISPOT_STATUS.label(c.status)) + '</span>'
           + '</a>';
         }).join("");
       }
@@ -165,7 +158,7 @@
         text("topbarName", profileResult.data.name || "求職者");
         text("topbarInitial", initial(profileResult.data.name));
 
-        const appsResult = await supabaseClient.from("seeker_applications").select("id,job_title,facility_name,status").eq("user_id", user.id).in("status", CHAT_OPEN_STATUSES);
+        const appsResult = await supabaseClient.from("seeker_applications").select("id,job_title,facility_name,status").eq("user_id", user.id).not("status", "in", "(" + window.MEDISPOT_STATUS.CLOSED.join(",") + ")");
         const apps = appsResult.error ? [] : (appsResult.data || []);
         if (!apps.length) { renderInbox([]); return; }
 

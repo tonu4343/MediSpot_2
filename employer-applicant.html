@@ -19,6 +19,11 @@
     .detail-head .actions { display: flex; flex-wrap: wrap; gap: 10px; }
     .btn-blue { color: #fff; background: linear-gradient(180deg, var(--blue-2), var(--blue)); box-shadow: 0 14px 28px rgba(0,91,172,.22); }
     .status-badge { display: inline-flex; min-height: 28px; align-items: center; padding: 0 12px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 12px; font-weight: 900; }
+    .status-badge.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
+    .status-badge.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .status-badge.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
+    .status-badge.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
+    .status-badge.status-rejected { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
     .panel-card { padding: clamp(22px,4vw,32px); margin-bottom: 20px; }
     .panel-card h2 { margin: 0 0 16px; color: var(--blue-dark); font-size: 20px; font-weight: 900; }
     .detail-list { display: grid; grid-template-columns: 160px 1fr; gap: 12px 16px; margin: 0; }
@@ -84,6 +89,7 @@
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="application-status.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -124,10 +130,12 @@
         currentApp = app;
         text("seekerName", (app.seeker_name || "求職者") + " さん");
         document.getElementById("jobLine").textContent = "応募求人：" + (app.job_title || "医療求人") + "／応募日：" + (app.created_at || "").slice(0, 10);
-        document.getElementById("statusBadge").textContent = app.status || "応募済み";
+        const statusBadge = document.getElementById("statusBadge");
+        statusBadge.textContent = window.MEDISPOT_STATUS.label(app.status);
+        statusBadge.className = "status-badge " + window.MEDISPOT_STATUS.cssClass(app.status);
         document.getElementById("chatLink").href = "application-chat.html?id=" + encodeURIComponent(app.id);
         const startButton = document.getElementById("startSelectionButton");
-        if (app.status === "応募済み") { startButton.style.display = ""; } else { startButton.style.display = "none"; }
+        if (app.status === "applied") { startButton.style.display = ""; } else { startButton.style.display = "none"; }
         if (app.message) { document.getElementById("applicationMessage").textContent = app.message; show("messagePanel"); }
         show("detailHead");
       }
@@ -172,7 +180,7 @@
         const button = document.getElementById("startSelectionButton");
         if (!supabaseClient || !currentUser) { location.href = "application-chat.html?id=" + encodeURIComponent(appId); return; }
         button.disabled = true; button.textContent = "開始しています…";
-        const result = await supabaseClient.from("seeker_applications").update({ status: "選考中" }).eq("id", appId).eq("employer_id", currentUser.id).select().single();
+        const result = await supabaseClient.from("seeker_applications").update({ status: "screening" }).eq("id", appId).eq("employer_id", currentUser.id).select().single();
         if (result.error) { console.error(result.error); button.disabled = false; button.textContent = "選考を開始"; message("選考を開始できませんでした。", true); return; }
         location.href = "application-chat.html?id=" + encodeURIComponent(appId);
       }

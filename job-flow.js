@@ -4,7 +4,7 @@
   const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY');
   const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
   const t = {
-    nurse:'スポット看護師', clinic:'新宿メディカルクリニック', nurseCat:'看護師', spot:'スポット', tokyo:'東京都 新宿区', friday:'今週金曜 9:00-17:00', nursePay:'日給 18,000円〜22,000円', nurseDesc:'外来補助、採血、問診、処置準備を担当します。短時間勤務の相談も可能です。', nurseReq:'看護師免許、採血経験', lab:'臨床検査技師', labFacility:'横浜健診センター', contract:'業務委託', kanagawa:'神奈川県 横浜市', weekly:'週1日から相談', labPay:'日給 16,000円〜20,000円', labDesc:'健診における検体検査、生理検査、結果入力を担当します。', labReq:'臨床検査技師免許', radio:'放射線技師', radioFacility:'大阪画像診断クリニック', part:'パート', osaka:'大阪府 大阪市', saturday:'土曜午前', radioDesc:'一般撮影、CT補助、検査前後の患者案内を担当します。', radioReq:'診療放射線技師免許', pt:'理学療法士', ptFacility:'千葉リハビリテーション病院', chiba:'千葉県 美浜区', ptSaturday:'今週土曜 9:00-16:00', ptPay:'日給 18,000円〜22,000円', ptDesc:'入院患者様の歩行訓練、関節可動域訓練、リハビリテーション計画の補助を担当します。', ptReq:'理学療法士免許', match:'マッチ度高', medicalJob:'医療求人', facility:'医療機関', salaryAsk:'給与相談', detail:'詳細を見る', none:'条件に合う求人がありません。条件を変更して検索してください。', count:'件の求人', newBadge:'NEW', detailTitle:'求人詳細', defaultDesc:'業務内容は医療機関と確認します。', applied:'応募済み', appJob:'応募求人', noApps:'まだ応募はありません。求人検索から応募できます。' };
+    nurse:'スポット看護師', clinic:'新宿メディカルクリニック', nurseCat:'看護師', spot:'スポット', tokyo:'東京都 新宿区', friday:'今週金曜 9:00-17:00', nursePay:'日給 18,000円〜22,000円', nurseDesc:'外来補助、採血、問診、処置準備を担当します。短時間勤務の相談も可能です。', nurseReq:'看護師免許、採血経験', lab:'臨床検査技師', labFacility:'横浜健診センター', contract:'業務委託', kanagawa:'神奈川県 横浜市', weekly:'週1日から相談', labPay:'日給 16,000円〜20,000円', labDesc:'健診における検体検査、生理検査、結果入力を担当します。', labReq:'臨床検査技師免許', radio:'放射線技師', radioFacility:'大阪画像診断クリニック', part:'パート', osaka:'大阪府 大阪市', saturday:'土曜午前', radioDesc:'一般撮影、CT補助、検査前後の患者案内を担当します。', radioReq:'診療放射線技師免許', pt:'理学療法士', ptFacility:'千葉リハビリテーション病院', chiba:'千葉県 美浜区', ptSaturday:'今週土曜 9:00-16:00', ptPay:'日給 18,000円〜22,000円', ptDesc:'入院患者様の歩行訓練、関節可動域訓練、リハビリテーション計画の補助を担当します。', ptReq:'理学療法士免許', match:'マッチ度高', medicalJob:'医療求人', facility:'医療機関', salaryAsk:'給与相談', detail:'詳細を見る', none:'条件に合う求人がありません。条件を変更して検索してください。', count:'件の求人', newBadge:'NEW', detailTitle:'求人詳細', defaultDesc:'業務内容は医療機関と確認します。', appJob:'応募求人', noApps:'まだ応募はありません。求人検索から応募できます。' };
   const demoJobs = [
     { id:'demo-nurse', title:t.nurse, facility_name:t.clinic, category:t.nurseCat, type:t.spot, location:t.tokyo, work_date:t.friday, salary:t.nursePay, description:t.nurseDesc, requirements:t.nurseReq, image:'assets/job-nurse.png' },
     { id:'demo-lab', title:t.lab, facility_name:t.labFacility, category:t.lab, type:t.contract, location:t.kanagawa, work_date:t.weekly, salary:t.labPay, description:t.labDesc, requirements:t.labReq, image:'assets/job-lab.png' },
@@ -13,8 +13,6 @@
   ];
   function esc(v) { return String(v || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
   function looksSensitive(text) { return /(0\d{1,4}[-−ー－]?\d{1,4}[-−ー－]?\d{3,4})|(\d{10,11})/.test(text) || /(パスワード|password|暗証番号|マイナンバー|口座番号)/i.test(text); }
-  function statusClass(status) { return status === '選考中' ? 'status-selection' : status === '採用決定' ? 'status-hired' : status === '勤務開始' ? 'status-working' : status === '完了' ? 'status-completed' : ''; }
-  function isChatOpen(status) { return status === '選考中' || status === '採用決定' || status === '勤務開始' || status === '完了'; }
   function getParam(name) { return new URLSearchParams(location.search).get(name); }
   function localApps() { try { return JSON.parse(localStorage.getItem('medispot_applications') || '[]'); } catch { return []; } }
   function saveLocalApp(app) { const apps = localApps(); apps.unshift(app); localStorage.setItem('medispot_applications', JSON.stringify(apps)); }
@@ -50,7 +48,7 @@
     const r = await supabaseClient.from('jobs').select('*').eq('id', id).maybeSingle();
     return (!r.error && r.data) ? r.data : null;
   }
-  function showApplied(app) { const applySection = document.getElementById('applySection'); const appliedSection = document.getElementById('appliedSection'); if (!appliedSection) return; applySection.style.display = 'none'; appliedSection.style.display = 'block'; const statusEl = document.getElementById('appliedStatus'); statusEl.textContent = app.status || t.applied; statusEl.className = 'status ' + statusClass(app.status); const canChat = isChatOpen(app.status); const note = document.getElementById('appliedNote'); const link = document.getElementById('appliedLink'); if (canChat) { note.textContent = '選考が進んでいます。チャットで医療機関とやり取りできます。'; link.textContent = 'メッセージを確認する'; link.href = 'application-chat.html?id=' + encodeURIComponent(app.id); } else { note.textContent = 'この求人にはすでに応募済みです。選考状況は応募管理から確認できます。'; link.textContent = '応募管理を見る'; link.href = 'seeker-applications.html'; } }
+  function showApplied(app) { const applySection = document.getElementById('applySection'); const appliedSection = document.getElementById('appliedSection'); if (!appliedSection) return; applySection.style.display = 'none'; appliedSection.style.display = 'block'; const statusEl = document.getElementById('appliedStatus'); statusEl.textContent = window.MEDISPOT_STATUS.label(app.status); statusEl.className = 'status ' + window.MEDISPOT_STATUS.cssClass(app.status); const canChat = window.MEDISPOT_STATUS.isChatOpen(app.status); const note = document.getElementById('appliedNote'); const link = document.getElementById('appliedLink'); if (canChat) { note.textContent = '選考が進んでいます。チャットで医療機関とやり取りできます。'; link.textContent = 'メッセージを確認する'; link.href = 'application-chat.html?id=' + encodeURIComponent(app.id); } else { note.textContent = 'この求人にはすでに応募済みです。選考状況は応募管理から確認できます。'; link.textContent = '応募管理を見る'; link.href = 'seeker-applications.html'; } }
   function profileComplete(p) { return !!(p && p.name && p.license && p.birth_date && p.experience_years && p.preferred_style); }
   async function loadDetailPage() {
     const title = document.getElementById('jobTitle');
@@ -141,7 +139,7 @@
       const msg = document.getElementById('message');
       const button = document.getElementById('applyButton');
       msg.className = 'message';
-      const baseApp = { job_id: job.id, employer_id: job.employer_id || null, job_title: job.title, facility_name: job.facility_name || t.facility, status: t.applied, message: document.getElementById('applyMessage').value.trim(), created_at: new Date().toISOString() };
+      const baseApp = { job_id: job.id, employer_id: job.employer_id || null, job_title: job.title, facility_name: job.facility_name || t.facility, status: 'applied', message: document.getElementById('applyMessage').value.trim(), created_at: new Date().toISOString() };
       if (baseApp.message && looksSensitive(baseApp.message) && !window.confirm('電話番号・住所・パスワードなど、個人情報や機密情報が含まれている可能性があります。\nこのまま送信しますか？')) return;
       if (!supabaseClient || String(job.id || '').startsWith('demo-')) { saveLocalApp(baseApp); showComplete(); return; }
       const session = await supabaseClient.auth.getSession();
@@ -206,7 +204,7 @@
       if (!jobsResult.error) jobsById = Object.fromEntries((jobsResult.data || []).map(j => [j.id, j]));
     }
     list.innerHTML = apps.length ? apps.map(a => {
-      const canChat = a.id && isChatOpen(a.status);
+      const canChat = a.id && window.MEDISPOT_STATUS.isChatOpen(a.status);
       const job = jobsById[a.job_id] || {};
       const details = [
         appDetailRow('応募日', formatJaDate(a.created_at)),
@@ -214,7 +212,7 @@
         appDetailRow('勤務地', job.location),
         appDetailRow('給与', job.salary)
       ].join('');
-      return '<article class="job-card"><div class="job-card-main"><span class="status ' + statusClass(a.status) + '">' + esc(a.status || t.applied) + '</span><h3>' + esc(a.job_title || t.appJob) + '</h3><p class="job-facility">' + esc(a.facility_name || t.facility) + '</p><dl class="app-detail-list">' + details + '</dl></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id=' + encodeURIComponent(a.job_id || '') + '">' + t.detail + '</a>' + (canChat ? '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>' : '') + '</div></article>';
+      return '<article class="job-card"><div class="job-card-main"><span class="status ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span><h3>' + esc(a.job_title || t.appJob) + '</h3><p class="job-facility">' + esc(a.facility_name || t.facility) + '</p><dl class="app-detail-list">' + details + '</dl></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id=' + encodeURIComponent(a.job_id || '') + '">' + t.detail + '</a>' + (canChat ? '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>' : '') + '</div></article>';
     }).join('') : '<div class="panel">' + t.noApps + '</div>';
   }
   logoutWire(); loadJobsPage(); loadDetailPage(); loadApplicationsPage();

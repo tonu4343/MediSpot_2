@@ -187,6 +187,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="application-status.js"></script>
   <script>
     (function () {
       "use strict";
@@ -255,9 +256,9 @@
 
       function pillClass(status) {
         const value = String(status || "").toLowerCase();
-        if (["open", "paid", "completed", "hired", "採用決定", "勤務開始", "完了", "支払済み", "公開中"].includes(value)) return "green";
-        if (["pending", "reviewing", "selection", "選考中", "確認中", "未払い"].includes(value)) return "amber";
-        if (["failed", "cancelled", "rejected", "失敗", "不採用"].includes(value)) return "red";
+        if (["open", "paid", "completed", "hired", "work_scheduled", "working", "採用決定", "勤務開始", "完了", "支払済み", "公開中"].includes(value)) return "green";
+        if (["pending", "reviewing", "selection", "screening", "interview_scheduling", "interview_scheduled", "offer_pending", "選考中", "確認中", "未払い"].includes(value)) return "amber";
+        if (["failed", "cancelled", "rejected", "withdrawn", "失敗", "不採用"].includes(value)) return "red";
         return "gray";
       }
 
@@ -310,7 +311,7 @@
           supabaseClient.from("seeker_profiles").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
           supabaseClient.from("employer_profiles").select("id", { count: "exact", head: true }).eq("is_admin", false).gte("created_at", todayIso),
           supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
-          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).in("status", ["採用決定", "勤務開始", "完了"]).gte("created_at", monthIso),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).in("status", window.MEDISPOT_STATUS.HIRED_PLUS).gte("created_at", monthIso),
           supabaseClient.from("seeker_profiles").select("name,license,created_at").order("created_at", { ascending: false }).limit(5),
           supabaseClient.from("employer_profiles").select("facility_name,facility_type,created_at").eq("is_admin", false).order("created_at", { ascending: false }).limit(5),
           supabaseClient.from("jobs").select("title,facility_name,status,created_at").order("created_at", { ascending: false }).limit(5),
@@ -333,7 +334,7 @@
         renderList("recentSeekers", resultRows(recentSeekers), "最近の登録はありません", function (row) { return activityRow({ title: row.name, subtitle: row.license || "資格未設定", date: row.created_at, status: "登録済み" }); });
         renderList("recentEmployers", resultRows(recentEmployers), "最近の登録はありません", function (row) { return activityRow({ title: row.facility_name, subtitle: row.facility_type || "施設種別未設定", date: row.created_at }); });
         renderList("recentJobs", resultRows(recentJobs), "公開された求人はありません", function (row) { return activityRow({ title: row.facility_name || "施設名未設定", subtitle: row.title || "求人タイトル未設定", date: row.created_at, status: row.status === "open" ? "公開中" : "非公開" }); });
-        renderList("recentApplications", resultRows(recentApplications), "最近の応募はありません", function (row) { return activityRow({ title: row.seeker_name || "求職者", subtitle: row.job_title || "応募求人", date: row.created_at, status: row.status || "応募済み" }); });
+        renderList("recentApplications", resultRows(recentApplications), "最近の応募はありません", function (row) { return activityRow({ title: row.seeker_name || "求職者", subtitle: row.job_title || "応募求人", date: row.created_at, status: window.MEDISPOT_STATUS.label(row.status) }); });
 
         // バケット一覧の権限に左右されず、Storage クライアントの初期化状態を表示する。
         const storageOk = Boolean(supabaseClient.storage);
