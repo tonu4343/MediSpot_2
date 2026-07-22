@@ -184,6 +184,38 @@
       showComplete();
     });
   }
-  async function loadApplicationsPage() { const list = document.getElementById('applicationsList'); if (!list) return; let apps = localApps(); if (supabaseClient) { const session = await supabaseClient.auth.getSession(); const user = session.data.session?.user; if (!user && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') { location.href='login.html?role=seeker'; return; } if (user) { const profileResult = await supabaseClient.from('seeker_profiles').select('id').eq('user_id', user.id).order('created_at',{ascending:false}).limit(1).maybeSingle(); if (profileResult.error || !profileResult.data) { await supabaseClient.auth.signOut(); location.href='login.html?role=seeker&roleError=1'; return; } const r = await supabaseClient.from('seeker_applications').select('*').eq('user_id', user.id).order('created_at',{ascending:false}); if (!r.error) apps = r.data || []; } } list.innerHTML = apps.length ? apps.map(a => { const canChat = a.id && isChatOpen(a.status); return '<article class="job-card"><div><span class="status '+statusClass(a.status)+'">'+esc(a.status || t.applied)+'</span><h3>'+esc(a.job_title || t.appJob)+'</h3><p class="job-meta">'+esc(a.facility_name || t.facility)+' / '+esc((a.created_at || '').slice(0,10))+'</p></div><div class="job-actions" style="display:flex;flex-wrap:wrap;gap:8px;"><a class="btn btn-outline" href="job-detail.html?id='+encodeURIComponent(a.job_id || '')+'">'+t.detail+'</a>'+(canChat?'<a class="btn btn-blue" href="application-chat.html?id='+encodeURIComponent(a.id)+'">メッセージ</a>':'')+'</div></article>'; }).join('') : '<div class="panel">'+t.noApps+'</div>'; }
+  function formatJaDate(value) { if (!value) return '-'; const d = new Date(value); return Number.isNaN(d.getTime()) ? '-' : d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }); }
+  function appDetailRow(label, value) { return value ? '<div><dt>' + esc(label) + '</dt><dd>' + esc(value) + '</dd></div>' : ''; }
+  async function loadApplicationsPage() {
+    const list = document.getElementById('applicationsList'); if (!list) return;
+    let apps = localApps();
+    if (supabaseClient) {
+      const session = await supabaseClient.auth.getSession(); const user = session.data.session?.user;
+      if (!user && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') { location.href = 'login.html?role=seeker'; return; }
+      if (user) {
+        const profileResult = await supabaseClient.from('seeker_profiles').select('id').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (profileResult.error || !profileResult.data) { await supabaseClient.auth.signOut(); location.href = 'login.html?role=seeker&roleError=1'; return; }
+        const r = await supabaseClient.from('seeker_applications').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+        if (!r.error) apps = r.data || [];
+      }
+    }
+    let jobsById = {};
+    const jobIds = [...new Set(apps.map(a => a.job_id).filter(Boolean))];
+    if (supabaseClient && jobIds.length) {
+      const jobsResult = await supabaseClient.from('jobs').select('id,location,salary,work_date').in('id', jobIds);
+      if (!jobsResult.error) jobsById = Object.fromEntries((jobsResult.data || []).map(j => [j.id, j]));
+    }
+    list.innerHTML = apps.length ? apps.map(a => {
+      const canChat = a.id && isChatOpen(a.status);
+      const job = jobsById[a.job_id] || {};
+      const details = [
+        appDetailRow('応募日', formatJaDate(a.created_at)),
+        appDetailRow('勤務日', job.work_date),
+        appDetailRow('勤務地', job.location),
+        appDetailRow('給与', job.salary)
+      ].join('');
+      return '<article class="job-card"><div class="job-card-main"><span class="status ' + statusClass(a.status) + '">' + esc(a.status || t.applied) + '</span><h3>' + esc(a.job_title || t.appJob) + '</h3><p class="job-facility">' + esc(a.facility_name || t.facility) + '</p><dl class="app-detail-list">' + details + '</dl></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id=' + encodeURIComponent(a.job_id || '') + '">' + t.detail + '</a>' + (canChat ? '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>' : '') + '</div></article>';
+    }).join('') : '<div class="panel">' + t.noApps + '</div>';
+  }
   logoutWire(); loadJobsPage(); loadDetailPage(); loadApplicationsPage();
 })();
