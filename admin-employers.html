@@ -290,7 +290,7 @@
         try {
           const results = await Promise.all([supabaseClient.from("jobs").select("id", { count: "exact", head: true }).eq("employer_id", row.user_id).eq("status", "open"), supabaseClient.from("seeker_applications").select("status").eq("employer_id", row.user_id)]);
           const applications = results[1].error ? [] : (results[1].data || []), items = element("detailGrid").querySelectorAll(".detail-item dd");
-          items[11].innerHTML = metric(results[0].error ? 0 : results[0].count); items[12].innerHTML = metric(applications.length); items[13].innerHTML = metric(applications.filter(function (item) { return item.status === "採用決定" || item.status === "hired"; }).length);
+          items[11].innerHTML = metric(results[0].error ? 0 : results[0].count); items[12].innerHTML = metric(applications.length); items[13].innerHTML = metric(applications.filter(function (item) { return item.status === "採用決定" || item.status === "勤務開始" || item.status === "完了" || item.status === "hired"; }).length);
         } catch (error) { console.error("Related employer metrics failed:", error); }
       }
 

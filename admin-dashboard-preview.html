@@ -75,6 +75,8 @@
     .mini-pill { display: inline-flex; align-items: center; min-height: 19px; margin-top: 2px; padding: 0 8px; border-radius: 999px; font-size: 10px; font-weight: 900; white-space: nowrap; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; }
     .mini-pill.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
     .mini-pill.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .mini-pill.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
+    .mini-pill.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
     .mini-pill.status-open { color: var(--green-dark); background: #e8fbf0; border-color: #8bdbad; }
     .mini-pill.status-closed { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
     .list-empty { padding: 22px 12px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 700; }
@@ -263,7 +265,7 @@
       function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
       function count(result) { return result && !result.error ? (result.count || 0) : 0; }
       function rows(result) { return result && !result.error ? (result.data || []) : []; }
-      function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : ""; }
+      function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : status === "勤務開始" ? "status-working" : status === "完了" ? "status-completed" : ""; }
 
       function setSystemStatus(ok) {
         ["dotSupabase", "dotAuth", "dotDb"].forEach(function (id) {
@@ -328,8 +330,8 @@
           supabaseClient.from("seeker_profiles").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
           supabaseClient.from("employer_profiles").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
           supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
-          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).eq("status", "採用決定").gte("created_at", monthStart),
-          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).eq("status", "採用決定"),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).in("status", ["採用決定", "勤務開始", "完了"]).gte("created_at", monthStart),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).in("status", ["採用決定", "勤務開始", "完了"]),
           supabaseClient.from("seeker_profiles").select("name,license,created_at").order("created_at", { ascending: false }).limit(5),
           supabaseClient.from("employer_profiles").select("facility_name,facility_type,created_at").order("created_at", { ascending: false }).limit(5),
           supabaseClient.from("jobs").select("title,facility_name,status,created_at").order("created_at", { ascending: false }).limit(5),
