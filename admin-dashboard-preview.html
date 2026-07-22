@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>運営管理者ダッシュボード | Medi Job</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.admin-dashboard-page { color: var(--ink); background: #f5f9fc; }
+    .site-header.dash-topbar { position: sticky; top: 0; z-index: 70; }
+    .dash-topbar-right { display: flex; align-items: center; gap: 18px; }
+    .dash-user { display: flex; align-items: center; gap: 10px; }
+    .dash-user-text { text-align: right; line-height: 1.4; }
+    .dash-user-text small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .dash-user-text strong { display: block; color: #14324c; font-size: 13px; font-weight: 900; }
+    .admin-avatar { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; background: #2b3646; border-radius: 50%; font-size: 12px; font-weight: 900; }
+    .dash-logout { min-height: 34px; padding: 0 14px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer; }
+
+    .dash-body { display: grid; grid-template-columns: 232px 1fr; align-items: start; }
+    .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
+    .side-nav { display: grid; gap: 3px; margin: 0 0 6px; padding: 0; list-style: none; }
+    .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; transition: background .15s ease, color .15s ease; }
+    .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
+    .side-nav a.active { color: #fff; background: #2b3646; }
+    .side-nav a .nav-soon { margin-left: auto; color: var(--muted); background: #eef3f7; border-radius: 999px; padding: 1px 7px; font-size: 9.5px; font-weight: 900; }
+    .side-nav.sub a { padding-left: 34px; }
+    .side-nav-group-label { margin: 14px 0 4px; padding: 0 12px; color: var(--faint, #96a5b0); font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+
+    .admin-badge-card { margin: 14px 2px 0; padding: 15px; background: #2b3646; border-radius: 12px; }
+    .admin-badge-card strong { display: block; color: #fff; font-size: 12.5px; font-weight: 900; }
+    .admin-badge-card span { display: block; margin-top: 4px; color: rgba(255,255,255,.72); font-size: 11px; font-weight: 700; line-height: 1.6; }
+
+    .dash-main { min-width: 0; max-width: 1400px; margin: 0 auto; padding: 26px clamp(16px,2.6vw,34px) 60px; }
+
+    .admin-hero { margin-bottom: 22px; }
+    .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.6vw,28px); font-weight: 900; }
+    .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; }
+
+    .section-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 30px 0 16px; }
+    .section-title-row h2 { margin: 0; color: var(--blue-dark); font-size: 16px; font-weight: 900; }
+    .section-title-row:first-of-type { margin-top: 0; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+    .stat-card { display: flex; flex-direction: column; gap: 12px; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,63,125,.05); }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; }
+    .stat-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; }
+    .stat-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .stat-card.c-blue .stat-icon { color: var(--blue); background: #e9f3fd; }
+    .stat-card.c-green .stat-icon { color: var(--green-dark); background: #e8fbf0; }
+    .stat-card.c-amber .stat-icon { color: #b5670f; background: #fff3e0; }
+    .stat-card.c-pink .stat-icon { color: #c23b6c; background: #fdeaf1; }
+    .stat-card.c-teal .stat-icon { color: #0c8a8f; background: #e6f8f8; }
+    .stat-card.c-purple .stat-icon { color: #6a4fc2; background: #efeafd; }
+    .stat-card.c-slate .stat-icon { color: #45536a; background: #eef1f5; }
+    .stat-card .label { color: var(--muted); font-size: 12px; font-weight: 900; }
+    .stat-card strong { display: block; margin-top: 2px; color: #14324c; font-size: 26px; line-height: 1.2; font-weight: 900; }
+    .stat-card .secondary { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-size: 11.5px; font-weight: 800; }
+    .stat-card .secondary.up { color: var(--green-dark); }
+    .stat-card .secondary.muted-note { color: var(--faint, #96a5b0); font-style: italic; }
+
+    .activity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 16px; }
+    .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,63,125,.05); padding: 20px; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .panel-head h3 { margin: 0; color: var(--blue-dark); font-size: 14.5px; font-weight: 900; }
+    .panel-head a { color: var(--blue); font-size: 11.5px; font-weight: 900; flex: 0 0 auto; }
+    .activity-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .activity-row { display: flex; align-items: center; gap: 10px; padding: 10px 11px; background: #f8fafc; border: 1px solid #eef1f5; border-radius: 9px; }
+    .activity-row .a-icon { display: grid; place-items: center; flex: 0 0 30px; width: 30px; height: 30px; border-radius: 50%; color: #fff; background: #7c8ba1; font-size: 11px; font-weight: 900; }
+    .activity-row .a-body { flex: 1; min-width: 0; }
+    .activity-row .a-title { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1c2b3a; font-size: 12.5px; font-weight: 800; }
+    .activity-row .a-sub { display: block; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .activity-row .a-meta { flex: 0 0 auto; text-align: right; }
+    .activity-row .a-date { display: block; color: var(--muted); font-size: 10.5px; font-weight: 700; }
+    .mini-pill { display: inline-flex; align-items: center; min-height: 19px; margin-top: 2px; padding: 0 8px; border-radius: 999px; font-size: 10px; font-weight: 900; white-space: nowrap; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; }
+    .mini-pill.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
+    .mini-pill.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .mini-pill.status-open { color: var(--green-dark); background: #e8fbf0; border-color: #8bdbad; }
+    .mini-pill.status-closed { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
+    .list-empty { padding: 22px 12px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .list-empty.soon { color: var(--faint, #96a5b0); font-style: italic; }
+
+    .quick-actions { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+    .quick-action-btn { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: 10px; color: var(--blue-dark); font-size: 13px; font-weight: 900; box-shadow: 0 6px 16px rgba(0,63,125,.05); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+    .quick-action-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,63,125,.1); border-color: #b9dbf5; }
+    .quick-action-btn .qa-plus { display: grid; place-items: center; flex: 0 0 26px; width: 26px; height: 26px; color: var(--blue); background: #e9f3fd; border-radius: 50%; font-size: 15px; font-weight: 900; }
+
+    .status-card-grid { display: grid; grid-template-columns: minmax(0,1fr) 260px; gap: 16px; align-items: start; }
+    .system-status-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .system-status-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; font-size: 12.5px; font-weight: 800; color: #263949; }
+    .status-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #ccd6dc; flex: 0 0 auto; }
+    .status-dot.ok { background: #2ecc71; box-shadow: 0 0 0 3px rgba(46,204,113,.18); }
+    .status-dot.down { background: #e6483c; box-shadow: 0 0 0 3px rgba(230,72,60,.18); }
+    .system-status-note { margin: 10px 0 0; padding-top: 10px; border-top: 1px solid #eef1f5; color: var(--faint, #96a5b0); font-size: 10.5px; font-weight: 700; line-height: 1.6; }
+
+    .admin-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px,5vw,64px); background: #fff; border-top: 1px solid var(--line); }
+    .admin-footer-light .brand { color: var(--blue); }
+    .admin-footer-copy { width: 100%; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+
+    @media (max-width: 1180px) { .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .quick-actions { grid-template-columns: repeat(2, minmax(0,1fr)); } .status-card-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+      .side-nav, .side-nav.sub { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .side-nav a, .side-nav.sub a { white-space: nowrap; padding-left: 12px; }
+      .side-nav-group-label { display: none; }
+      .admin-badge-card { display: none; }
+    }
+    @media (max-width: 640px) {
+      .dash-main { padding: 20px 14px 48px; }
+      .stats-grid, .quick-actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="admin-dashboard-page">
+  <header class="site-header dash-topbar">
+    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <div class="dash-topbar-right">
+      <div class="dash-user"><span class="admin-avatar" id="topbarInitial">管</span><div class="dash-user-text"><small>運営管理者</small><strong id="topbarName">読み込み中</strong></div></div>
+      <button class="dash-logout" id="logoutButton" type="button">ログアウト</button>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <aside class="dash-sidebar" aria-label="管理者メニュー">
+      <ul class="side-nav">
+        <li><a class="active" href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
+      </ul>
+      <p class="side-nav-group-label">ユーザー管理</p>
+      <ul class="side-nav sub">
+        <li><a href="admin-seekers.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>求職者一覧</a></li>
+        <li><a href="admin-employers.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>求人者一覧</a></li>
+      </ul>
+      <ul class="side-nav" style="margin-top:14px;">
+        <li><a href="admin-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="admin-applications.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>応募管理</a></li>
+        <li><a href="admin-payments.html"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>決済管理</a></li>
+        <li><a href="#"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="3" width="3" height="17"/></svg>レポート<span class="nav-soon">準備中</span></a></li>
+        <li><a href="#"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>マスタ管理<span class="nav-soon">準備中</span></a></li>
+        <li><a href="admin-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>システム設定</a></li>
+      </ul>
+
+      <div class="admin-badge-card">
+        <strong>運営管理者モード</strong>
+        <span>プラットフォーム全体のデータを横断的に確認できます。</span>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <section class="admin-hero">
+        <h1>運営管理者ダッシュボード</h1>
+        <p>プラットフォーム全体の登録者数と稼働状況の概要です。</p>
+      </section>
+
+      <section class="stats-grid" aria-label="プラットフォーム統計">
+        <article class="stat-card c-blue">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg></span></div>
+          <span class="label">求職者数</span>
+          <strong id="statSeekers">-</strong>
+          <span class="secondary up" id="statSeekersToday">-</span>
+        </article>
+        <article class="stat-card c-green">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/></svg></span></div>
+          <span class="label">求人者数</span>
+          <strong id="statEmployers">-</strong>
+          <span class="secondary up" id="statEmployersToday">-</span>
+        </article>
+        <article class="stat-card c-amber">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span></div>
+          <span class="label">公開中の求人</span>
+          <strong id="statOpenJobs">-</strong>
+          <span class="secondary" id="statAllJobs">-</span>
+        </article>
+        <article class="stat-card c-pink">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/></svg></span></div>
+          <span class="label">応募件数</span>
+          <strong id="statApplications">-</strong>
+          <span class="secondary up" id="statApplicationsToday">-</span>
+        </article>
+        <article class="stat-card c-teal">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg></span></div>
+          <span class="label">本日の新規登録</span>
+          <strong id="statTodaySignups">-</strong>
+          <span class="secondary" id="statTodaySignupsBreakdown">-</span>
+        </article>
+        <article class="stat-card c-purple">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9.5-8.7C1 8.3 2.6 5 6 5c2 0 3.3 1.1 4 2.2C10.7 6.1 12 5 14 5c3.4 0 5 3.3 3.5 6.3C19 15.7 12 20 12 20z"/></svg></span></div>
+          <span class="label">今月の採用成立</span>
+          <strong id="statMonthHires">-</strong>
+          <span class="secondary" id="statAllHires">-</span>
+        </article>
+        <article class="stat-card c-slate">
+          <div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span></div>
+          <span class="label">今月の売上</span>
+          <strong>-</strong>
+          <span class="secondary muted-note">決済データ未連携</span>
+        </article>
+      </section>
+
+      <div class="section-title-row"><h2>最近のアクティビティ</h2></div>
+      <section class="activity-grid" aria-label="最近のアクティビティ">
+        <article class="panel-card">
+          <div class="panel-head"><h3>最近登録した求職者</h3><a href="admin-seekers.html">すべて見る ›</a></div>
+          <ul class="activity-list" id="recentSeekersList"><li class="list-empty">読み込んでいます…</li></ul>
+        </article>
+        <article class="panel-card">
+          <div class="panel-head"><h3>最近登録した求人者</h3><a href="admin-employers.html">すべて見る ›</a></div>
+          <ul class="activity-list" id="recentEmployersList"><li class="list-empty">読み込んでいます…</li></ul>
+        </article>
+        <article class="panel-card">
+          <div class="panel-head"><h3>最新の求人</h3><a href="admin-jobs.html">すべて見る ›</a></div>
+          <ul class="activity-list" id="recentJobsList"><li class="list-empty">読み込んでいます…</li></ul>
+        </article>
+        <article class="panel-card">
+          <div class="panel-head"><h3>最近の応募</h3><a href="admin-applications.html">すべて見る ›</a></div>
+          <ul class="activity-list" id="recentApplicationsList"><li class="list-empty">読み込んでいます…</li></ul>
+        </article>
+        <article class="panel-card">
+          <div class="panel-head"><h3>最近の決済</h3><a href="admin-payments.html">すべて見る ›</a></div>
+          <ul class="activity-list"><li class="list-empty soon">決済データはまだ連携されていません。</li></ul>
+        </article>
+      </section>
+
+      <div class="section-title-row"><h2>クイック操作</h2></div>
+      <section class="quick-actions" aria-label="クイック操作">
+        <a class="quick-action-btn" href="admin-jobs.html"><span class="qa-plus">＋</span>求人を確認</a>
+        <a class="quick-action-btn" href="admin-seekers.html"><span class="qa-plus">＋</span>求職者一覧</a>
+        <a class="quick-action-btn" href="admin-employers.html"><span class="qa-plus">＋</span>求人者一覧</a>
+        <a class="quick-action-btn" href="admin-payments.html"><span class="qa-plus">＋</span>決済一覧</a>
+      </section>
+
+      <div class="section-title-row"><h2>システム状態</h2></div>
+      <section class="status-card-grid">
+        <div class="panel-card">
+          <ul class="system-status-list" id="systemStatusList">
+            <li><span class="status-dot" id="dotSupabase"></span>Supabase 接続<span id="statusSupabase" style="margin-left:auto;color:var(--muted);font-size:11px;">確認中…</span></li>
+            <li><span class="status-dot" id="dotStorage"></span>Storage<span style="margin-left:auto;color:var(--faint,#96a5b0);font-size:11px;">未使用</span></li>
+            <li><span class="status-dot" id="dotAuth"></span>Authentication<span id="statusAuth" style="margin-left:auto;color:var(--muted);font-size:11px;">確認中…</span></li>
+            <li><span class="status-dot" id="dotDb"></span>Database<span id="statusDb" style="margin-left:auto;color:var(--muted);font-size:11px;">確認中…</span></li>
+          </ul>
+          <p class="system-status-note">Supabase 接続・Database は同一の疎通確認結果を表示しています。Storage は本サービスでは未使用のため対象外です。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="admin-footer-light">
+    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <p class="admin-footer-copy">© 2024 MEDICAL SPOT JOB. All Rights Reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = false && config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+
+      function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
+      function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
+      function initial(name) { return (name || "管").trim().charAt(0).toUpperCase() || "管"; }
+      function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
+      function count(result) { return result && !result.error ? (result.count || 0) : 0; }
+      function rows(result) { return result && !result.error ? (result.data || []) : []; }
+      function statusClass(status) { return status === "選考中" ? "status-selection" : status === "採用決定" ? "status-hired" : ""; }
+
+      function setSystemStatus(ok) {
+        ["dotSupabase", "dotAuth", "dotDb"].forEach(function (id) {
+          const dot = document.getElementById(id);
+          if (dot) dot.className = "status-dot " + (ok ? "ok" : "down");
+        });
+        text("statusSupabase", ok ? "正常" : "接続できません");
+        text("statusAuth", ok ? "正常" : "確認できません");
+        text("statusDb", ok ? "正常" : "確認できません");
+      }
+
+      function renderList(id, items, emptyText, rowFn) {
+        const el = document.getElementById(id);
+        if (!items.length) { el.innerHTML = '<li class="list-empty">' + esc(emptyText) + '</li>'; return; }
+        el.innerHTML = items.map(rowFn).join("");
+      }
+
+      function seekerRow(p) {
+        return '<li class="activity-row"><span class="a-icon">' + esc(initial(p.name)) + '</span><span class="a-body"><span class="a-title">' + esc(p.name || "未設定") + '</span><span class="a-sub">' + esc(p.license || "資格未設定") + '</span></span><span class="a-meta"><span class="a-date">' + esc(formatDate(p.created_at)) + '</span><span class="mini-pill">登録済み</span></span></li>';
+      }
+      function employerRow(p) {
+        return '<li class="activity-row"><span class="a-icon">' + esc(initial(p.facility_name)) + '</span><span class="a-body"><span class="a-title">' + esc(p.facility_name || "未設定") + '</span><span class="a-sub">' + esc(p.facility_type || "施設区分未設定") + '</span></span><span class="a-meta"><span class="a-date">' + esc(formatDate(p.created_at)) + '</span></span></li>';
+      }
+      function jobRow(j) {
+        const open = j.status !== "closed";
+        return '<li class="activity-row"><span class="a-icon">' + esc(initial(j.facility_name)) + '</span><span class="a-body"><span class="a-title">' + esc(j.title || "医療求人") + '</span><span class="a-sub">' + esc(j.facility_name || "-") + '</span></span><span class="a-meta"><span class="a-date">' + esc(formatDate(j.created_at)) + '</span><span class="mini-pill ' + (open ? "status-open" : "status-closed") + '">' + (open ? "募集中" : "募集終了") + '</span></span></li>';
+      }
+      function applicationRow(a) {
+        return '<li class="activity-row"><span class="a-icon">' + esc(initial(a.seeker_name)) + '</span><span class="a-body"><span class="a-title">' + esc(a.seeker_name || "求職者") + '</span><span class="a-sub">' + esc(a.job_title || "応募求人") + '</span></span><span class="a-meta"><span class="a-date">' + esc(formatDate(a.created_at)) + '</span><span class="mini-pill ' + statusClass(a.status) + '">' + esc(a.status || "応募済み") + '</span></span></li>';
+      }
+
+      async function loadDashboard() {
+        if (!supabaseClient) { text("topbarName", "運営管理者"); text("topbarInitial", "管"); setSystemStatus(false); return; }
+        const sessionResult = await supabaseClient.auth.getSession();
+        const user = sessionResult.data.session?.user;
+        if (!user) { window.location.href = "login.html?role=admin"; return; }
+
+        const adminCheck = await supabaseClient.from("employer_profiles").select("id,contact_name").eq("user_id", user.id).eq("is_admin", true).limit(1).maybeSingle();
+        if (adminCheck.error || !adminCheck.data) {
+          window.location.href = "employer-dashboard.html";
+          return;
+        }
+        const adminName = adminCheck.data.contact_name || "運営管理者";
+        text("topbarName", adminName);
+        text("topbarInitial", initial(adminName));
+
+        const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+        const todayIso = todayStart.toISOString();
+        const monthStart = new Date(todayStart.getFullYear(), todayStart.getMonth(), 1).toISOString();
+
+        const [
+          seekersCount, employersCount, openJobsCount, allJobsCount, applicationsCount,
+          todaySeekersCount, todayEmployersCount, todayApplicationsCount,
+          monthHiredCount, allHiredCount,
+          recentSeekers, recentEmployers, recentJobs, recentApplications
+        ] = await Promise.all([
+          supabaseClient.from("seeker_profiles").select("id", { count: "exact", head: true }),
+          supabaseClient.from("employer_profiles").select("id", { count: "exact", head: true }),
+          supabaseClient.from("jobs").select("id", { count: "exact", head: true }).eq("status", "open"),
+          supabaseClient.from("jobs").select("id", { count: "exact", head: true }),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }),
+          supabaseClient.from("seeker_profiles").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
+          supabaseClient.from("employer_profiles").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).gte("created_at", todayIso),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).eq("status", "採用決定").gte("created_at", monthStart),
+          supabaseClient.from("seeker_applications").select("id", { count: "exact", head: true }).eq("status", "採用決定"),
+          supabaseClient.from("seeker_profiles").select("name,license,created_at").order("created_at", { ascending: false }).limit(5),
+          supabaseClient.from("employer_profiles").select("facility_name,facility_type,created_at").order("created_at", { ascending: false }).limit(5),
+          supabaseClient.from("jobs").select("title,facility_name,status,created_at").order("created_at", { ascending: false }).limit(5),
+          supabaseClient.from("seeker_applications").select("seeker_name,job_title,status,created_at").order("created_at", { ascending: false }).limit(5)
+        ]);
+
+        const anyError = [seekersCount, employersCount, openJobsCount].some(function (r) { return r.error; });
+        setSystemStatus(!anyError);
+
+        const todaySeekers = count(todaySeekersCount);
+        const todayEmployers = count(todayEmployersCount);
+        const todayApplications = count(todayApplicationsCount);
+
+        text("statSeekers", String(count(seekersCount)));
+        text("statSeekersToday", "本日 +" + todaySeekers);
+        text("statEmployers", String(count(employersCount)));
+        text("statEmployersToday", "本日 +" + todayEmployers);
+        text("statOpenJobs", String(count(openJobsCount)));
+        text("statAllJobs", "全求人 " + count(allJobsCount) + "件");
+        text("statApplications", String(count(applicationsCount)));
+        text("statApplicationsToday", "本日 +" + todayApplications);
+        text("statTodaySignups", String(todaySeekers + todayEmployers));
+        text("statTodaySignupsBreakdown", "求職者 " + todaySeekers + "・求人者 " + todayEmployers);
+        text("statMonthHires", String(count(monthHiredCount)));
+        text("statAllHires", "累計 " + count(allHiredCount) + "件");
+
+        renderList("recentSeekersList", rows(recentSeekers), "求職者の登録はまだありません。", seekerRow);
+        renderList("recentEmployersList", rows(recentEmployers), "求人者の登録はまだありません。", employerRow);
+        renderList("recentJobsList", rows(recentJobs), "求人はまだありません。", jobRow);
+        renderList("recentApplicationsList", rows(recentApplications), "応募はまだありません。", applicationRow);
+      }
+
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      loadDashboard().catch(function (error) { console.error(error); setSystemStatus(false); });
+    })();
+  </script>
+</body>
+</html>
