@@ -1,47 +1,86 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>求人検索 | Medi Job</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    body.flow-page { background: linear-gradient(180deg,#f4faff 0%,#fff 48%,#f2faf8 100%); color: var(--ink); }
-    .flow-shell { width:min(1180px,calc(100% - 40px)); margin:0 auto; padding:42px 0 70px; }
+    :root { --sj-blue:#1565C0; --sj-blue-dark:#0d47a1; --sj-green:#22C55E; --sj-green-dark:#16A34A; --sj-ink:#101828; --sj-muted:#64748B; --sj-line:#E5EAF1; --sj-radius:18px; }
+    body.flow-page { background:#F6F9FC; color:var(--ink); }
+    .flow-shell { width:min(1180px,calc(100% - 40px)); margin:0 auto; padding:36px 0 70px; }
     .dashboard-nav { display:flex; justify-content:center; gap:clamp(12px,2vw,28px); flex:1; color:var(--blue-dark); font-size:13px; font-weight:900; white-space:nowrap; }
     .dashboard-nav a { padding:8px 0; }
     .header-actions { display:flex; align-items:center; gap:12px; }
     .logout-btn { min-height:38px; padding:0 18px; color:var(--blue); background:#fff; border:1px solid var(--blue); border-radius:8px; font-size:13px; font-weight:900; cursor:pointer; }
-    .page-head { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px; align-items:end; margin-bottom:24px; }
-    .page-head h1 { margin:0; color:var(--blue-dark); font-size:clamp(34px,4vw,52px); line-height:1.2; font-weight:900; }
-    .page-head p { margin:12px 0 0; color:var(--muted); font-size:16px; font-weight:800; line-height:1.8; }
-    .pill { display:inline-flex; align-items:center; min-height:36px; padding:0 16px; color:var(--green-dark); background:#ecfff5; border:1px solid #a8e6c1; border-radius:999px; font-weight:900; white-space:nowrap; }
-    .panel, .job-card, .detail-card, .side-card { background:rgba(255,255,255,.97); border:1px solid var(--line); border-radius:12px; box-shadow:0 18px 42px rgba(0,63,125,.08); }
-    .panel, .detail-card, .side-card { padding:clamp(22px,3vw,32px); }
-    .filter-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; align-items:end; }
-    label span { display:block; margin-bottom:7px; color:#102338; font-size:13px; font-weight:900; }
-    select, input, textarea { width:100%; min-height:50px; padding:0 14px; color:#102338; background:#fff; border:1px solid #cfdfe9; border-radius:8px; font:inherit; font-size:14px; outline:none; }
-    textarea { min-height:120px; padding-top:12px; line-height:1.7; resize:vertical; }
-    select:focus,input:focus,textarea:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(0,91,172,.12); }
-    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:50px; padding:0 20px; border-radius:8px; font-weight:900; border:0; cursor:pointer; text-decoration:none; }
-    .btn-green { color:#fff; background:linear-gradient(180deg,#2ecb7f,var(--green)); box-shadow:0 14px 28px rgba(33,183,97,.24); }
-    .btn-blue { color:#fff; background:linear-gradient(180deg,var(--blue-2),var(--blue)); box-shadow:0 14px 28px rgba(0,91,172,.22); }
-    .btn-outline { color:var(--blue); background:#fff; border:1px solid #acd3f1; }
-    .jobs-toolbar { display:flex; justify-content:space-between; gap:16px; align-items:center; margin:26px 0 14px; }
-    .jobs-toolbar h2 { margin:0; color:var(--blue-dark); font-size:24px; font-weight:900; }
-    .jobs-list { display:grid; gap:14px; }
-    .job-card { display:grid; grid-template-columns:108px minmax(0,1fr) auto; gap:18px; align-items:center; padding:16px; }
-    .job-thumb { width:108px; height:88px; overflow:hidden; border-radius:8px; background:#edf7ff; }
-    .job-thumb img { width:100%; height:100%; object-fit:cover; }
-    .job-tag { display:inline-flex; align-items:center; min-height:26px; padding:0 11px; color:var(--green-dark); background:#effff6; border:1px solid #8bdbad; border-radius:999px; font-size:12px; font-weight:900; }
-    .match-tag { margin-left:8px; color:var(--blue); background:#f0f8ff; border-color:#b9dbf5; }
-    .job-card h3 { margin:8px 0 6px; color:var(--blue-dark); font-size:19px; font-weight:900; }
-    .job-meta { margin:0; color:var(--muted); font-size:13px; font-weight:800; line-height:1.7; }
-    .job-salary { margin-top:6px; color:#008e51; font-size:17px; font-weight:900; }
-    .detail-layout { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:22px; align-items:start; }
-    .detail-card h2,.side-card h2 { margin:0 0 14px; color:var(--blue-dark); font-size:22px; font-weight:900; }
-    .detail-list { display:grid; grid-template-columns:150px 1fr; gap:12px; margin:0; }
-    .detail-list dt { color:var(--muted); font-weight:900; }
-    .detail-list dd { margin:0; color:#102338; font-weight:800; }
-    .section { padding-top:24px; margin-top:24px; border-top:1px solid #e1edf6; }
-    .app-list { display:grid; gap:14px; }
-    .status { display:inline-flex; min-height:28px; align-items:center; padding:0 12px; border-radius:999px; color:var(--blue); background:#edf7ff; border:1px solid #b9dbf5; font-size:12px; font-weight:900; }
-    .message { display:none; margin-top:14px; font-weight:900; color:var(--green-dark); }
-    @media(max-width:980px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.detail-layout,.page-head{grid-template-columns:1fr}.site-header{flex-wrap:wrap}.dashboard-nav{order:3;width:100%;overflow-x:auto;justify-content:flex-start}.job-card{grid-template-columns:88px minmax(0,1fr)}.job-actions{grid-column:1/-1}.job-thumb{width:88px;height:78px}}
-    @media(max-width:640px){.flow-shell{width:calc(100% - 28px);padding-top:28px}.filter-grid{grid-template-columns:1fr}.btn{width:100%}.job-card{grid-template-columns:1fr}.job-thumb{width:100%;height:160px}.detail-list{grid-template-columns:1fr}.jobs-toolbar{align-items:flex-start;flex-direction:column}}
-  </style></head><body class="flow-page"><header class="site-header"><a class="brand" href="index.html" aria-label="Medi Job home"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><nav class="dashboard-nav"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-jobs.html">求人を探す</a><a href="seeker-applications.html">応募管理</a><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav><div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div></header><main class="flow-shell"><div class="page-head"><div><h1>求人検索</h1><p>プロフィールと希望条件に合う医療求人を探せます。</p></div><span class="pill">あなたに合う求人</span></div><section class="panel"><div class="filter-grid"><label><span>職種</span><select id="category"><option value="">すべて</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label><label><span>勤務地</span><select id="location"><option value="">すべて</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option></select></label><label><span>勤務形態</span><select id="type"><option value="">すべて</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></label><label><span>勤務日</span><select id="workDate"><option value="">すべて</option><option>平日</option><option>土日</option><option>単発</option><option>相談</option></select></label><button class="btn btn-green" id="searchButton" type="button">求人を探す</button></div></section><div class="jobs-toolbar"><h2>マッチング求人</h2><span class="pill" id="jobCount">0件</span></div><section class="jobs-list" id="jobsList"></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="job-flow.js"></script></body></html>
+
+    .sj-page-head { margin-bottom:22px; }
+    .sj-page-head h1 { margin:0; color:var(--sj-ink); font-size:clamp(26px,3.2vw,36px); line-height:1.3; font-weight:900; letter-spacing:-.01em; }
+    .sj-page-head p { margin:8px 0 0; color:var(--sj-muted); font-size:14.5px; font-weight:700; line-height:1.8; }
+
+    .sj-search-panel { background:#fff; border:1px solid var(--sj-line); border-radius:var(--sj-radius); box-shadow:0 10px 30px rgba(16,24,40,.06); padding:22px clamp(20px,3vw,28px); margin-bottom:28px; }
+    .sj-filter-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)) auto; gap:14px; align-items:end; }
+    .sj-filter-grid label { display:grid; gap:7px; }
+    .sj-filter-grid label span { color:#334155; font-size:12.5px; font-weight:800; }
+    .sj-filter-grid select { width:100%; height:46px; padding:0 14px; color:#1e293b; background:#F8FAFC; border:1px solid #DDE4EC; border-radius:10px; font:inherit; font-size:13.5px; outline:none; transition:border-color .15s,box-shadow .15s; }
+    .sj-filter-grid select:focus { border-color:var(--sj-blue); box-shadow:0 0 0 4px rgba(21,101,192,.12); background:#fff; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; height:46px; padding:0 22px; border-radius:10px; font-weight:900; font-size:14px; border:0; cursor:pointer; text-decoration:none; white-space:nowrap; }
+    .btn-green { color:#fff; background:linear-gradient(180deg,#34D178,var(--sj-green)); box-shadow:0 12px 24px rgba(34,197,94,.28); }
+    .btn-green:hover { filter:brightness(1.03); }
+    .btn-outline { color:var(--sj-blue); background:#fff; border:1.5px solid #C7DAF0; }
+
+    .sj-toolbar { display:flex; justify-content:space-between; gap:16px; align-items:baseline; margin:0 0 16px; }
+    .sj-toolbar h2 { margin:0; color:var(--sj-ink); font-size:20px; font-weight:900; }
+    .sj-toolbar .sj-count { color:var(--sj-muted); font-size:13.5px; font-weight:800; }
+    .sj-jobs-list { display:grid; gap:16px; }
+
+    .sj-job-card { position:relative; display:flex; gap:22px; background:#fff; border:1px solid var(--sj-line); border-radius:var(--sj-radius); box-shadow:0 8px 22px rgba(16,24,40,.06); padding:18px; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+    .sj-job-card:hover { transform:translateY(-3px); box-shadow:0 20px 40px rgba(16,24,40,.12); border-color:#CFE0F5; }
+    .sj-job-card-link { position:absolute; inset:0; z-index:1; border-radius:inherit; }
+    .sj-job-card-link:focus-visible { outline:3px solid var(--sj-blue); outline-offset:2px; }
+    .sj-job-card-save { position:absolute; top:14px; right:14px; z-index:2; width:34px; height:34px; display:grid; place-items:center; color:#94A3B8; background:rgba(255,255,255,.92); border:1px solid #E5EAF1; border-radius:50%; font-size:17px; line-height:1; cursor:pointer; transition:color .15s,border-color .15s,transform .15s; }
+    .sj-job-card-save:hover { color:#EF4444; border-color:#FBD5D5; transform:scale(1.08); }
+
+    .sj-job-card-media { position:relative; flex:0 0 220px; width:220px; height:160px; overflow:hidden; border-radius:14px; background:#EEF3FA; }
+    .sj-job-card-media img { width:100%; height:100%; object-fit:cover; }
+    .sj-badge-new { position:absolute; top:10px; left:10px; z-index:2; display:inline-flex; align-items:center; height:22px; padding:0 10px; color:#fff; background:var(--sj-blue); border-radius:999px; font-size:10.5px; font-weight:900; letter-spacing:.03em; }
+
+    .sj-job-card-body { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; }
+    .sj-job-card-badges { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:9px; }
+    .sj-badge { display:inline-flex; align-items:center; height:24px; padding:0 11px; border-radius:999px; font-size:11.5px; font-weight:900; white-space:nowrap; }
+    .sj-badge-type { color:var(--sj-green-dark); background:#EAFBF1; border:1px solid #BCEDD1; }
+    .sj-badge-match { color:var(--sj-blue); background:#EAF2FC; border:1px solid #C7DAF0; }
+
+    .sj-job-card-title { margin:0 0 5px; color:var(--sj-ink); font-size:19px; line-height:1.4; font-weight:900; }
+    .sj-job-card-facility { margin:0 0 10px; color:var(--sj-muted); font-size:13px; font-weight:700; }
+    .sj-job-card-meta { display:flex; flex-wrap:wrap; gap:16px; margin-bottom:auto; }
+    .sj-meta-item { display:inline-flex; align-items:center; gap:5px; color:#475569; font-size:12.5px; font-weight:700; }
+    .sj-meta-item svg { width:14px; height:14px; stroke:#94A3B8; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+    .sj-job-card-footer { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:14px; padding-top:14px; border-top:1px dashed var(--sj-line); }
+    .sj-job-card-salary { color:var(--sj-green-dark); font-size:16.5px; font-weight:900; }
+    .sj-job-card-cta { position:relative; z-index:2; pointer-events:none; padding:0 18px; height:38px; font-size:12.5px; }
+    .sj-job-card:hover .sj-job-card-cta { color:#fff; background:var(--sj-blue); border-color:var(--sj-blue); }
+
+    .sj-jobs-empty { padding:48px 24px; text-align:center; color:var(--sj-muted); background:#fff; border:1px dashed var(--sj-line); border-radius:var(--sj-radius); font-size:14px; font-weight:700; }
+
+    @media(max-width:980px){
+      .sj-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .sj-filter-grid .btn{grid-column:1/-1;}
+      .site-header{flex-wrap:wrap}
+      .dashboard-nav{order:3;width:100%;overflow-x:auto;justify-content:flex-start}
+      .sj-job-card-media{flex-basis:170px;width:170px;height:140px}
+    }
+    @media(max-width:640px){
+      .flow-shell{width:calc(100% - 24px);padding-top:24px}
+      .sj-filter-grid{grid-template-columns:1fr}
+      .sj-job-card{flex-direction:column}
+      .sj-job-card-media{width:100%;height:170px}
+      .sj-job-card-footer{flex-direction:column;align-items:flex-start;gap:10px}
+      .sj-job-card-cta{width:100%;text-align:center}
+    }
+  </style></head><body class="flow-page"><header class="site-header"><a class="brand" href="index.html" aria-label="Medi Job home"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><nav class="dashboard-nav"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-jobs.html">求人を探す</a><a href="seeker-applications.html">応募管理</a><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav><div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div></header><main class="flow-shell">
+
+  <div class="sj-page-head"><h1>あなたに合う求人を探す</h1><p>職種・勤務地・勤務条件から、希望に合う医療求人を検索できます。</p></div>
+
+  <section class="sj-search-panel"><div class="sj-filter-grid"><label><span>職種</span><select id="category"><option value="">すべて</option><option>看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></label><label><span>勤務地</span><select id="location"><option value="">すべて</option><option>東京都</option><option>神奈川県</option><option>千葉県</option><option>埼玉県</option></select></label><label><span>勤務形態</span><select id="type"><option value="">すべて</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></label><label><span>勤務日</span><select id="workDate"><option value="">すべて</option><option>平日</option><option>土日</option><option>単発</option><option>相談</option></select></label><button class="btn btn-green" id="searchButton" type="button">この条件で検索</button></div></section>
+
+  <div class="sj-toolbar"><h2>検索結果</h2><span class="sj-count" id="jobCount">0件</span></div>
+  <section class="sj-jobs-list" id="jobsList"></section>
+
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="job-flow.js"></script></body></html>

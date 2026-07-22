@@ -4,7 +4,7 @@
   const configured = config.url && config.anonKey && !config.url.includes('YOUR_PROJECT_ID') && !config.anonKey.includes('YOUR_SUPABASE_ANON_KEY');
   const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
   const t = {
-    nurse:'スポット看護師', clinic:'新宿メディカルクリニック', nurseCat:'看護師', spot:'スポット', tokyo:'東京都 新宿区', friday:'今週金曜 9:00-17:00', nursePay:'日給 18,000円〜22,000円', nurseDesc:'外来補助、採血、問診、処置準備を担当します。短時間勤務の相談も可能です。', nurseReq:'看護師免許、採血経験', lab:'臨床検査技師', labFacility:'横浜健診センター', contract:'業務委託', kanagawa:'神奈川県 横浜市', weekly:'週1日から相談', labPay:'日給 16,000円〜20,000円', labDesc:'健診における検体検査、生理検査、結果入力を担当します。', labReq:'臨床検査技師免許', radio:'放射線技師', radioFacility:'大阪画像診断クリニック', part:'パート', osaka:'大阪府 大阪市', saturday:'土曜午前', radioDesc:'一般撮影、CT補助、検査前後の患者案内を担当します。', radioReq:'診療放射線技師免許', pt:'理学療法士', ptFacility:'千葉リハビリテーション病院', chiba:'千葉県 美浜区', ptSaturday:'今週土曜 9:00-16:00', ptPay:'日給 18,000円〜22,000円', ptDesc:'入院患者様の歩行訓練、関節可動域訓練、リハビリテーション計画の補助を担当します。', ptReq:'理学療法士免許', match:'マッチ度高', medicalJob:'医療求人', facility:'医療機関', salaryAsk:'給与相談', detail:'詳細を見る', none:'条件に合う求人がありません。条件を変更して検索してください。', count:'件', detailTitle:'求人詳細', defaultDesc:'業務内容は医療機関と確認します。', applied:'応募済み', appJob:'応募求人', noApps:'まだ応募はありません。求人検索から応募できます。' };
+    nurse:'スポット看護師', clinic:'新宿メディカルクリニック', nurseCat:'看護師', spot:'スポット', tokyo:'東京都 新宿区', friday:'今週金曜 9:00-17:00', nursePay:'日給 18,000円〜22,000円', nurseDesc:'外来補助、採血、問診、処置準備を担当します。短時間勤務の相談も可能です。', nurseReq:'看護師免許、採血経験', lab:'臨床検査技師', labFacility:'横浜健診センター', contract:'業務委託', kanagawa:'神奈川県 横浜市', weekly:'週1日から相談', labPay:'日給 16,000円〜20,000円', labDesc:'健診における検体検査、生理検査、結果入力を担当します。', labReq:'臨床検査技師免許', radio:'放射線技師', radioFacility:'大阪画像診断クリニック', part:'パート', osaka:'大阪府 大阪市', saturday:'土曜午前', radioDesc:'一般撮影、CT補助、検査前後の患者案内を担当します。', radioReq:'診療放射線技師免許', pt:'理学療法士', ptFacility:'千葉リハビリテーション病院', chiba:'千葉県 美浜区', ptSaturday:'今週土曜 9:00-16:00', ptPay:'日給 18,000円〜22,000円', ptDesc:'入院患者様の歩行訓練、関節可動域訓練、リハビリテーション計画の補助を担当します。', ptReq:'理学療法士免許', match:'マッチ度高', medicalJob:'医療求人', facility:'医療機関', salaryAsk:'給与相談', detail:'詳細を見る', none:'条件に合う求人がありません。条件を変更して検索してください。', count:'件の求人', newBadge:'NEW', detailTitle:'求人詳細', defaultDesc:'業務内容は医療機関と確認します。', applied:'応募済み', appJob:'応募求人', noApps:'まだ応募はありません。求人検索から応募できます。' };
   const demoJobs = [
     { id:'demo-nurse', title:t.nurse, facility_name:t.clinic, category:t.nurseCat, type:t.spot, location:t.tokyo, work_date:t.friday, salary:t.nursePay, description:t.nurseDesc, requirements:t.nurseReq, image:'assets/job-nurse.png' },
     { id:'demo-lab', title:t.lab, facility_name:t.labFacility, category:t.lab, type:t.contract, location:t.kanagawa, work_date:t.weekly, salary:t.labPay, description:t.labDesc, requirements:t.labReq, image:'assets/job-lab.png' },
@@ -18,9 +18,30 @@
   function localApps() { try { return JSON.parse(localStorage.getItem('medispot_applications') || '[]'); } catch { return []; } }
   function saveLocalApp(app) { const apps = localApps(); apps.unshift(app); localStorage.setItem('medispot_applications', JSON.stringify(apps)); }
   function imageFor(job) { const c = String(job.category || ''); return job.image || (c.includes(t.lab) ? 'assets/job-lab.png' : c.includes(t.radio) ? 'assets/job-radiology.png' : 'assets/job-nurse.png'); }
+  function isRecent(job) { if (!job.created_at) return false; const days = (Date.now() - new Date(job.created_at).getTime()) / 86400000; return days >= 0 && days <= 7; }
+  const pinIcon = '<svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/></svg>';
+  const clockIcon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.3 2"/></svg>';
   async function logoutWire() { const btn = document.getElementById('logoutButton'); if (!btn) return; btn.addEventListener('click', async () => { if (supabaseClient) await supabaseClient.auth.signOut(); location.href='login.html'; }); }
-  function card(job) { return '<article class="job-card"><div class="job-thumb"><img src="'+esc(imageFor(job))+'" alt=""></div><div><span class="job-tag">'+esc(job.type || t.spot)+'</span><span class="job-tag match-tag">'+t.match+'</span><h3>'+esc(job.title || job.category || t.medicalJob)+'</h3><p class="job-meta">'+esc(job.facility_name || t.facility)+' / '+esc(job.location || '')+' / '+esc(job.work_date || '')+'</p><div class="job-salary">'+esc(job.salary || t.salaryAsk)+'</div></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id='+encodeURIComponent(job.id)+'">'+t.detail+'</a></div></article>'; }
-  async function loadJobsPage() { const list = document.getElementById('jobsList'); if (!list) return; let jobs = demoJobs; if (supabaseClient) { const r = await supabaseClient.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false}); if (!r.error && r.data && r.data.length) jobs = r.data; } const render = () => { const cat = document.getElementById('category').value; const loc = document.getElementById('location').value; const type = document.getElementById('type').value; const day = document.getElementById('workDate').value; const filtered = jobs.filter(j => (!cat || j.category === cat) && (!loc || String(j.location || '').includes(loc)) && (!type || j.type === type) && (!day || String(j.work_date || '').includes(day))); document.getElementById('jobCount').textContent = filtered.length + t.count; list.innerHTML = filtered.length ? filtered.map(card).join('') : '<div class="panel">'+t.none+'</div>'; }; document.getElementById('searchButton').addEventListener('click', render); render(); }
+  function card(job) {
+    const title = esc(job.title || job.category || t.medicalJob);
+    const href = 'job-detail.html?id=' + encodeURIComponent(job.id);
+    return '<article class="sj-job-card">'
+      + '<a class="sj-job-card-link" href="' + href + '" aria-label="' + title + t.detail + '"></a>'
+      + '<button class="sj-job-card-save" type="button" aria-label="お気に入りに追加">♡</button>'
+      + '<div class="sj-job-card-media"><img src="' + esc(imageFor(job)) + '" alt="">' + (isRecent(job) ? '<span class="sj-badge-new">' + t.newBadge + '</span>' : '') + '</div>'
+      + '<div class="sj-job-card-body">'
+        + '<div class="sj-job-card-badges"><span class="sj-badge sj-badge-type">' + esc(job.type || t.spot) + '</span><span class="sj-badge sj-badge-match">' + t.match + '</span></div>'
+        + '<h3 class="sj-job-card-title">' + title + '</h3>'
+        + '<p class="sj-job-card-facility">' + esc(job.facility_name || t.facility) + '</p>'
+        + '<div class="sj-job-card-meta">'
+          + '<span class="sj-meta-item">' + pinIcon + esc(job.location || '-') + '</span>'
+          + '<span class="sj-meta-item">' + clockIcon + esc(job.work_date || '-') + '</span>'
+        + '</div>'
+        + '<div class="sj-job-card-footer"><div class="sj-job-card-salary">' + esc(job.salary || t.salaryAsk) + '</div><span class="btn btn-outline sj-job-card-cta">' + t.detail + '</span></div>'
+      + '</div>'
+      + '</article>';
+  }
+  async function loadJobsPage() { const list = document.getElementById('jobsList'); if (!list) return; let jobs = demoJobs; if (supabaseClient) { const r = await supabaseClient.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false}); if (!r.error && r.data && r.data.length) jobs = r.data; } const render = () => { const cat = document.getElementById('category').value; const loc = document.getElementById('location').value; const type = document.getElementById('type').value; const day = document.getElementById('workDate').value; const filtered = jobs.filter(j => (!cat || j.category === cat) && (!loc || String(j.location || '').includes(loc)) && (!type || j.type === type) && (!day || String(j.work_date || '').includes(day))); document.getElementById('jobCount').textContent = filtered.length + t.count; list.innerHTML = filtered.length ? filtered.map(card).join('') : '<div class="sj-jobs-empty">'+t.none+'</div>'; }; document.getElementById('searchButton').addEventListener('click', render); render(); }
   async function findJob(id) {
     if (!id) return demoJobs[0];
     if (id.startsWith('demo-')) return demoJobs.find(j => j.id === id) || demoJobs[0];
