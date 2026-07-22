@@ -34,7 +34,8 @@
     .page-status { margin: 0 0 18px; padding: 14px 16px; color: #49667d; background: #f3f9fd; border: 1px solid #cfe3f2; border-radius: 9px; font-size: 13px; font-weight: 800; }
     .page-status.success { color: #067044; background: #eafff3; border-color: #a8e4c2; }
     .page-status.error { color: #9d2d24; background: #fff2f0; border-color: #f1bbb5; }
-    @media (max-width: 680px) { .detail-shell { width: calc(100% - 28px); } .detail-head { align-items: flex-start; flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } .detail-actions, .action-group { flex-direction: column; width: 100%; } .detail-actions .btn { width: 100%; } }
+    @media (max-width: 960px) { .site-header { flex-wrap: wrap; } .main-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
+    @media (max-width: 680px) { .detail-shell { width: calc(100% - 28px); } .detail-head { align-items: flex-start; flex-direction: column; } .form-grid { grid-template-columns: 1fr; } .field.full { grid-column: auto; } .detail-actions, .action-group { flex-direction: column; width: 100%; } .detail-actions .btn { width: 100%; } .breadcrumb { flex-wrap: wrap; } }
   </style>
 </head>
 <body class="job-detail-page">

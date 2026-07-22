@@ -38,7 +38,8 @@
     .empty-note { padding: 18px; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 9px; font-size: 13px; font-weight: 800; text-align: center; }
     .page-status { margin: 0 0 18px; padding: 14px 16px; color: #49667d; background: #f3f9fd; border: 1px solid #cfe3f2; border-radius: 9px; font-size: 13px; font-weight: 800; }
     .page-status.error { color: #9d2d24; background: #fff2f0; border-color: #f1bbb5; }
-    @media (max-width: 680px) { .detail-shell { width: calc(100% - 28px); } .detail-head { align-items: flex-start; flex-direction: column; } .detail-list { grid-template-columns: 1fr; } .detail-list dt { margin-top: 6px; } }
+    @media (max-width: 960px) { .site-header { flex-wrap: wrap; } .main-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
+    @media (max-width: 680px) { .detail-shell { width: calc(100% - 28px); } .detail-head { align-items: flex-start; flex-direction: column; } .detail-list { grid-template-columns: 1fr; } .detail-list dt { margin-top: 6px; } .breadcrumb { flex-wrap: wrap; } }
   </style>
 </head>
 <body class="applicant-page">
