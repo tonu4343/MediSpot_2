@@ -71,6 +71,7 @@
         <section class="form-section">
           <h2>資格・経験</h2>
           <div class="form-grid">
+            <div class="field"><label for="name">氏名<span class="required">必須</span></label><input class="input" id="name" required placeholder="例）山田 花子"></div>
             <div class="field"><label for="license">保有資格（職種）<span class="required">必須</span></label><select class="input" id="license" required><option value="">選択してください</option><option>看護師</option><option>准看護師</option><option>臨床検査技師</option><option>放射線技師</option><option>理学療法士</option><option>作業療法士</option><option>言語聴覚士</option><option>ヘルパー</option></select></div>
             <div class="field"><label for="experience">実務経験年数<span class="required">必須</span></label><select class="input" id="experience" required><option value="">選択してください</option><option>1年未満</option><option>1-3年未満</option><option>3-5年未満</option><option>5-10年未満</option><option>10年以上</option></select></div>
             <div class="field full"><label for="qualificationName">資格名称（詳細）</label><input class="input" id="qualificationName" placeholder="例）正看護師、認定看護師（感染管理）など"></div>
@@ -88,6 +89,9 @@
           <div class="form-grid" style="margin-top:22px;">
             <div class="field"><label for="preferredStyle">希望雇用形態</label><select class="input" id="preferredStyle"><option>こだわらない</option><option>スポット</option><option>パート</option><option>業務委託</option><option>非常勤</option></select></div>
             <div class="field"><label>希望勤務地（首都圏・複数選択可）</label><div class="location-check-grid" id="preferredAreaGrid"><label class="location-check-pill"><input type="checkbox" value="東京都"><span>東京都</span></label><label class="location-check-pill"><input type="checkbox" value="神奈川県"><span>神奈川県</span></label><label class="location-check-pill"><input type="checkbox" value="千葉県"><span>千葉県</span></label><label class="location-check-pill"><input type="checkbox" value="埼玉県"><span>埼玉県</span></label></div></div>
+            <div class="field"><label for="employmentStatus">現在の就業状況</label><select class="input" id="employmentStatus"><option value="">選択してください</option><option>就業中（転職・副業を検討中）</option><option>就業中（スポット・単発を希望）</option><option>離職中（すぐに就業可能）</option><option>離職中（就業準備中）</option></select></div>
+            <div class="field"><label for="commuteMethod">通勤方法</label><select class="input" id="commuteMethod"><option value="">選択してください</option><option>電車</option><option>バス</option><option>車</option><option>バイク</option><option>自転車</option><option>徒歩</option><option>その他</option></select></div>
+            <div class="field"><label for="nearestStation">最寄り駅</label><input class="input" id="nearestStation" placeholder="例）新宿駅"></div>
             <div class="field full"><label for="pr">自己PR</label><textarea class="textarea" id="pr" placeholder="経験の概要や希望条件を自由にご記入ください。"></textarea></div>
           </div>
         </section>
@@ -184,12 +188,16 @@
       }
       function fill(profile, user) {
         currentProfile = profile || {};
+        setValue('name', currentProfile.name);
         setValue('license', currentProfile.license);
         setValue('experience', currentProfile.experience_years);
         setValue('birthDate', currentProfile.birth_date);
         setValue('phone', currentProfile.phone);
         setValue('preferredStyle', currentProfile.preferred_style);
         setLocations(currentProfile.preferred_area);
+        setValue('employmentStatus', currentProfile.employment_status);
+        setValue('commuteMethod', currentProfile.commute_method);
+        setValue('nearestStation', currentProfile.nearest_station);
         setValue('pr', currentProfile.pr);
         const savedSkills = Array.isArray(currentProfile.skills) ? currentProfile.skills : [];
         const otherEntry = savedSkills.find(s => s === SKILL_OTHER || s.indexOf(SKILL_OTHER + '：') === 0);
@@ -211,7 +219,7 @@
       el('certificateFiles').addEventListener('change', function () { const files = Array.from(this.files || []); el('uploadList').innerHTML = files.length ? files.map(file => '<li>' + esc(file.name) + '</li>').join('') : '<li>まだファイルが選択されていません。</li>'; });
       el('birthDate').addEventListener('input', updateAgeHint);
       el('logoutButton').addEventListener('click', async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = 'login.html'; });
-      el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: selectedLocations(), preferred_style: value('preferredStyle'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。前の画面に戻ります。', false); el('saveStatus').textContent = '登録済み'; const back = document.referrer && new URL(document.referrer).origin === window.location.origin ? document.referrer : 'seeker-dashboard.html'; setTimeout(function () { window.location.href = back; }, 900); });
+      el('seekerProfileForm').addEventListener('submit', async function (event) { event.preventDefault(); if (!supabaseClient || !currentUser || !currentProfile?.id) return; const payload = { name: value('name'), birth_date: value('birthDate'), phone: value('phone'), license: value('license'), experience_years: value('experience'), preferred_area: selectedLocations(), preferred_style: value('preferredStyle'), employment_status: value('employmentStatus'), commute_method: value('commuteMethod'), nearest_station: value('nearestStation'), skills: selectedSkills(), pr: value('pr') }; const result = await supabaseClient.from('seeker_profiles').update(payload).eq('id', currentProfile.id).eq('user_id', currentUser.id); if (result.error) { console.error(result.error); message('保存に失敗しました。' + (result.error.message ? ' ' + result.error.message : ''), true); return; } message('プロフィールを保存しました。前の画面に戻ります。', false); el('saveStatus').textContent = '登録済み'; const back = document.referrer && new URL(document.referrer).origin === window.location.origin ? document.referrer : 'seeker-dashboard.html'; setTimeout(function () { window.location.href = back; }, 900); });
       load().catch(function (error) { console.error(error); message('プロフィールを読み込めませんでした。', true); });
     })();
   </script>
