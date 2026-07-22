@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>求職者ダッシュボード | Medi Job</title>
+  <title>求職者ダッシュボード | Medi Job</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#005bac"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="icon" href="assets/icon-32.png">
   <link rel="stylesheet" href="styles.css">
   <style>
     body.dashboard-page { color: var(--ink); background: #f5f9fc; }
@@ -488,5 +488,5 @@
       loadDashboard().catch(function (error) { console.error(error); applyProfile(null, null); renderJobs(demoJobs); renderRecentJobs(demoJobs); renderApps([]); renderMessages([], []); });
     })();
   </script>
-</body>
+<script src="pwa-register.js"></script></body>
 </html>
