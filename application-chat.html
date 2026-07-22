@@ -122,7 +122,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 
   function hireApplicant() { updateStatus({ status: 'hired' }, null, '採用を確定しました。'); }
   function startInterviewScheduling() { updateStatus({ status: 'interview_scheduling' }, null, '面接調整中に更新しました。'); }
-  function proposeOffer() { updateStatus({ status: 'offer_pending' }, null, '内定提示中に更新しました。'); }
+  function proposeOffer() { updateStatus({ status: 'offer_pending' }, null, '採用承諾待ちに更新しました。'); }
   function startWork() { updateStatus({ status: 'working' }, null, '勤務中に更新しました。'); }
   function markCompleted() { updateStatus({ status: 'completed' }, '完了として確定します。よろしいですか？', '完了として更新しました。'); }
   function rejectApplicant() { updateStatus({ status: 'rejected' }, 'この応募者を不採用にします。よろしいですか？', '不採用として更新しました。'); }
