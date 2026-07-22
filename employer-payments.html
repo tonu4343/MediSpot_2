@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>料金・お支払い | Medi Job</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.employer-dashboard-page { color: var(--ink); background: #f5f9fc; }
+    .site-header.dash-topbar { position: sticky; top: 0; z-index: 70; }
+    .dash-topbar-right { display: flex; align-items: center; gap: 18px; }
+    .dash-user { display: flex; align-items: center; gap: 10px; }
+    .dash-user-text { text-align: right; line-height: 1.4; }
+    .dash-user-text small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .dash-user-text strong { display: block; color: #14324c; font-size: 13px; font-weight: 900; }
+    .dash-logout { min-height: 34px; padding: 0 14px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer; }
+
+    .dash-body { display: grid; grid-template-columns: 232px 1fr; align-items: start; }
+    .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
+    .side-nav { display: grid; gap: 3px; margin: 0 0 18px; padding: 0; list-style: none; }
+    .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; transition: background .15s ease, color .15s ease; }
+    .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
+    .side-nav a.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); box-shadow: 0 8px 18px rgba(0,91,172,.24); }
+    .side-nav a .nav-soon { margin-left: auto; color: var(--muted); background: #eef3f7; border-radius: 999px; padding: 1px 7px; font-size: 9.5px; font-weight: 900; }
+
+    .support-card { margin: 0 2px; padding: 15px; background: #f7fbff; border: 1px solid var(--line); border-radius: 12px; }
+    .support-card strong { display: block; color: var(--blue-dark); font-size: 12.5px; font-weight: 900; }
+    .support-card span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .support-card .support-phone { margin-top: 8px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .support-card a.support-cta { display: block; margin-top: 10px; text-align: center; min-height: 32px; line-height: 32px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; }
+
+    .dash-main { min-width: 0; max-width: 1100px; margin: 0 auto; padding: 26px clamp(16px,2.6vw,34px) 60px; }
+
+    .admin-hero { margin-bottom: 22px; }
+    .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.6vw,28px); font-weight: 900; }
+    .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; }
+
+    .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); padding: 22px; margin-bottom: 20px; }
+    .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    .panel-head h2 { margin: 0; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+
+    .price-explainer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; background: linear-gradient(120deg,#eaf5ff 0%,#f2fbf6 100%); border: 1px solid var(--line); border-radius: 12px; }
+    .price-explainer .label { color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
+    .price-explainer .amount { color: var(--blue-dark); font-size: 26px; font-weight: 900; }
+    .price-explainer .amount small { margin-left: 4px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .price-explainer .note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 12.5px; font-weight: 700; line-height: 1.8; }
+
+    .billing-summary { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; }
+    .billing-stat { padding: 14px 16px; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; }
+    .billing-stat span { display: block; color: var(--muted); font-size: 11.5px; font-weight: 800; }
+    .billing-stat strong { display: block; margin-top: 6px; color: #14324c; font-size: 19px; font-weight: 900; }
+
+    .admin-table-wrap { overflow-x: auto; }
+    table.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.admin-table th { padding: 10px 12px; text-align: left; color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .02em; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    table.admin-table td { padding: 12px; color: #263949; font-weight: 700; border-bottom: 1px solid #eef3f7; vertical-align: top; }
+    table.admin-table tr:last-child td { border-bottom: 0; }
+    table.admin-table td.name-cell { color: #14324c; font-weight: 900; white-space: nowrap; }
+    .status-pill { display: inline-flex; align-items: center; min-height: 22px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; }
+    .status-pill.status-processing { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
+    .status-pill.status-paid { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .status-pill.status-error { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
+    .status-pill.status-refunded { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
+    .table-empty { padding: 30px 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
+
+    .employer-footer { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) 1.1fr; gap: 28px; padding: 40px clamp(20px,5vw,64px) 18px; color: var(--ink); background: #fff; border-top: 1px solid var(--line); }
+    .employer-footer .footer-brand p { max-width: 250px; margin: 12px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
+    .employer-footer h3 { margin: 0 0 12px; color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
+    .employer-footer div:not(.footer-brand):not(.footer-support) a { display: block; margin: 8px 0; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .employer-footer div:not(.footer-brand):not(.footer-support) a:hover { color: var(--blue); }
+    .employer-footer .footer-support { align-self: start; padding: 16px; background: #f7fbff; border: 1px solid var(--line); border-radius: 10px; text-align: left; }
+    .employer-footer .footer-support strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
+    .employer-footer .footer-support span { display: block; margin-top: 6px; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+    .employer-footer .footer-support .support-phone { margin-top: 4px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .employer-footer .copyright { grid-column: 1 / -1; margin: 8px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+    @media (max-width: 960px) { .employer-footer { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+    @media (max-width: 960px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+      .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .side-nav a { white-space: nowrap; }
+      .side-nav a .nav-soon { display: none; }
+      .support-card { display: none; }
+      .billing-summary { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px) {
+      .dash-main { padding: 20px 14px 48px; }
+      .price-explainer { flex-direction: column; align-items: flex-start; }
+      .billing-summary { grid-template-columns: 1fr 1fr; }
+      .employer-footer { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="employer-dashboard-page">
+  <header class="site-header dash-topbar">
+    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <div class="dash-topbar-right">
+      <div class="dash-user"><div class="dash-user-text"><small id="topbarFacility">読み込み中</small><strong id="topbarContact">-</strong></div></div>
+      <button class="dash-logout" id="logoutButton" type="button">ログアウト</button>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <aside class="dash-sidebar" aria-label="求人者メニュー">
+      <ul class="side-nav">
+        <li><a href="employer-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a></li>
+        <li><a href="employer-dashboard.html#jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>応募者管理</a></li>
+        <li><a href="employer-dashboard.html#messages"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ</a></li>
+        <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9.5-8.7C1 8.3 2.6 5 6 5c2 0 3.3 1.1 4 2.2C10.7 6.1 12 5 14 5c3.4 0 5 3.3 3.5 6.3C19 15.7 12 20 12 20z"/></svg>採用管理</a></li>
+        <li><a href="#"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>スカウト管理<span class="nav-soon">準備中</span></a></li>
+        <li><a href="employer-profile.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>施設情報</a></li>
+        <li><a class="active" href="employer-payments.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>料金・お支払い</a></li>
+        <li><a href="#"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="3" width="3" height="17"/></svg>分析レポート<span class="nav-soon">準備中</span></a></li>
+        <li><a href="employer-profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>設定</a></li>
+        <li><a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 0 1 5.2.9c0 1.8-2.6 2.1-2.6 4.1"/><line x1="12" y1="17.3" x2="12" y2="17.31"/></svg>ヘルプ・お問い合わせ</a></li>
+        <li id="adminNavItem" hidden><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>管理者画面</a></li>
+      </ul>
+
+      <div class="support-card">
+        <strong>サポート窓口</strong>
+        <span>平日 9:00〜18:00</span>
+        <span class="support-phone">03-1234-5678</span>
+        <a class="support-cta" href="#">お問い合わせ</a>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <section class="admin-hero">
+        <h1>料金・お支払い</h1>
+        <p>求人掲載・応募受付・メッセージのご利用は無料です。成功報酬は採用が成立した場合のみ発生します。</p>
+      </section>
+
+      <section class="panel-card">
+        <div class="price-explainer">
+          <div><span class="label">成功報酬</span><div class="amount">1名採用あたり3,300円<small>税込</small></div></div>
+          <p class="note">求人掲載・応募受付・メッセージ利用は無料です。採用が成立した場合のみ、採用人数 × 3,300円（税込）を請求します。複数名を採用した場合は、3,300円 × 採用人数で計算します（例：2名採用 6,600円、3名採用 9,900円）。</p>
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-head"><h2>請求内容</h2></div>
+        <div class="billing-summary">
+          <div class="billing-stat"><span>採用人数</span><strong id="sumCount">0名</strong></div>
+          <div class="billing-stat"><span>成功報酬単価</span><strong id="sumUnitPrice">3,300円</strong></div>
+          <div class="billing-stat"><span>小計</span><strong id="sumSubtotal">0円</strong></div>
+          <div class="billing-stat"><span>消費税</span><strong id="sumTax">0円</strong></div>
+          <div class="billing-stat"><span>合計金額</span><strong id="sumTotal">0円</strong></div>
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-head"><h2>請求履歴 <span class="count" id="invoiceCount"></span></h2></div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>求職者</th><th>求人</th><th>採用日</th><th>金額</th><th>支払いステータス</th><th>操作</th></tr></thead>
+            <tbody id="invoiceTableBody"><tr><td colspan="6" class="table-empty">読み込んでいます…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <form id="payjpForm" style="position:absolute; left:-9999px" aria-hidden="true">
+    <input type="hidden" id="payjpInvoiceId" name="invoiceId">
+  </form>
+
+  <footer class="employer-footer">
+    <div class="footer-brand"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
+    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-payments.html">料金・プラン</a></div>
+    <div><h3>サポート</h3><a href="index.html#flow">ご利用ガイド</a><a href="index.html#faq">よくある質問</a><a href="#">お問い合わせ</a></div>
+    <div><h3>運営会社</h3><a href="#">会社概要</a><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a></div>
+    <div class="footer-support"><strong>サポート窓口</strong><span>平日 9:00〜18:00</span><span class="support-phone">03-1234-5678</span></div>
+    <p class="copyright">© 2025 MEDICAL SPOT JOB. All Rights Reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="payjp-config.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+
+      function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
+      function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
+      function yen(amount) { return (amount || 0).toLocaleString("ja-JP") + "円"; }
+      function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
+      function statusClass(status) {
+        return status === "決済処理中" ? "status-processing"
+          : status === "支払い済み" ? "status-paid"
+          : status === "決済エラー" ? "status-error"
+          : status === "返金済み" ? "status-refunded"
+          : "";
+      }
+
+      // 3,300円は税込。小計・消費税は税込合計から逆算し、二重に課税しない。
+      function computeBilling(rows) {
+        const count = rows.length;
+        const unitPrice = 3300;
+        const total = rows.reduce(function (sum, row) { return sum + (row.total_amount || 0); }, 0);
+        const subtotal = Math.floor(total / 1.1);
+        const tax = total - subtotal;
+        return { count: count, unitPrice: unitPrice, subtotal: subtotal, tax: tax, total: total };
+      }
+
+      function renderSummary(rows) {
+        const billing = computeBilling(rows);
+        text("sumCount", billing.count + "名");
+        text("sumUnitPrice", yen(billing.unitPrice));
+        text("sumSubtotal", yen(billing.subtotal));
+        text("sumTax", yen(billing.tax));
+        text("sumTotal", yen(billing.total));
+      }
+
+      function renderInvoices(rows) {
+        const body = document.getElementById("invoiceTableBody");
+        text("invoiceCount", rows.length ? "(" + rows.length + "件)" : "");
+        if (!rows.length) { body.innerHTML = '<tr><td colspan="6" class="table-empty">まだ採用成立による請求はありません。</td></tr>'; return; }
+        body.innerHTML = rows.map(function (row) {
+          const payable = row.payment_status === "未払い" || row.payment_status === "決済エラー";
+          const action = payable ? "<button type=\"button\" class=\"btn btn-green pay-invoice-btn\" data-id=\"" + esc(row.id) + "\">支払う</button>" : "-";
+          return "<tr><td class=\"name-cell\">" + esc(row.seeker_name || "求職者") + "</td><td>" + esc(row.job_title || "-") + "</td><td>" + esc(formatDate(row.created_at)) + "</td><td>" + yen(row.total_amount) + "</td><td><span class=\"status-pill " + statusClass(row.payment_status) + "\">" + esc(row.payment_status || "未払い") + "</span></td><td>" + action + "</td></tr>";
+        }).join("");
+      }
+
+      async function load() {
+        if (!supabaseClient) { text("topbarFacility", "医療機関"); text("topbarContact", "ご担当者 様"); renderSummary([]); renderInvoices([]); return; }
+        const sessionResult = await supabaseClient.auth.getSession();
+        const user = sessionResult.data.session?.user;
+        if (!user) { window.location.href = "login.html?role=employer"; return; }
+        const profileResult = await supabaseClient.from("employer_profiles").select("facility_name,contact_name,is_admin").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+        const profile = profileResult.data || {};
+        text("topbarFacility", profile.facility_name || "医療機関");
+        text("topbarContact", (profile.contact_name || "ご担当者") + " 様");
+        const adminNavItem = document.getElementById("adminNavItem");
+        if (adminNavItem) adminNavItem.hidden = !profile.is_admin;
+
+        const invoicesResult = await supabaseClient.from("hire_invoices").select("id,seeker_name,job_title,total_amount,payment_status,created_at").eq("employer_id", user.id).order("created_at", { ascending: false });
+        const invoices = invoicesResult.error ? [] : (invoicesResult.data || []);
+        if (invoicesResult.error) console.error(invoicesResult.error);
+        renderSummary(invoices);
+        renderInvoices(invoices);
+      }
+
+      // pay.jp Checkout: build the auto-button via a real createElement + appendChild
+      // (not innerHTML) so the browser actually executes it, using the public key
+      // from payjp-config.js. One reusable hidden form/button serves every row —
+      // clicking a row's own "支払う" button just sets which invoice is pending
+      // and programmatically clicks the pay.jp-rendered button to open its card modal.
+      const payjpConfig = window.MEDISPOT_PAYJP || {};
+      if (payjpConfig.publicKey && !payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) {
+        const payjpScript = document.createElement("script");
+        payjpScript.src = "https://checkout.pay.jp/";
+        payjpScript.className = "payjp-button";
+        payjpScript.dataset.key = payjpConfig.publicKey;
+        payjpScript.dataset.amount = "3300";
+        payjpScript.dataset.currency = "jpy";
+        payjpScript.dataset.text = "お支払い";
+        document.getElementById("payjpForm").appendChild(payjpScript);
+      }
+
+      document.getElementById("invoiceTableBody").addEventListener("click", function (event) {
+        const button = event.target.closest(".pay-invoice-btn");
+        if (!button) return;
+        if (!payjpConfig.publicKey || payjpConfig.publicKey.includes("YOUR_PAYJP_PUBLIC_KEY")) { window.alert("お支払い機能が設定されていません。運営にお問い合わせください。"); return; }
+        document.getElementById("payjpInvoiceId").value = button.getAttribute("data-id");
+        const payjpButton = document.querySelector("#payjpForm button");
+        if (payjpButton) payjpButton.click(); else window.alert("お支払いボタンの読み込みに失敗しました。時間をおいて再度お試しください。");
+      });
+
+      document.getElementById("payjpForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const cardToken = formData.get("payjp-token");
+        const invoiceId = formData.get("invoiceId");
+        if (!cardToken || !invoiceId || !supabaseClient) return;
+        const sessionResult = await supabaseClient.auth.getSession();
+        const accessToken = sessionResult.data.session?.access_token;
+        if (!accessToken) { window.alert("セッションが切れています。再度ログインしてください。"); return; }
+        try {
+          const response = await fetch("/api/charge", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + accessToken },
+            body: JSON.stringify({ invoiceId: invoiceId, cardToken: cardToken })
+          });
+          const result = await response.json();
+          window.alert(result.message || (result.success ? "お支払いが完了しました。" : "決済に失敗しました。"));
+        } catch (error) {
+          console.error(error);
+          window.alert("通信エラーが発生しました。時間をおいて再度お試しください。");
+        }
+        load().catch(function (error) { console.error(error); });
+      });
+
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      load().catch(function (error) { console.error(error); renderSummary([]); renderInvoices([]); });
+    })();
+  </script>
+</body>
+</html>

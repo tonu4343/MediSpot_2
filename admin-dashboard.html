@@ -339,13 +339,12 @@
         const storageOk = Boolean(supabaseClient.storage);
         setStatus("Storage", storageOk, storageOk ? "正常" : "利用不可");
 
-        // payments テーブル追加後、そのままライブ表示へ移行できる任意クエリ。
-        const paymentsResult = await supabaseClient.from("payments").select("employer_name,amount,status,created_at").order("created_at", { ascending: false }).limit(5);
+        const paymentsResult = await supabaseClient.from("hire_invoices").select("facility_name,total_amount,payment_status,created_at").order("created_at", { ascending: false }).limit(5);
         const payments = resultRows(paymentsResult);
-        const monthPaymentsResult = paymentsResult.error ? null : await supabaseClient.from("payments").select("amount").eq("status", "paid").gte("created_at", monthIso);
-        const monthSales = resultRows(monthPaymentsResult).reduce(function (sum, payment) { return sum + (Number(payment.amount) || 0); }, 0);
+        const monthPaymentsResult = paymentsResult.error ? null : await supabaseClient.from("hire_invoices").select("total_amount").eq("payment_status", "支払い済み").gte("created_at", monthIso);
+        const monthSales = resultRows(monthPaymentsResult).reduce(function (sum, payment) { return sum + (Number(payment.total_amount) || 0); }, 0);
         setStat("monthSales", paymentsResult.error ? "-" : formatMoney(monthSales), paymentsResult.error ? "決済連携待ち" : "支払済み売上");
-        renderList("recentPayments", payments, paymentsResult.error ? "決済データ連携後に表示されます" : "最近の決済はありません", function (row) { return activityRow({ title: row.employer_name || "求人者", subtitle: formatMoney(row.amount), date: row.created_at, status: row.status === "paid" ? "支払済み" : (row.status || "確認中") }); });
+        renderList("recentPayments", payments, paymentsResult.error ? "決済データ連携後に表示されます" : "最近の決済はありません", function (row) { return activityRow({ title: row.facility_name || "求人者", subtitle: formatMoney(row.total_amount), date: row.created_at, status: row.payment_status === "支払い済み" ? "支払済み" : (row.payment_status || "確認中") }); });
       }
 
       renderShells();
