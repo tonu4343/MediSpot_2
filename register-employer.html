@@ -36,9 +36,13 @@
     .terms-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--employer-teal); }
     .terms-row a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
     .password-field { position: relative; }
-    .password-field .input { padding-right: 94px; }
-    .password-toggle { position: absolute; right: 8px; bottom: 8px; min-height: 40px; padding: 0 12px; color: var(--blue); background: #f4faff; border: 1px solid #b9d8ec; border-radius: 7px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .password-field .input { padding-right: 48px; }
+    .password-toggle { position: absolute; right: 6px; bottom: 6px; display: grid; place-items: center; width: 40px; height: 40px; color: var(--blue); background: transparent; border: 0; border-radius: 7px; cursor: pointer; }
     .password-toggle:hover { background: #eaf6ff; }
+    .password-toggle svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .password-toggle .icon-eye-off { display: none; }
+    .password-toggle[aria-pressed="true"] .icon-eye { display: none; }
+    .password-toggle[aria-pressed="true"] .icon-eye-off { display: block; }
     .submit-row { margin-top: 28px; display: grid; gap: 15px; text-align: center; }
     .submit-row .wide-cta { width: 100%; min-height: 56px; margin: 0; border: 0; border-radius: 8px; background: linear-gradient(180deg, #28c975, var(--green)); box-shadow: 0 15px 28px rgba(33,183,97,.24); font-size: 17px; cursor: pointer; }
     .login-link { color: var(--blue); font-size: 14px; font-weight: 800; }
@@ -92,8 +96,8 @@
             <div class="field full"><label for="facilityType">施設区分</label><select class="input" id="facilityType"><option>病院</option><option>クリニック</option><option>薬局</option><option>介護施設</option><option>健診センター</option><option>訪問看護ステーション</option><option>その他</option></select></div>
             <div class="field full"><label for="address">所在地 <span class="required">必須</span></label><input class="input" id="address" autocomplete="street-address" required placeholder="例）東京都世田谷区〇〇1-2-3"></div>
             <div class="field full"><label for="email">メールアドレス <span class="required">必須</span></label><input class="input" id="email" type="email" autocomplete="email" required placeholder="example@example.com" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="ドメインを含む正しいメールアドレスの形式で入力してください（例：name@example.com）"></div>
-            <div class="field full password-field"><label for="password">パスワード <span class="required">必須</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8文字以上"><button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false">表示する</button></div>
-            <div class="field full password-field"><label for="passwordConfirm">パスワード確認 <span class="required">必須</span></label><input class="input" id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="もう一度入力"><button class="password-toggle" id="passwordConfirmToggle" type="button" aria-controls="passwordConfirm" aria-pressed="false">表示する</button></div>
+            <div class="field full password-field"><label for="password">パスワード <span class="required">必須</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8文字以上"><button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false" aria-label="パスワードを表示する"><svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
+            <div class="field full password-field"><label for="passwordConfirm">パスワード確認 <span class="required">必須</span></label><input class="input" id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="もう一度入力"><button class="password-toggle" id="passwordConfirmToggle" type="button" aria-controls="passwordConfirm" aria-pressed="false" aria-label="パスワードを表示する"><svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
           </div>
 
           <label class="terms-row"><input type="checkbox" required><span><a href="terms.html" target="_blank" rel="noopener">利用規約</a>と<a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。</span></label>
@@ -115,8 +119,8 @@
         button.addEventListener("click", function () {
           const showing = input.type === "text";
           input.type = showing ? "password" : "text";
-          button.textContent = showing ? "表示する" : "隠す";
           button.setAttribute("aria-pressed", String(!showing));
+          button.setAttribute("aria-label", showing ? "パスワードを表示する" : "パスワードを隠す");
         });
       });
     })();

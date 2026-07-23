@@ -53,9 +53,13 @@
     .terms-row { display: flex; gap: 12px; align-items: flex-start; margin-top: 28px; color: #243b53; font-size: 15px; font-weight: 900; line-height: 1.6; }
     .terms-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--seeker-teal); }
     .password-field { position: relative; }
-    .password-field .input { padding-right: 94px; }
-    .password-toggle { position: absolute; right: 8px; bottom: 8px; min-height: 40px; padding: 0 12px; color: var(--seeker-teal); background: #f0faf8; border: 1px solid #a9ddd8; border-radius: 7px; font-size: 13px; font-weight: 900; cursor: pointer; }
+    .password-field .input { padding-right: 48px; }
+    .password-toggle { position: absolute; right: 6px; bottom: 6px; display: grid; place-items: center; width: 40px; height: 40px; color: var(--seeker-teal); background: transparent; border: 0; border-radius: 7px; cursor: pointer; }
     .password-toggle:hover { background: #e4f7f3; }
+    .password-toggle svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .password-toggle .icon-eye-off { display: none; }
+    .password-toggle[aria-pressed="true"] .icon-eye { display: none; }
+    .password-toggle[aria-pressed="true"] .icon-eye-off { display: block; }
     .submit-row { margin-top: 28px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
     .submit-row .wide-cta { min-width: 260px; min-height: 58px; margin: 0; border: 0; border-radius: 8px; background: linear-gradient(180deg, #1ab79f, #119f91); box-shadow: 0 15px 28px rgba(22, 163, 148, .24); font-size: 18px; cursor: pointer; }
     .back-button { min-height: 58px; padding: 0 28px; color: #007a6c; background: #fff; border: 1px solid #a9ddd8; border-radius: 8px; font-size: 18px; font-weight: 900; }
@@ -105,8 +109,8 @@
             <div class="field"><label for="lastName">&#22995; <span class="required">&#24517;&#38920;</span></label><input class="input" id="lastName" autocomplete="family-name" required></div>
             <div class="field"><label for="firstName">&#21517; <span class="required">&#24517;&#38920;</span></label><input class="input" id="firstName" autocomplete="given-name" required></div>
             <div class="field full"><label for="email">&#12513;&#12540;&#12523;&#12450;&#12489;&#12524;&#12473; <span class="required">&#24517;&#38920;</span></label><input class="input" id="email" type="email" autocomplete="email" required placeholder="example@example.com" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="ドメインを含む正しいメールアドレスの形式で入力してください（例：name@example.com）"></div>
-            <div class="field password-field"><label for="password">&#12497;&#12473;&#12527;&#12540;&#12489; <span class="required">&#24517;&#38920;</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8&#25991;&#23383;&#20197;&#19978;"><button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false">&#34920;&#31034;&#12377;&#12427;</button></div>
-            <div class="field password-field"><label for="passwordConfirm">&#12497;&#12473;&#12527;&#12540;&#12489;&#30906;&#35469; <span class="required">&#24517;&#38920;</span></label><input class="input" id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="&#12418;&#12358;&#19968;&#24230;&#20837;&#21147;"><button class="password-toggle" id="passwordConfirmToggle" type="button" aria-controls="passwordConfirm" aria-pressed="false">&#34920;&#31034;&#12377;&#12427;</button></div>
+            <div class="field password-field"><label for="password">&#12497;&#12473;&#12527;&#12540;&#12489; <span class="required">&#24517;&#38920;</span></label><input class="input" id="password" type="password" autocomplete="new-password" minlength="8" required placeholder="8&#25991;&#23383;&#20197;&#19978;"><button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false" aria-label="&#12497;&#12473;&#12527;&#12540;&#12489;&#12434;&#34920;&#31034;&#12377;&#12427;"><svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
+            <div class="field password-field"><label for="passwordConfirm">&#12497;&#12473;&#12527;&#12540;&#12489;&#30906;&#35469; <span class="required">&#24517;&#38920;</span></label><input class="input" id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" required placeholder="&#12418;&#12358;&#19968;&#24230;&#20837;&#21147;"><button class="password-toggle" id="passwordConfirmToggle" type="button" aria-controls="passwordConfirm" aria-pressed="false" aria-label="&#12497;&#12473;&#12527;&#12540;&#12489;&#12434;&#34920;&#31034;&#12377;&#12427;"><svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
           </div>
 
           <p class="form-note">登録後にマイページで電話番号、生年月日、スキル、履歴書、希望勤務地を追加できます。</p>
@@ -138,8 +142,8 @@
         button.addEventListener("click", function () {
           const showing = input.type === "text";
           input.type = showing ? "password" : "text";
-          button.textContent = showing ? "表示する" : "隠す";
           button.setAttribute("aria-pressed", String(!showing));
+          button.setAttribute("aria-label", showing ? "パスワードを表示する" : "パスワードを隠す");
         });
       });
     })();
