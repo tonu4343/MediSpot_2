@@ -83,7 +83,7 @@
     const profileTable = selectedRole === "employer" ? "employer_profiles" : "seeker_profiles";
     const profileResult = await supabaseClient
       .from(profileTable)
-      .select("id")
+      .select("id, account_status")
       .eq("user_id", data.user.id)
       .limit(1)
       .maybeSingle();
@@ -103,6 +103,17 @@
       return;
     }
 
+    if (profileResult.data.account_status && profileResult.data.account_status !== "active") {
+      await supabaseClient.auth.signOut();
+      showNotice(
+        profileResult.data.account_status === "withdrawn"
+          ? "このアカウントは退会済みです。ご不明な点はサポートまでお問い合わせください。"
+          : "このアカウントは利用停止されています。詳細はサポートまでお問い合わせください。",
+        true
+      );
+      return;
+    }
+
     showNotice("ログインしました。マイページへ移動します。", false);
     setTimeout(function () {
       window.location.href = selectedRole === "seeker" ? "seeker-dashboard.html" : "employer-dashboard.html";
@@ -110,7 +121,11 @@
   });
 
   setRole(params.get("role") === "employer" ? "employer" : "seeker");
-  if (params.get("roleError") === "1") {
+  if (params.get("accountStatus") === "suspended") {
+    showNotice("このアカウントは利用停止されています。詳細はサポートまでお問い合わせください。", true);
+  } else if (params.get("accountStatus") === "withdrawn") {
+    showNotice("このアカウントは退会済みです。ご不明な点はサポートまでお問い合わせください。", true);
+  } else if (params.get("roleError") === "1") {
     showNotice("アカウント種別が違います。正しいログイン種別を選択してください。", true);
   } else if (params.get("registered") === "1") {
     showNotice("登録が完了しました。メール認証が必要な場合は、確認メールを開いてからログインしてください。", false);

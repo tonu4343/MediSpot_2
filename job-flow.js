@@ -168,6 +168,7 @@
       const session = await supabaseClient.auth.getSession();
       const user = session.data.session?.user;
       if (!user) { location.href = 'login.html?role=seeker'; return; }
+      if (window.MEDISPOT_ACCOUNT_GUARD && !(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, 'seeker'))) return;
       button.disabled = true; button.textContent = '応募しています…';
       const [profileResult, resumeResult] = await Promise.all([
         supabaseClient.from('seeker_profiles').select('name,email,license,birth_date,experience_years,preferred_style').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),

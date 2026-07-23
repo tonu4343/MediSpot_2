@@ -316,6 +316,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="account-guard.js"></script>
   <script src="application-status.js"></script>
   <script>
     (function () {
@@ -460,6 +461,7 @@
         const sessionResult = await supabaseClient.auth.getSession();
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "login.html?role=seeker"; return; }
+        if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, "seeker"))) return;
 
         const profileResult = await supabaseClient.from("seeker_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
         if (profileResult.error || !profileResult.data) {

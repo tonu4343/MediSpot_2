@@ -66,6 +66,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+<script src="account-guard.js"></script>
 <script src="application-status.js"></script>
 <script>
 (function () {
@@ -231,6 +232,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     const r = await client.from('seeker_applications').select('*').eq('id', id).maybeSingle();
     if (r.error || !r.data) { console.error(r.error); show('応募情報を読み込めませんでした。参加者だけがメッセージを確認できます。', true); form.style.display = 'none'; return; }
     setup(r.data);
+    if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(client, user, role))) return;
     await loadMessages();
     setInterval(loadMessages, 5000);
   }

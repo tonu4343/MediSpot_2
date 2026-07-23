@@ -115,6 +115,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="account-guard.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -207,7 +208,7 @@
         el('saveStatus').textContent = currentProfile.license ? '登録済み' : '未完了';
         updateAgeHint();
       }
-      async function load() { renderSkills(el('license').value, []); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
+      async function load() { renderSkills(el('license').value, []); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, currentUser, 'seeker'))) return; const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
       el('license').addEventListener('change', function () {
         if (previousLicense) {
           const cur = Array.from(el('skillGrid').querySelectorAll('input:checked')).map(input => input.value);
