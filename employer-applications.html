@@ -106,7 +106,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <script src="supabase-config.js"></script><script src="account-guard.js"></script>
   <script src="application-status.js"></script>
   <script>
     (function () {
@@ -198,6 +198,7 @@
           location.href = "login.html?role=employer";
           return;
         }
+        if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(client, user, "employer"))) return;
         const jobFilter = new URLSearchParams(location.search).get("job");
         let q = client.from("seeker_applications").select("*").eq("employer_id", user.id).order("created_at", { ascending: false });
         if (jobFilter) q = q.eq("job_id", jobFilter);

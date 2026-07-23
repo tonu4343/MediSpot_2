@@ -59,7 +59,7 @@
     </form>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <script src="supabase-config.js"></script><script src="account-guard.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -80,6 +80,7 @@
         if (!supabaseClient) { if (localPreview) { fill({ title:"スポット看護師募集", category:"看護師", type:"スポット", salary:"日給 18,000円〜22,000円", location:"東京都 新宿区", work_date:"来週金曜 9:00-17:00", description:"外来での看護業務を担当します。", requirements:"看護師免許、臨床経験1年以上", status:"open" }); message("ローカルプレビューです。画面操作を確認できます。", "success"); return; } message("Supabase設定を確認してください。", "error"); return; }
         const sessionResult = await supabaseClient.auth.getSession(); currentUser = sessionResult.data.session?.user;
         if (!currentUser) { if (localPreview) { fill({ title:"スポット看護師募集", category:"看護師", type:"スポット", salary:"日給 18,000円〜22,000円", location:"東京都 新宿区", work_date:"来週金曜 9:00-17:00", description:"外来での看護業務を担当します。", requirements:"看護師免許、臨床経験1年以上", status:"open" }); message("ローカルプレビューです。画面操作を確認できます。", "success"); return; } window.location.href = "login.html?role=employer"; return; }
+        if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, currentUser, "employer"))) return;
         if (!jobId) { message("求人IDが指定されていません。求人一覧から選択してください。", "error"); return; }
         const result = await supabaseClient.from("jobs").select("*").eq("id", jobId).eq("employer_id", currentUser.id).maybeSingle();
         if (result.error || !result.data) { console.error(result.error); message("求人を読み込めませんでした。閲覧権限または求人IDをご確認ください。", "error"); return; }

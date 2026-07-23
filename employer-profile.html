@@ -106,7 +106,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <script src="supabase-config.js"></script><script src="account-guard.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -142,6 +142,7 @@
         const session = await supabaseClient.auth.getSession();
         currentUser = session.data.session?.user;
         if (!currentUser) { window.location.href = 'login.html?role=employer'; return; }
+        if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, currentUser, 'employer'))) return;
         const result = await supabaseClient.from('employer_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
         if (result.error || !result.data) { window.location.href = 'login.html?role=employer&roleError=1'; return; }
         fill(result.data, currentUser);
