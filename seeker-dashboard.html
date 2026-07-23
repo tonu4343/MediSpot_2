@@ -53,12 +53,12 @@
     .seeker-hero-text .sub { margin: 0; color: #4e6578; font-size: 13.5px; font-weight: 800; line-height: 1.8; }
     .seeker-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
     .seeker-hero-graphic { position: relative; z-index: 2; flex: 0 0 auto; display: flex; align-items: center; gap: 18px; }
-    .hero-stats-panel { position: relative; z-index: 3; width: 210px; }
+    .hero-stats-panel { position: relative; z-index: 3; width: 210px; min-width: 0; }
     .hero-stats-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
     .hero-stats-head span { color: var(--blue-dark); font-size: 13px; font-weight: 900; }
     .hero-stats-head a { color: var(--blue); font-size: 11.5px; font-weight: 800; white-space: nowrap; }
-    .seeker-hero-stats { display: grid; gap: 12px; width: 100%; }
-    .hero-stat-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 26px rgba(0,63,125,.1); transition: transform .15s ease, box-shadow .15s ease; }
+    .seeker-hero-stats { display: grid; gap: 12px; width: 100%; min-width: 0; }
+    .hero-stat-card { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 26px rgba(0,63,125,.1); transition: transform .15s ease, box-shadow .15s ease; }
     a.hero-stat-card:hover { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(0,63,125,.16); }
     .hero-stat-icon { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 9px; }
     .hero-stat-icon svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; }
@@ -213,10 +213,35 @@
     }
     @media (max-width: 576px) {
       .dash-main { padding: 20px 14px 48px; }
-      .seeker-hero-stats { grid-auto-flow: row; grid-template-columns: 1fr; }
       .quick-search-grid { grid-template-columns: 1fr; }
-      .job-slide { flex-basis: 220px; }
       .seeker-footer { grid-template-columns: 1fr; }
+
+      /* The stacked mobile hero (photo + 3 full-width stat cards +
+         heading + paragraph + buttons) added up to ~860px tall - well
+         past what's actually visible on a phone before scrolling
+         (~600-650px after the browser's own address bar), so the
+         heading/CTA buttons sat below the fold on first load. Keep the
+         stat cards in one compact row instead of stacking them, shrink
+         the photo, and tighten spacing throughout so the whole hero
+         fits in view without scrolling. */
+      .seeker-hero { padding: 18px; gap: 14px; }
+      .seeker-hero-graphic { gap: 10px; }
+      .seeker-hero-photo { height: 150px; }
+      .seeker-hero-text .eyebrow { margin-bottom: 8px; }
+      .seeker-hero-text h1 { margin-bottom: 8px; }
+      .seeker-hero-actions { margin-top: 14px; }
+      .hero-stat-card { padding: 8px; gap: 6px; }
+      .hero-stat-icon { flex-basis: 26px; width: 26px; height: 26px; }
+      .hero-stat-icon svg { width: 13px; height: 13px; }
+      .hero-stat-body span { font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .hero-stat-card strong { font-size: 15px; }
+      .hero-stat-chevron { display: none; }
+
+      /* Show exactly one job card at a time on the recommendation
+         carousel - a card cut off mid-way at the viewport edge reads
+         as broken/incomplete on a phone, not as an intentional swipe
+         hint. */
+      .job-slide { flex-basis: calc(100% - 8px); }
     }
   </style>
 </head>
