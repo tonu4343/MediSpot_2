@@ -15,4 +15,11 @@ Thumbs.db
 # Local env/secrets, logs
 .env
 .env.local
+.env.test
 *.log
+
+# Playwright E2E test output
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
