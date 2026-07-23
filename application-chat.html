@@ -215,7 +215,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     if (r.error) { console.error(r.error); show('メッセージを読み込めませんでした。Supabaseのチャットポリシーをご確認ください。', true); return; }
     render(r.data || []);
     const unread = (r.data || []).some(m => m.sender_id !== user.id && !m.read_at);
-    if (unread) client.from('application_messages').update({ read_at: new Date().toISOString() }).eq('application_id', id).neq('sender_id', user.id).is('read_at', null).then(res => { if (res.error) console.error(res.error); });
+    if (unread) client.rpc('mark_messages_read', { p_application_id: id }).then(res => { if (res.error) console.error(res.error); });
   }
 
   async function load() {
