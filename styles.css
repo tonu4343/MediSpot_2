@@ -36,9 +36,11 @@ img { display: block; max-width: 100%; }
   gap: 24px;
   min-height: 64px;
   padding: 10px clamp(20px, 5vw, 72px);
-  background: rgba(255, 255, 255, 0.96);
+  background: #fff;
   border-bottom: 1px solid var(--line);
   box-shadow: 0 2px 16px rgba(0, 63, 125, 0.08);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .brand {
