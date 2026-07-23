@@ -175,7 +175,7 @@
       <div class="action-icon" style="background:#E8F5EE;">🔍</div>
       <div class="text"><h4>求人を検索</h4><p>職種・勤務地・日付で絞り込み</p></div>
     </a>
-    <a href="seeker-apply-complete.html" class="action-btn">
+    <a href="seeker-applications.html" class="action-btn">
       <div class="action-icon" style="background:#FFF0EB;">📋</div>
       <div class="text"><h4>応募履歴</h4><p>応募した求人のステータス確認</p></div>
     </a>
@@ -213,7 +213,7 @@
             (job.work_date ? '<br>📅 ' + escHtml(job.work_date) : '') +
           '</div>' +
           '<div class="job-salary">' + escHtml(job.salary || '') + '</div>' +
-          '<a href="seeker-job-detail.html?id=' + encodeURIComponent(job.id) + '" class="btn-apply">応募する →</a>' +
+          '<a href="job-detail.html?id=' + encodeURIComponent(job.id) + '" class="btn-apply">応募する →</a>' +
         '</div>'
       );
     }).join('');
