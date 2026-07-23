@@ -369,6 +369,7 @@
         else { renderMessages(messagesResult.data || [], applications); }
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      document.querySelector(".bell-btn").addEventListener("click", function () { window.location.href = "employer-applications.html"; });
       loadDashboard().catch(function (error) { console.error(error); applyProfile(null); renderJobs([], []); renderStatusSummary([]); renderMessages([], []); });
     })();
   </script>
