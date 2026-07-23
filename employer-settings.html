@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>設定 | Medi Job</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#005bac"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="icon" href="assets/icon-32.png">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.employer-dashboard-page { color: var(--ink); background: #f5f9fc; }
+    .site-header.dash-topbar { position: sticky; top: 0; z-index: 70; }
+    .dash-topbar-right { display: flex; align-items: center; gap: 18px; }
+    .dash-user { display: flex; align-items: center; gap: 10px; }
+    .dash-user-text { text-align: right; line-height: 1.4; }
+    .dash-user-text small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .dash-user-text strong { display: block; color: #14324c; font-size: 13px; font-weight: 900; }
+    .dash-logout { min-height: 34px; padding: 0 14px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer; }
+
+    .dash-body { display: grid; grid-template-columns: 232px 1fr; align-items: start; }
+    .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
+    .side-nav { display: grid; gap: 3px; margin: 0 0 18px; padding: 0; list-style: none; }
+    .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; transition: background .15s ease, color .15s ease; }
+    .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
+    .side-nav a.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); box-shadow: 0 8px 18px rgba(0,91,172,.24); }
+    .side-nav a .nav-soon { margin-left: auto; color: var(--muted); background: #eef3f7; border-radius: 999px; padding: 1px 7px; font-size: 9.5px; font-weight: 900; }
+
+    .support-card { margin: 0 2px; padding: 15px; background: #f7fbff; border: 1px solid var(--line); border-radius: 12px; }
+    .support-card strong { display: block; color: var(--blue-dark); font-size: 12.5px; font-weight: 900; }
+    .support-card span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .support-card .support-phone { margin-top: 8px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .support-card a.support-cta { display: block; margin-top: 10px; text-align: center; min-height: 32px; line-height: 32px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; }
+
+    .dash-main { min-width: 0; max-width: 1400px; margin: 0 auto; padding: 26px clamp(16px,2.6vw,34px) 60px; }
+
+    .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); padding: 22px; }
+
+    .employer-footer { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) 1.1fr; gap: 28px; padding: 40px clamp(20px,5vw,64px) 18px; color: var(--ink); background: #fff; border-top: 1px solid var(--line); }
+    .employer-footer .footer-brand p { max-width: 250px; margin: 12px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
+    .employer-footer h3 { margin: 0 0 12px; color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
+    .employer-footer div:not(.footer-brand):not(.footer-support) a { display: block; margin: 8px 0; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .employer-footer div:not(.footer-brand):not(.footer-support) a:hover { color: var(--blue); }
+    .employer-footer .footer-support { align-self: start; padding: 16px; background: #f7fbff; border: 1px solid var(--line); border-radius: 10px; text-align: left; }
+    .employer-footer .footer-support strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
+    .employer-footer .footer-support span { display: block; margin-top: 6px; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+    .employer-footer .footer-support .support-phone { margin-top: 4px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .employer-footer .copyright { grid-column: 1 / -1; margin: 8px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+
+    /* Settings page content */
+    .settings-page-head { margin-bottom: 20px; }
+    .settings-page-head h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.8vw,28px); font-weight: 900; }
+    .settings-page-head p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 800; line-height: 1.7; }
+
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    .settings-section h2 { margin: 0 0 4px; color: var(--blue-dark); font-size: 16px; font-weight: 900; }
+    .settings-rows { display: grid; }
+
+    .settings-row { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 4px; color: inherit; background: none; border: 0; border-top: 1px solid var(--line); text-align: left; font: inherit; text-decoration: none; cursor: pointer; }
+    .settings-rows .settings-row:first-child { border-top: 0; }
+    a.settings-row:hover, button.settings-row:hover { background: #f7fbff; }
+    .settings-row[aria-disabled="true"] { cursor: default; }
+    .settings-row[aria-disabled="true"]:hover { background: none; }
+    .settings-row-icon { display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 9px; color: var(--blue); background: #eef6ff; }
+    .settings-row-icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .settings-row-label { flex: 1; min-width: 0; }
+    .settings-row-label strong { display: block; color: #14324c; font-size: 13.5px; font-weight: 900; }
+    .settings-row-label span { display: block; margin-top: 2px; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+    .settings-row-chevron { flex: 0 0 auto; color: var(--muted); font-size: 17px; }
+
+    .verify-badge { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 26px; padding: 0 12px; border-radius: 999px; font-size: 11.5px; font-weight: 900; }
+    .verify-badge.verified { color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; }
+    .verify-badge.pending { color: #b5670f; background: #fff6e9; border: 1px solid #f2cf9c; }
+
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 4px; border-top: 1px solid var(--line); }
+    .settings-rows .toggle-row:first-child { border-top: 0; }
+    .toggle-row span.toggle-label { color: #3c5266; font-size: 13.5px; font-weight: 800; }
+    .switch { position: relative; display: inline-block; flex: 0 0 auto; width: 44px; height: 25px; }
+    .switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+    .switch .track { position: absolute; inset: 0; background: #d7e2ea; border-radius: 999px; transition: background .15s ease; }
+    .switch .thumb { position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.28); transition: transform .15s ease; }
+    .switch input:checked ~ .track { background: var(--green); }
+    .switch input:checked ~ .track .thumb { transform: translateX(19px); }
+    .switch input:focus-visible ~ .track { box-shadow: 0 0 0 3px rgba(0,91,172,.28); }
+
+    .settings-bottom-actions { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .settings-bottom-actions .btn-outline { min-height: 46px; padding: 0 28px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13.5px; font-weight: 900; cursor: pointer; }
+    .danger-link { padding: 0; color: #c0392b; background: none; border: 0; font-size: 12.5px; font-weight: 900; text-decoration: underline; cursor: pointer; }
+    .danger-link:hover { color: #a5281a; }
+
+    .settings-modal-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(7,31,55,.62); backdrop-filter: blur(3px); }
+    .settings-modal { position: fixed; z-index: 1001; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(400px, calc(100% - 40px)); max-height: calc(100vh - 40px); overflow-y: auto; padding: 26px; background: #fff; border-radius: 16px; box-shadow: 0 28px 80px rgba(0,31,67,.3); }
+    .settings-modal h3 { margin: 0 0 8px; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
+    .settings-modal.danger h3 { color: #b3261e; }
+    .settings-modal .modal-lead { margin: 0 0 18px; color: var(--muted); font-size: 12.5px; line-height: 1.7; font-weight: 700; }
+    .settings-modal label { display: block; margin-bottom: 14px; }
+    .settings-modal label span { display: block; margin-bottom: 6px; color: #3c5266; font-size: 12.5px; font-weight: 900; }
+    .settings-modal .password-field { position: relative; }
+    .settings-modal input { width: 100%; min-height: 46px; padding: 0 14px; color: #0f2140; background: #fff; border: 1px solid #cfdfe9; border-radius: 8px; outline: none; font: inherit; font-size: 14px; }
+    .settings-modal .password-field input { padding-right: 46px; }
+    .settings-modal .password-toggle { position: absolute; right: 5px; bottom: 5px; display: grid; place-items: center; width: 36px; height: 36px; color: #64798c; background: transparent; border: 0; border-radius: 6px; cursor: pointer; }
+    .settings-modal .password-toggle:hover { color: var(--blue); background: #f0f8ff; }
+    .settings-modal .password-toggle svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .settings-modal .password-toggle .icon-eye-off { display: none; }
+    .settings-modal .password-toggle[aria-pressed="true"] .icon-eye { display: none; }
+    .settings-modal .password-toggle[aria-pressed="true"] .icon-eye-off { display: block; }
+    .settings-modal-error { display: none; margin: 0 0 14px; color: #b3261e; font-size: 12.5px; font-weight: 800; }
+    .settings-modal-error.show { display: block; }
+    .settings-modal-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .settings-modal .btn { width: 100%; min-height: 48px; border-radius: 8px; font-size: 14px; font-weight: 900; border: 0; cursor: pointer; }
+    .settings-modal .btn-blue { color: #fff; background: linear-gradient(180deg, var(--blue-2), var(--blue)); box-shadow: 0 14px 28px rgba(0,91,172,.22); }
+    .settings-modal .btn-danger { color: #fff; background: linear-gradient(180deg, #e6483c, #c0392b); box-shadow: 0 14px 28px rgba(198,57,42,.24); }
+    .settings-modal .btn-outline { color: var(--blue); background: #fff; border: 1px solid var(--blue); }
+
+    @media (max-width: 960px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+      .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .side-nav a { white-space: nowrap; }
+      .side-nav a .nav-soon { display: none; }
+      .support-card { display: none; }
+      .employer-footer { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 760px) {
+      .settings-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .dash-main { padding: 20px 14px 48px; }
+      .settings-bottom-actions { flex-direction: column; align-items: stretch; text-align: center; }
+      .settings-bottom-actions .btn-outline { width: 100%; }
+      .employer-footer { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="employer-dashboard-page">
+  <header class="site-header dash-topbar">
+    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <div class="dash-topbar-right">
+      <div class="dash-user"><div class="dash-user-text"><small id="topbarFacility">読み込み中</small><strong id="topbarContact">-</strong></div></div>
+      <button class="dash-logout" id="logoutButton" type="button">ログアウト</button>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <aside class="dash-sidebar" aria-label="求人者メニュー">
+      <ul class="side-nav">
+        <li><a href="employer-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a></li>
+        <li><a href="employer-dashboard.html#jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>応募者管理</a></li>
+        <li><a href="employer-dashboard.html#messages"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ</a></li>
+        <li><a href="employer-hires.html"><svg viewBox="0 0 24 24"><path d="M9 12.5l2 2 4-4.5"/><circle cx="12" cy="12" r="9"/></svg>採用管理</a></li>
+        <li><a href="employer-profile.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>施設情報</a></li>
+        <li><a href="employer-payments.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>料金・お支払い</a></li>
+        <li><a href="#" aria-disabled="true"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="3" width="3" height="17"/></svg>分析・レポート<span class="nav-soon">準備中</span></a></li>
+        <li><a class="active" href="employer-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>設定</a></li>
+        <li><a href="employer-help.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 0 1 5.2.9c0 1.8-2.6 2.1-2.6 4.1"/><line x1="12" y1="17.3" x2="12" y2="17.31"/></svg>ヘルプ・お問い合わせ</a></li>
+        <li id="adminNavItem" hidden><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>管理者画面</a></li>
+      </ul>
+
+      <div class="support-card">
+        <strong>サポート窓口</strong>
+        <span>平日 9:00〜18:00</span>
+        <span class="support-phone">03-1234-5678</span>
+        <a class="support-cta" href="employer-help.html">お問い合わせ</a>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <div class="settings-page-head">
+        <h1>設定</h1>
+        <p>アカウント情報や通知設定を管理できます。</p>
+      </div>
+
+      <div class="settings-grid">
+        <section class="panel-card settings-section">
+          <h2>アカウント設定</h2>
+          <div class="settings-rows">
+            <a class="settings-row" href="employer-profile.html">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg></span>
+              <span class="settings-row-label"><strong>施設情報</strong><span>医療機関名・所在地などを編集</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </a>
+            <button class="settings-row" type="button" id="openEmailModalButton">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span>
+              <span class="settings-row-label"><strong>メールアドレス変更</strong><span id="currentEmailText">-</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </button>
+            <button class="settings-row" type="button" id="openPasswordModalButton">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+              <span class="settings-row-label"><strong>パスワード変更</strong><span>ログイン用パスワードを更新</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </button>
+            <a class="settings-row" href="#" aria-disabled="true">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 20l1.1-5.5A8.38 8.38 0 0 1 4 12 8.5 8.5 0 0 1 12.5 3.5 8.38 8.38 0 0 1 21 11.5z"/></svg></span>
+              <span class="settings-row-label"><strong>LINE連携</strong><span>LINEで通知を受け取る</span></span>
+              <span class="nav-soon">準備中</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="panel-card settings-section">
+          <h2>通知設定</h2>
+          <div class="settings-rows">
+            <label class="toggle-row"><span class="toggle-label">新着応募通知</span><span class="switch"><input type="checkbox" data-pref="new_applications"><span class="track"><span class="thumb"></span></span></span></label>
+            <label class="toggle-row"><span class="toggle-label">メッセージ通知</span><span class="switch"><input type="checkbox" data-pref="messages"><span class="track"><span class="thumb"></span></span></span></label>
+            <label class="toggle-row"><span class="toggle-label">採用決定通知</span><span class="switch"><input type="checkbox" data-pref="hires"><span class="track"><span class="thumb"></span></span></span></label>
+            <label class="toggle-row"><span class="toggle-label">支払い通知</span><span class="switch"><input type="checkbox" data-pref="payments"><span class="track"><span class="thumb"></span></span></span></label>
+            <label class="toggle-row"><span class="toggle-label">メール通知</span><span class="switch"><input type="checkbox" data-pref="email"><span class="track"><span class="thumb"></span></span></span></label>
+          </div>
+        </section>
+
+        <section class="panel-card settings-section">
+          <h2>施設確認</h2>
+          <div class="settings-rows">
+            <a class="settings-row" href="#" aria-disabled="true">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg></span>
+              <span class="settings-row-label"><strong>登録書類を管理</strong><span>開設許可証などをアップロード</span></span>
+              <span class="nav-soon">準備中</span>
+            </a>
+            <div class="settings-row" aria-disabled="true" style="cursor:default;">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg></span>
+              <span class="settings-row-label"><strong>施設確認状況</strong><span>メール認証の状態です</span></span>
+              <span class="verify-badge" id="verifyBadge">-</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card settings-section">
+          <h2>サポート</h2>
+          <div class="settings-rows">
+            <a class="settings-row" href="index.html#faq">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 0 1 5.2.9c0 1.8-2.6 2.1-2.6 4.1"/><line x1="12" y1="17.3" x2="12" y2="17.31"/></svg></span>
+              <span class="settings-row-label"><strong>よくある質問</strong><span>ご利用にあたってのご質問</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </a>
+            <a class="settings-row" href="employer-help.html">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><path d="M22 16.9v2a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 1h2a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L7.1 8.7a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z"/></svg></span>
+              <span class="settings-row-label"><strong>お問い合わせ</strong><span>運営チームへ連絡する</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </a>
+            <a class="settings-row" href="terms.html" target="_blank" rel="noopener">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg></span>
+              <span class="settings-row-label"><strong>利用規約</strong><span>サービスのご利用条件</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </a>
+            <a class="settings-row" href="privacy.html" target="_blank" rel="noopener">
+              <span class="settings-row-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+              <span class="settings-row-label"><strong>プライバシーポリシー</strong><span>個人情報の取り扱いについて</span></span>
+              <span class="settings-row-chevron" aria-hidden="true">›</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="panel-card settings-bottom-actions">
+          <button class="btn-outline" id="logoutButtonBottom" type="button">ログアウト</button>
+          <button class="danger-link" id="openDeleteModalButton" type="button">アカウントを削除する</button>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="employer-footer">
+    <div class="footer-brand"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
+    <div><h3>求人者向け</h3><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人を作成</a><a href="employer-payments.html">料金・プラン</a></div>
+    <div><h3>サポート</h3><a href="index.html#flow">ご利用ガイド</a><a href="index.html#faq">よくある質問</a><a href="employer-help.html">お問い合わせ</a></div>
+    <div><h3>運営会社</h3><a href="#">会社概要</a><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a></div>
+    <div class="footer-support"><strong>サポート窓口</strong><span>平日 9:00〜18:00</span><span class="support-phone">03-1234-5678</span></div>
+    <p class="copyright">© 2025 MEDICAL SPOT JOB. All Rights Reserved.</p>
+  </footer>
+
+  <div class="settings-modal-backdrop" id="emailModalBackdrop" hidden></div>
+  <div class="settings-modal" id="emailModal" hidden role="dialog" aria-modal="true" aria-label="メールアドレス変更">
+    <h3>メールアドレスを変更</h3>
+    <p class="modal-lead">新しいメールアドレスに確認メールを送信します。メール内のリンクを開くと変更が完了します。</p>
+    <p class="settings-modal-error" id="emailModalError"></p>
+    <label><span>新しいメールアドレス</span><input type="email" id="newEmailInput" placeholder="example@example.com" autocomplete="email"></label>
+    <div class="settings-modal-actions">
+      <button class="btn btn-blue" type="button" id="submitEmailChangeButton">変更する</button>
+      <button class="btn btn-outline" type="button" id="cancelEmailModalButton">キャンセル</button>
+    </div>
+  </div>
+
+  <div class="settings-modal-backdrop" id="passwordModalBackdrop" hidden></div>
+  <div class="settings-modal" id="passwordModal" hidden role="dialog" aria-modal="true" aria-label="パスワード変更">
+    <h3>パスワードを変更</h3>
+    <p class="modal-lead">新しいパスワードは8文字以上で設定してください。</p>
+    <p class="settings-modal-error" id="passwordModalError"></p>
+    <label><span>新しいパスワード</span>
+      <div class="password-field">
+        <input type="password" id="newPasswordInput" minlength="8" placeholder="8文字以上" autocomplete="new-password">
+        <button class="password-toggle" type="button" data-toggle-for="newPasswordInput" aria-pressed="false" aria-label="パスワードを表示する">
+          <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+    </label>
+    <label><span>新しいパスワード（確認）</span>
+      <div class="password-field">
+        <input type="password" id="newPasswordConfirmInput" minlength="8" placeholder="もう一度入力" autocomplete="new-password">
+        <button class="password-toggle" type="button" data-toggle-for="newPasswordConfirmInput" aria-pressed="false" aria-label="パスワードを表示する">
+          <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+    </label>
+    <div class="settings-modal-actions">
+      <button class="btn btn-blue" type="button" id="submitPasswordChangeButton">変更する</button>
+      <button class="btn btn-outline" type="button" id="cancelPasswordModalButton">キャンセル</button>
+    </div>
+  </div>
+
+  <div class="settings-modal-backdrop" id="deleteModalBackdrop" hidden></div>
+  <div class="settings-modal danger" id="deleteModal" hidden role="dialog" aria-modal="true" aria-label="アカウント削除">
+    <h3>アカウントを削除しますか？</h3>
+    <p class="modal-lead">削除すると、ログイン・求人管理・応募者対応・メッセージなど全ての機能が利用できなくなります。この操作は取り消せません。</p>
+    <p class="settings-modal-error" id="deleteModalError"></p>
+    <div class="settings-modal-actions">
+      <button class="btn btn-danger" type="button" id="confirmDeleteButton">削除する</button>
+      <button class="btn btn-outline" type="button" id="cancelDeleteModalButton">キャンセル</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="account-guard.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+
+      const TOGGLE_KEYS = ["new_applications", "messages", "hires", "payments", "email"];
+      const DEFAULT_PREFS = { new_applications: true, messages: true, hires: true, payments: true, email: true };
+
+      let currentProfile = null;
+
+      function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value == null ? "-" : value; }
+
+      function openModal(prefix) {
+        document.getElementById(prefix + "Backdrop").hidden = false;
+        document.getElementById(prefix).hidden = false;
+      }
+      function closeModal(prefix) {
+        document.getElementById(prefix + "Backdrop").hidden = true;
+        document.getElementById(prefix).hidden = true;
+        const err = document.getElementById(prefix + "Error");
+        if (err) { err.classList.remove("show"); err.textContent = ""; }
+      }
+      function showModalError(prefix, msg) {
+        const err = document.getElementById(prefix + "Error");
+        if (!err) return;
+        err.textContent = msg;
+        err.classList.add("show");
+      }
+
+      ["emailModal", "passwordModal", "deleteModal"].forEach(function (prefix) {
+        document.getElementById(prefix + "Backdrop").addEventListener("click", function () { closeModal(prefix); });
+      });
+      document.getElementById("openEmailModalButton").addEventListener("click", function () { openModal("emailModal"); });
+      document.getElementById("cancelEmailModalButton").addEventListener("click", function () { closeModal("emailModal"); });
+      document.getElementById("openPasswordModalButton").addEventListener("click", function () { openModal("passwordModal"); });
+      document.getElementById("cancelPasswordModalButton").addEventListener("click", function () { closeModal("passwordModal"); });
+      document.getElementById("openDeleteModalButton").addEventListener("click", function () { openModal("deleteModal"); });
+      document.getElementById("cancelDeleteModalButton").addEventListener("click", function () { closeModal("deleteModal"); });
+
+      document.querySelectorAll(".password-toggle[data-toggle-for]").forEach(function (button) {
+        const input = document.getElementById(button.getAttribute("data-toggle-for"));
+        if (!input) return;
+        button.addEventListener("click", function () {
+          const showing = input.type === "text";
+          input.type = showing ? "password" : "text";
+          button.setAttribute("aria-pressed", String(!showing));
+          button.setAttribute("aria-label", showing ? "パスワードを表示する" : "パスワードを隠す");
+        });
+      });
+
+      document.getElementById("submitEmailChangeButton").addEventListener("click", async function () {
+        if (!supabaseClient) return;
+        const btn = this;
+        const email = document.getElementById("newEmailInput").value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showModalError("emailModal", "正しいメールアドレスを入力してください。"); return; }
+        btn.disabled = true; btn.textContent = "送信しています…";
+        const result = await supabaseClient.auth.updateUser({ email: email });
+        btn.disabled = false; btn.textContent = "変更する";
+        if (result.error) { showModalError("emailModal", result.error.message || "変更できませんでした。"); return; }
+        closeModal("emailModal");
+        window.alert("確認メールを送信しました。新しいメールアドレス宛のメールを開き、リンクから変更を完了してください。");
+      });
+
+      document.getElementById("submitPasswordChangeButton").addEventListener("click", async function () {
+        if (!supabaseClient) return;
+        const btn = this;
+        const pw = document.getElementById("newPasswordInput").value;
+        const pwConfirm = document.getElementById("newPasswordConfirmInput").value;
+        if (pw.length < 8) { showModalError("passwordModal", "パスワードは8文字以上で入力してください。"); return; }
+        if (pw !== pwConfirm) { showModalError("passwordModal", "パスワードが一致しません。"); return; }
+        btn.disabled = true; btn.textContent = "変更しています…";
+        const result = await supabaseClient.auth.updateUser({ password: pw });
+        btn.disabled = false; btn.textContent = "変更する";
+        if (result.error) { showModalError("passwordModal", result.error.message || "変更できませんでした。"); return; }
+        document.getElementById("newPasswordInput").value = "";
+        document.getElementById("newPasswordConfirmInput").value = "";
+        closeModal("passwordModal");
+        window.alert("パスワードを変更しました。");
+      });
+
+      document.getElementById("confirmDeleteButton").addEventListener("click", async function () {
+        if (!supabaseClient || !currentProfile) return;
+        const btn = this;
+        btn.disabled = true; btn.textContent = "処理しています…";
+        const result = await supabaseClient.from("employer_profiles").update({ account_status: "withdrawn" }).eq("id", currentProfile.id);
+        btn.disabled = false; btn.textContent = "削除する";
+        if (result.error) { showModalError("deleteModal", "削除できませんでした。時間をおいて再度お試しください。"); return; }
+        await supabaseClient.auth.signOut();
+        window.location.href = "login.html?accountStatus=withdrawn";
+      });
+
+      async function loadSettings() {
+        if (!supabaseClient) return;
+        const sessionResult = await supabaseClient.auth.getSession();
+        const user = sessionResult.data.session?.user;
+        if (!user) { window.location.href = "login.html?role=employer"; return; }
+        if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, "employer"))) return;
+
+        const profileResult = await supabaseClient.from("employer_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+        if (profileResult.error || !profileResult.data) {
+          await supabaseClient.auth.signOut();
+          window.location.href = "login.html?role=employer&roleError=1";
+          return;
+        }
+        currentProfile = profileResult.data;
+
+        text("topbarFacility", currentProfile.facility_name || "医療機関");
+        text("topbarContact", (currentProfile.contact_name || "ご担当者") + " 様");
+        text("currentEmailText", user.email || "-");
+        const adminNavItem = document.getElementById("adminNavItem");
+        if (adminNavItem) adminNavItem.hidden = !currentProfile.is_admin;
+
+        const badge = document.getElementById("verifyBadge");
+        if (user.email_confirmed_at) { badge.textContent = "確認済み"; badge.className = "verify-badge verified"; }
+        else { badge.textContent = "審査中"; badge.className = "verify-badge pending"; }
+
+        const prefs = Object.assign({}, DEFAULT_PREFS, currentProfile.notification_preferences || {});
+        TOGGLE_KEYS.forEach(function (key) {
+          const input = document.querySelector('[data-pref="' + key + '"]');
+          if (!input) return;
+          input.checked = Boolean(prefs[key]);
+          input.addEventListener("change", async function () {
+            prefs[key] = input.checked;
+            await supabaseClient.from("employer_profiles").update({ notification_preferences: prefs }).eq("id", currentProfile.id);
+          });
+        });
+      }
+
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      document.getElementById("logoutButtonBottom").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+
+      loadSettings().catch(function (error) { console.error(error); });
+    })();
+  </script>
+<script src="pwa-register.js"></script></body>
+</html>
