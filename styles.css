@@ -13,7 +13,20 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* iOS Safari auto-boosts font sizes on some text blocks ("text
+     autosizer") independent of the CSS font-size and independent of
+     the user's own pinch-zoom - a real-device-only behavior that
+     desktop-engine testing (including Playwright's WebKit) doesn't
+     reproduce. Without this, that inflation silently breaks nowrap
+     layouts and fixed-column grids sized for the CSS-specified font
+     size, and body's overflow-x:hidden below then clips the result
+     instead of showing a scrollbar, so it looks like content is cut
+     off on the right on real phones only. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 body {
   margin: 0;
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, system-ui, sans-serif;
