@@ -166,12 +166,18 @@
     .recent-job-card-body p { margin: 0; color: var(--muted); font-size: 11px; font-weight: 700; }
     .recent-job-card-body .recent-salary { margin-top: 5px; color: #008e51; font-size: 12.5px; font-weight: 900; }
 
-    .seeker-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px,5vw,64px); background: #fff; border-top: 1px solid var(--line); }
-    .seeker-footer-light .brand { color: var(--blue); }
-    .seeker-footer-links { display: flex; flex-wrap: wrap; gap: 4px 22px; }
-    .seeker-footer-links a { color: var(--muted); font-size: 12.5px; font-weight: 800; }
-    .seeker-footer-links a:hover { color: var(--blue); }
-    .seeker-footer-copy { width: 100%; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .seeker-footer { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) 1.1fr; gap: 28px; padding: 40px clamp(20px,5vw,64px) 18px; color: var(--ink); background: #fff; border-top: 1px solid var(--line); }
+    .seeker-footer .footer-brand p { max-width: 250px; margin: 12px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
+    .seeker-footer h3 { margin: 0 0 12px; color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
+    .seeker-footer div:not(.footer-brand):not(.footer-support) a { display: block; margin: 8px 0; color: var(--muted); font-size: 13px; font-weight: 700; }
+    .seeker-footer div:not(.footer-brand):not(.footer-support) a:hover { color: var(--blue); }
+    .seeker-footer .footer-support { align-self: start; padding: 16px; background: #f7fbff; border: 1px solid var(--line); border-radius: 10px; text-align: left; }
+    .seeker-footer .footer-support strong { display: block; color: var(--blue-dark); font-size: 13px; font-weight: 900; }
+    .seeker-footer .footer-support span { display: block; margin-top: 6px; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+    .seeker-footer .footer-support .support-phone { margin-top: 4px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .seeker-footer .copyright { grid-column: 1 / -1; margin: 8px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+    @media (max-width: 960px) { .seeker-footer { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 640px) { .seeker-footer { grid-template-columns: 1fr; } }
 
     @media (max-width: 1180px) { .recent-jobs-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
     @media (max-width: 960px) {
@@ -308,10 +314,13 @@
     </main>
   </div>
 
-  <footer class="seeker-footer-light">
-    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="seeker-footer-links"><a href="#">運営会社</a><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a><a href="#">特定商取引法に基づく表記</a><a href="index.html#faq">よくある質問</a><a href="#">お問い合わせ</a><a href="index.html#faq">ヘルプ</a></nav>
-    <p class="seeker-footer-copy">© 2024 MEDICAL SPOT JOB. All Rights Reserved.</p>
+  <footer class="seeker-footer">
+    <div class="footer-brand"><a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><p>医療資格者と医療機関をつなぐスポット求人マッチングサービス。</p></div>
+    <div><h3>求職者向け</h3><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-jobs.html">求人を探す</a><a href="seeker-applications.html">応募管理</a></div>
+    <div><h3>サポート</h3><a href="index.html#flow">ご利用ガイド</a><a href="index.html#faq">よくある質問</a><a href="#">お問い合わせ</a></div>
+    <div><h3>運営会社</h3><a href="#">会社概要</a><a href="terms.html">利用規約</a><a href="privacy.html">プライバシーポリシー</a></div>
+    <div class="footer-support"><strong>サポート窓口</strong><span>平日 9:00〜18:00</span><span class="support-phone">03-1234-5678</span></div>
+    <p class="copyright">© 2025 MEDICAL SPOT JOB. All Rights Reserved.</p>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
