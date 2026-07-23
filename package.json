@@ -3,5 +3,11 @@
   "private": true,
   "engines": {
     "node": "20.x"
+  },
+  "scripts": {
+    "check:syntax": "node scripts/check-syntax.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "check:migrations": "node scripts/check-migrations.mjs",
+    "test": "npm run check:syntax && npm run check:links && npm run check:migrations"
   }
 }
