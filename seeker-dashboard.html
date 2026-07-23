@@ -214,6 +214,7 @@
     @media (max-width: 576px) {
       .dash-main { padding: 20px 14px 48px; }
       .quick-search-grid { grid-template-columns: 1fr; }
+      .recent-jobs-grid { grid-template-columns: minmax(0, 1fr); }
       .seeker-footer { grid-template-columns: 1fr; }
 
       /* The stacked mobile hero (photo + 3 full-width stat cards +
@@ -241,7 +242,7 @@
          carousel - a card cut off mid-way at the viewport edge reads
          as broken/incomplete on a phone, not as an intentional swipe
          hint. */
-      .job-slide { flex-basis: calc(100% - 8px); }
+      .job-slide { flex-basis: 100%; min-width: 0; }
     }
   </style>
 </head>
