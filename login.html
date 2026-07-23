@@ -233,27 +233,6 @@
       font-size: 16px;
       font-weight: 700;
     }
-    .password-field { position: relative; }
-    .password-field input { padding-right: 48px; }
-    .password-toggle {
-      position: absolute;
-      right: 6px;
-      bottom: 6px;
-      display: grid;
-      place-items: center;
-      width: 40px;
-      height: 40px;
-      color: #64798c;
-      background: transparent;
-      border: 0;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .password-toggle:hover { color: var(--blue); background: #f0f8ff; }
-    .password-toggle svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .password-toggle .icon-eye-off { display: none; }
-    .password-toggle[aria-pressed="true"] .icon-eye { display: none; }
-    .password-toggle[aria-pressed="true"] .icon-eye-off { display: block; }
     .field input::placeholder { color: #748293; }
     .field input:focus {
       border-color: var(--blue);
@@ -375,13 +354,9 @@
           <label for="email">メールアドレス</label>
           <input id="email" name="email" type="email" placeholder="例）example@example.com" required pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="ドメインを含む正しいメールアドレスの形式で入力してください（例：name@example.com）">
         </div>
-        <div class="field password-field">
+        <div class="field">
           <label for="password">パスワード</label>
           <input id="password" name="password" type="password" placeholder="8文字以上" minlength="8" required>
-          <button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false" aria-label="パスワードを表示する">
-            <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a18.7 18.7 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-          </button>
         </div>
         <button class="submit-btn" type="submit">ログインする</button>
       </form>
