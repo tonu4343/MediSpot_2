@@ -1,0 +1,18 @@
+# Dependencies (assets/node_modules is a machine-local symlink to a shared
+# runtime cache - never something to commit, wherever node_modules shows up)
+node_modules/
+
+# Regenerable build output from assets/build_combined_services.mjs -
+# the source spreadsheets (サービス一覧/) and the scripts themselves are
+# tracked; this derived workbook/previews are not.
+assets/outputs/
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local env/secrets, logs
+.env
+.env.local
+*.log
