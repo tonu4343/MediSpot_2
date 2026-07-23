@@ -119,11 +119,43 @@ module.exports = async function handler(req, res) {
   }
 
   // 5) Mark paid and record the pay.jp charge id for admin reconciliation/refunds.
-  await fetch(SUPABASE_URL + "/rest/v1/hire_invoices?id=eq." + encodeURIComponent(invoiceId), {
-    method: "PATCH",
-    headers: serviceHeaders,
-    body: JSON.stringify({ payment_status: "支払い済み", paid_at: new Date().toISOString(), payjp_charge_id: chargeResult.id })
-  });
+  // The pay.jp charge already succeeded at this point (the card was charged),
+  // so a failure here must NOT be reported to the client as a failed payment
+  // (that would invite a duplicate charge attempt) - but it also must not be
+  // silently swallowed, or the invoice is stuck at 決済処理中 forever with no
+  // payjp_charge_id to reconcile against. Verify the write actually applied,
+  // retry once, and if it still fails, say so honestly instead of claiming a
+  // clean success.
+  async function markPaid() {
+    const markResponse = await fetch(SUPABASE_URL + "/rest/v1/hire_invoices?id=eq." + encodeURIComponent(invoiceId), {
+      method: "PATCH",
+      headers: Object.assign({}, serviceHeaders, { Prefer: "return=representation" }),
+      body: JSON.stringify({ payment_status: "支払い済み", paid_at: new Date().toISOString(), payjp_charge_id: chargeResult.id })
+    });
+    const rows = markResponse.ok ? await markResponse.json() : [];
+    return rows.length > 0;
+  }
+
+  let marked = false;
+  for (let attempt = 0; attempt < 2 && !marked; attempt++) {
+    try {
+      marked = await markPaid();
+    } catch (error) {
+      console.error("markPaid threw for invoice " + invoiceId + " (payjp charge " + chargeResult.id + ")", error);
+    }
+  }
+
+  if (!marked) {
+    console.error(
+      "payjp charge " + chargeResult.id + " succeeded for invoice " + invoiceId +
+      " but hire_invoices could not be updated to 支払い済み - needs manual reconciliation."
+    );
+    res.status(200).json({
+      success: true,
+      message: "お支払いは完了しましたが、記録の更新に失敗しました。お手数ですがサポートまでお問い合わせください。"
+    });
+    return;
+  }
 
   res.status(200).json({ success: true, message: "お支払いが完了しました。" });
 };
