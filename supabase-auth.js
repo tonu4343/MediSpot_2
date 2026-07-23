@@ -130,4 +130,15 @@
   } else if (params.get("registered") === "1") {
     showNotice("登録が完了しました。メール認証が必要な場合は、確認メールを開いてからログインしてください。", false);
   }
+
+  const passwordToggle = document.querySelector("#passwordToggle");
+  const passwordInput = document.querySelector("#password");
+  if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener("click", function () {
+      const showing = passwordInput.type === "text";
+      passwordInput.type = showing ? "password" : "text";
+      passwordToggle.setAttribute("aria-pressed", String(!showing));
+      passwordToggle.setAttribute("aria-label", showing ? "パスワードを表示する" : "パスワードを隠す");
+    });
+  }
 })();
