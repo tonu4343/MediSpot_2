@@ -220,7 +220,7 @@
         <li><a href="seeker-messages.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden></span></a></li>
         <li><a href="seeker-profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>プロフィール</a></li>
         <li><a href="seeker-resume.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>履歴書・職務経歴書</a></li>
-        <li><a href="#"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>お知らせ<span class="nav-soon">準備中</span></a></li>
+        <li><a href="seeker-notices.html"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>お知らせ<span class="nav-badge" id="sideNoticeBadge" hidden></span></a></li>
         <li><a href="seeker-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>設定</a></li>
       </ul>
 
@@ -484,6 +484,14 @@
         const apps = appsResult.error ? [] : (appsResult.data || []);
         renderApps(apps);
         loadMessagePreview(user, apps).catch(function (error) { console.error(error); });
+        loadNoticesBadge(profile).catch(function (error) { console.error(error); });
+      }
+
+      async function loadNoticesBadge(profile) {
+        const noticesResult = await supabaseClient.from("notices").select("id", { count: "exact", head: true }).in("audience", ["all", "seeker"]).gt("created_at", profile.last_notices_read_at || "1970-01-01");
+        const unread = noticesResult.error ? 0 : (noticesResult.count || 0);
+        const sideBadge = document.getElementById("sideNoticeBadge");
+        if (unread > 0 && sideBadge) { sideBadge.hidden = false; sideBadge.textContent = String(unread); }
       }
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
