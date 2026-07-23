@@ -208,23 +208,24 @@
       .seeker-footer { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
     @media (max-width: 768px) {
-      .quick-search-grid { grid-template-columns: 1fr 1fr; }
-      .quick-search-grid .btn { grid-column: 1 / -1; }
+      .quick-search-grid { grid-template-columns: minmax(0, 1fr); }
+      .quick-search-grid label,
+      .quick-search-grid select { min-width: 0; width: 100%; }
+      .quick-search-grid .btn { grid-column: auto; width: 100%; justify-content: center; }
     }
-    @media (max-width: 576px) {
+    @media (max-width: 768px) {
       .dash-main { padding: 20px 14px 48px; }
-      .quick-search-grid { grid-template-columns: 1fr; }
+      .seeker-hero,
+      .seeker-hero-graphic,
+      .hero-stats-panel { width: 100%; min-width: 0; }
+      .seeker-hero-stats { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); }
       .recent-jobs-grid { grid-template-columns: minmax(0, 1fr); }
       .seeker-footer { grid-template-columns: 1fr; }
 
-      /* The stacked mobile hero (photo + 3 full-width stat cards +
-         heading + paragraph + buttons) added up to ~860px tall - well
-         past what's actually visible on a phone before scrolling
-         (~600-650px after the browser's own address bar), so the
-         heading/CTA buttons sat below the fold on first load. Keep the
-         stat cards in one compact row instead of stacking them, shrink
-         the photo, and tighten spacing throughout so the whole hero
-         fits in view without scrolling. */
+      /* Use the full mobile layout through small-tablet widths. Keeping
+         the photo, activity cards and search fields in desktop-style
+         columns between 577px and 768px can create intrinsic-width
+         overflow and clip the right side of the dashboard. */
       .seeker-hero { padding: 18px; gap: 14px; }
       .seeker-hero-graphic { gap: 10px; }
       .seeker-hero-photo { height: 150px; }
