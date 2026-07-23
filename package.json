@@ -8,6 +8,12 @@
     "check:syntax": "node scripts/check-syntax.mjs",
     "check:links": "node scripts/check-links.mjs",
     "check:migrations": "node scripts/check-migrations.mjs",
-    "test": "npm run check:syntax && npm run check:links && npm run check:migrations"
+    "test": "npm run check:syntax && npm run check:links && npm run check:migrations",
+    "test:e2e": "playwright test",
+    "test:security": "node --env-file-if-exists=.env.test --test \"tests/security/**/*.test.mjs\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@supabase/supabase-js": "^2.110.8"
   }
 }
