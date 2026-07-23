@@ -164,39 +164,7 @@
 
     const email = value("email");
     const name = [value("lastName"), value("firstName")].filter(Boolean).join(" ") || value("name");
-
-    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          role: "seeker",
-          name
-        }
-      }
-    });
-
-    let user = authData?.user || null;
-
-    if (authError && !looksAlreadyRegisteredError(authError)) {
-      setBusy(form, false);
-      console.error(authError);
-      showMessage("formMessage", registrationErrorMessage(authError), true);
-      return;
-    }
-
-    if ((authError && looksAlreadyRegisteredError(authError)) || isDuplicateSignup(authData)) {
-      const recovery = await tryRecoverOrphanedAccount(email, password, "seeker_profiles");
-      if (!recovery || recovery.profileExists) {
-        setBusy(form, false);
-        showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
-        return;
-      }
-      user = recovery.user;
-    }
-
-    const payload = {
-      user_id: user?.id || null,
+    const seekerProfileFields = {
       name,
       email,
       birth_date: value("birth"),
@@ -210,13 +178,46 @@
       source_path: window.location.pathname
     };
 
-    const { error: profileError } = await supabaseClient.from("seeker_profiles").insert(payload);
-    setBusy(form, false);
+    // public.handle_new_profile() (a trigger on auth.users) creates the
+    // seeker_profiles row in the same transaction as the account, using
+    // this metadata - see supabase-schema.sql. If it fails, signUp()
+    // itself fails and no account is left behind, so there's nothing
+    // left for this client to insert on the normal path.
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: Object.assign({ role: "seeker" }, seekerProfileFields)
+      }
+    });
 
-    if (profileError) {
-      console.error(profileError);
-      showMessage("formMessage", "アカウントは作成されましたが、プロフィール保存に失敗しました。" + (profileError.message ? "（" + profileError.message + "）" : ""), true);
+    if (authError && !looksAlreadyRegisteredError(authError)) {
+      setBusy(form, false);
+      console.error(authError);
+      showMessage("formMessage", registrationErrorMessage(authError), true);
       return;
+    }
+
+    if ((authError && looksAlreadyRegisteredError(authError)) || isDuplicateSignup(authData)) {
+      // A pre-existing orphaned account (registered before this trigger
+      // existed) may still have no profile row - recover it here.
+      const recovery = await tryRecoverOrphanedAccount(email, password, "seeker_profiles");
+      if (!recovery || recovery.profileExists) {
+        setBusy(form, false);
+        showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
+        return;
+      }
+      const { error: profileError } = await supabaseClient
+        .from("seeker_profiles")
+        .insert(Object.assign({ user_id: recovery.user.id }, seekerProfileFields));
+      setBusy(form, false);
+      if (profileError) {
+        console.error(profileError);
+        showMessage("formMessage", "アカウントは作成されましたが、プロフィール保存に失敗しました。" + (profileError.message ? "（" + profileError.message + "）" : ""), true);
+        return;
+      }
+    } else {
+      setBusy(form, false);
     }
 
     showMessage("formMessage", "\u767b\u9332\u304c\u5b8c\u4e86\u3057\u307e\u3057\u305f\u3002\u30ed\u30b0\u30a4\u30f3\u753b\u9762\u3078\u79fb\u52d5\u3057\u307e\u3059\u3002", false);
@@ -251,42 +252,7 @@
     const email = value("email");
     const contactName = value("name");
     const facilityName = value("facilityName");
-
-    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          role: "employer",
-          name: contactName,
-          facility_name: facilityName
-        }
-      }
-    });
-
-    let user = authData?.user || null;
-    let recoveredSession = null;
-
-    if (authError && !looksAlreadyRegisteredError(authError)) {
-      setBusy(form, false);
-      console.error(authError);
-      showMessage("formMessage", registrationErrorMessage(authError), true);
-      return;
-    }
-
-    if ((authError && looksAlreadyRegisteredError(authError)) || isDuplicateSignup(authData)) {
-      const recovery = await tryRecoverOrphanedAccount(email, password, "employer_profiles");
-      if (!recovery || recovery.profileExists) {
-        setBusy(form, false);
-        showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
-        return;
-      }
-      user = recovery.user;
-      recoveredSession = recovery.session;
-    }
-
-    const payload = {
-      user_id: user?.id || null,
+    const employerProfileFields = {
       contact_name: contactName,
       position: value("position"),
       facility_name: facilityName,
@@ -300,13 +266,49 @@
       source_path: window.location.pathname
     };
 
-    const { error: profileError } = await supabaseClient.from("employer_profiles").insert(payload);
-    setBusy(form, false);
+    // public.handle_new_profile() (a trigger on auth.users) creates the
+    // employer_profiles row in the same transaction as the account, using
+    // this metadata - see supabase-schema.sql. If it fails, signUp()
+    // itself fails and no account is left behind, so there's nothing
+    // left for this client to insert on the normal path.
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: {
+        data: Object.assign({ role: "employer" }, employerProfileFields)
+      }
+    });
 
-    if (profileError) {
-      console.error(profileError);
-      showMessage("formMessage", "アカウントは作成されましたが、施設情報を保存できませんでした。再ログイン後も表示されない場合は運営者へお問い合わせください。", true);
+    let recoveredSession = null;
+
+    if (authError && !looksAlreadyRegisteredError(authError)) {
+      setBusy(form, false);
+      console.error(authError);
+      showMessage("formMessage", registrationErrorMessage(authError), true);
       return;
+    }
+
+    if ((authError && looksAlreadyRegisteredError(authError)) || isDuplicateSignup(authData)) {
+      // A pre-existing orphaned account (registered before this trigger
+      // existed) may still have no profile row - recover it here.
+      const recovery = await tryRecoverOrphanedAccount(email, password, "employer_profiles");
+      if (!recovery || recovery.profileExists) {
+        setBusy(form, false);
+        showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
+        return;
+      }
+      recoveredSession = recovery.session;
+      const { error: profileError } = await supabaseClient
+        .from("employer_profiles")
+        .insert(Object.assign({ user_id: recovery.user.id }, employerProfileFields));
+      setBusy(form, false);
+      if (profileError) {
+        console.error(profileError);
+        showMessage("formMessage", "アカウントは作成されましたが、施設情報を保存できませんでした。再ログイン後も表示されない場合は運営者へお問い合わせください。", true);
+        return;
+      }
+    } else {
+      setBusy(form, false);
     }
 
     const hasSession = Boolean(authData?.session || recoveredSession);
