@@ -100,7 +100,35 @@
     return Boolean(authData?.user) && Array.isArray(authData.user.identities) && authData.user.identities.length === 0;
   }
 
+  function looksAlreadyRegisteredError(error) {
+    const raw = String(error?.message || "").toLowerCase();
+    return raw.includes("already registered") || raw.includes("already exists") || raw.includes("user already");
+  }
+
   const ALREADY_REGISTERED_MESSAGE = "このメールアドレスはすでに登録されています。ログインしてください。";
+
+  // signUp() creates the Supabase Auth account before the profile row is
+  // ever inserted. If that profile insert then fails (network blip, RLS
+  // hiccup, etc.), the account is left stranded: the email is now "already
+  // registered" so the form can't be resubmitted, but there's no profile
+  // for login to find either. When a duplicate-email signup is detected,
+  // try signing in with the same credentials the user just submitted - if
+  // that succeeds and no profile exists yet, it's very likely their own
+  // orphaned account, so let the caller create the profile now instead of
+  // dead-ending. If a profile already exists, this really is an existing
+  // account and we sign back out immediately (this form must not silently
+  // log someone into their existing dashboard).
+  async function tryRecoverOrphanedAccount(email, password, profileTable) {
+    const signInResult = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (signInResult.error || !signInResult.data?.user) return null;
+    const user = signInResult.data.user;
+    const existing = await supabaseClient.from(profileTable).select("id").eq("user_id", user.id).limit(1).maybeSingle();
+    if (existing.data) {
+      await supabaseClient.auth.signOut();
+      return { user, profileExists: true, session: null };
+    }
+    return { user, profileExists: false, session: signInResult.data.session };
+  }
 
   function registrationErrorMessage(error) {
     const raw = String(error?.message || "").toLowerCase();
@@ -148,21 +176,27 @@
       }
     });
 
-    if (authError) {
+    let user = authData?.user || null;
+
+    if (authError && !looksAlreadyRegisteredError(authError)) {
       setBusy(form, false);
       console.error(authError);
       showMessage("formMessage", registrationErrorMessage(authError), true);
       return;
     }
 
-    if (isDuplicateSignup(authData)) {
-      setBusy(form, false);
-      showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
-      return;
+    if ((authError && looksAlreadyRegisteredError(authError)) || isDuplicateSignup(authData)) {
+      const recovery = await tryRecoverOrphanedAccount(email, password, "seeker_profiles");
+      if (!recovery || recovery.profileExists) {
+        setBusy(form, false);
+        showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
+        return;
+      }
+      user = recovery.user;
     }
 
     const payload = {
-      user_id: authData.user?.id || null,
+      user_id: user?.id || null,
       name,
       email,
       birth_date: value("birth"),
@@ -230,21 +264,29 @@
       }
     });
 
-    if (authError) {
+    let user = authData?.user || null;
+    let recoveredSession = null;
+
+    if (authError && !looksAlreadyRegisteredError(authError)) {
       setBusy(form, false);
       console.error(authError);
       showMessage("formMessage", registrationErrorMessage(authError), true);
       return;
     }
 
-    if (isDuplicateSignup(authData)) {
-      setBusy(form, false);
-      showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
-      return;
+    if ((authError && looksAlreadyRegisteredError(authError)) || isDuplicateSignup(authData)) {
+      const recovery = await tryRecoverOrphanedAccount(email, password, "employer_profiles");
+      if (!recovery || recovery.profileExists) {
+        setBusy(form, false);
+        showMessage("formMessage", ALREADY_REGISTERED_MESSAGE, true);
+        return;
+      }
+      user = recovery.user;
+      recoveredSession = recovery.session;
     }
 
     const payload = {
-      user_id: authData.user?.id || null,
+      user_id: user?.id || null,
       contact_name: contactName,
       position: value("position"),
       facility_name: facilityName,
@@ -267,7 +309,7 @@
       return;
     }
 
-    const hasSession = Boolean(authData.session);
+    const hasSession = Boolean(authData?.session || recoveredSession);
     showMessage("formMessage", hasSession ? "登録が完了しました。求人作成画面へ移動します。" : "登録が完了しました。メール確認後にログインしてください。", false);
     setTimeout(function () {
       window.location.href = hasSession ? "employer-job-new.html?registered=1" : "login.html?role=employer&registered=1";
