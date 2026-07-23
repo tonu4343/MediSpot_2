@@ -176,34 +176,47 @@
     .seeker-footer .footer-support span { display: block; margin-top: 6px; color: var(--muted); font-size: 11.5px; font-weight: 700; }
     .seeker-footer .footer-support .support-phone { margin-top: 4px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
     .seeker-footer .copyright { grid-column: 1 / -1; margin: 8px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 11px; font-weight: 700; }
-    @media (max-width: 960px) { .seeker-footer { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    @media (max-width: 640px) { .seeker-footer { grid-template-columns: 1fr; } }
 
-    @media (max-width: 1180px) { .recent-jobs-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    @media (max-width: 960px) {
+    /* Responsive breakpoint scale: 1200 / 992 / 768 / 576.
+       The hero's row layout (fixed-width photo + stats panel next to
+       flexible heading text) needs ~900px of content width to look
+       right - between 992-1180px that used to be squeezed into a
+       hero-inner width of only ~650-820px, forcing the heading into an
+       unreadably narrow wrapped column. Moving the hero's row->column
+       switch up to 1200px skips that cramped range entirely, while the
+       sidebar (which doesn't have the same squeeze problem) still
+       collapses at the narrower 992px. */
+    @media (max-width: 1200px) {
+      .seeker-hero { flex-direction: column; align-items: stretch; min-height: 0; }
+      .seeker-hero-text { max-width: none; flex: 1 1 auto; order: 2; }
+      .seeker-hero-graphic { order: 1; flex-direction: column; align-items: stretch; gap: 14px; }
+      .seeker-hero-graphic::before, .seeker-hero-cross, .seeker-hero-photo-shadow { display: none; }
+      .seeker-hero-photo { width: 100%; height: 220px; flex: none; }
+      .hero-stats-panel { width: auto; }
+      .seeker-hero-stats { grid-auto-flow: column; grid-template-columns: repeat(3,1fr); }
+      .recent-jobs-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 992px) {
       .dash-body { grid-template-columns: 1fr; }
       .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
       .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
       .side-nav a { white-space: nowrap; }
       .side-nav a .nav-badge, .side-nav a .nav-soon { display: none; }
       .support-card { display: none; }
-      .seeker-hero { flex-direction: column; align-items: stretch; min-height: 0; }
-      .seeker-hero-text { max-width: none; order: 2; }
-      .seeker-hero-graphic { order: 1; flex-direction: column; align-items: stretch; gap: 14px; }
-      .seeker-hero-graphic::before, .seeker-hero-cross, .seeker-hero-photo-shadow { display: none; }
-      .seeker-hero-photo { width: 100%; height: 220px; }
-      .hero-stats-panel { width: auto; }
-      .seeker-hero-stats { grid-auto-flow: column; grid-template-columns: repeat(3,1fr); }
       .row-2col { grid-template-columns: minmax(0,1fr); }
+      .recent-jobs-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .seeker-footer { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 768px) {
       .quick-search-grid { grid-template-columns: 1fr 1fr; }
       .quick-search-grid .btn { grid-column: 1 / -1; }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 576px) {
       .dash-main { padding: 20px 14px 48px; }
       .seeker-hero-stats { grid-auto-flow: row; grid-template-columns: 1fr; }
       .quick-search-grid { grid-template-columns: 1fr; }
-      .recent-jobs-grid { grid-template-columns: 1fr 1fr; }
       .job-slide { flex-basis: 220px; }
+      .seeker-footer { grid-template-columns: 1fr; }
     }
   </style>
 </head>
