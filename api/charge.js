@@ -89,7 +89,17 @@ module.exports = async function handler(req, res) {
   }
 
   // 4) Charge pay.jp for exactly the amount stored on the invoice.
+  // pay.jp has no documented idempotency-key support (unlike Stripe), so a
+  // retry of this whole request is a brand new charge attempt as far as
+  // pay.jp is concerned. The one thing standing between that and a real
+  // duplicate charge is knowing FOR CERTAIN whether the first attempt's
+  // charge call actually failed, versus merely never telling us the
+  // answer (network drop / timeout talking to pay.jp). Only a confirmed
+  // rejection from pay.jp itself is allowed to unlock the invoice
+  // (payment_status back to 決済エラー) for a safe retry; anything
+  // ambiguous leaves it locked at 決済処理中 from step 3.
   let chargeResult;
+  let confirmedRejection = false;
   try {
     const chargeResponse = await fetch("https://api.pay.jp/v1/charges", {
       method: "POST",
@@ -101,20 +111,44 @@ module.exports = async function handler(req, res) {
         amount: String(invoice.total_amount),
         currency: "jpy",
         card: cardToken,
-        description: "Medi Job 成功報酬 (invoice " + invoice.id + ")"
+        description: "Medi Job 成功報酬 (invoice " + invoice.id + ")",
+        "metadata[invoice_id]": String(invoice.id)
       }).toString()
     });
     chargeResult = await chargeResponse.json();
     if (!chargeResponse.ok || !chargeResult || chargeResult.paid !== true) {
+      // pay.jp answered clearly: this charge did not go through.
+      confirmedRejection = true;
       throw new Error((chargeResult && chargeResult.error && chargeResult.error.message) || "決済に失敗しました。");
     }
   } catch (error) {
-    await fetch(SUPABASE_URL + "/rest/v1/hire_invoices?id=eq." + encodeURIComponent(invoiceId), {
-      method: "PATCH",
-      headers: serviceHeaders,
-      body: JSON.stringify({ payment_status: "決済エラー" })
+    if (confirmedRejection) {
+      await fetch(SUPABASE_URL + "/rest/v1/hire_invoices?id=eq." + encodeURIComponent(invoiceId), {
+        method: "PATCH",
+        headers: serviceHeaders,
+        body: JSON.stringify({ payment_status: "決済エラー" })
+      });
+      res.status(402).json({ success: false, retryable: true, message: error.message || "決済に失敗しました。" });
+      return;
+    }
+
+    // We asked pay.jp to charge the card but never got a definitive
+    // answer back (network/timeout failure talking to pay.jp, or an
+    // unparsable response) - the card may or may not have been charged.
+    // Leave the invoice locked at 決済処理中 instead of reverting to
+    // 決済エラー, so it can't be immediately retried into a real
+    // duplicate charge. This needs a human to check pay.jp's dashboard
+    // (metadata.invoice_id above) and reconcile manually.
+    console.error(
+      "Unknown pay.jp charge outcome for invoice " + invoiceId +
+      " - leaving locked at 決済処理中 for manual review.",
+      error
+    );
+    res.status(202).json({
+      success: false,
+      retryable: false,
+      message: "決済状況を確認できませんでした。安全のため今すぐの再決済はお控えください。しばらくしてから状態をご確認いただくか、サポートまでお問い合わせください。"
     });
-    res.status(402).json({ success: false, message: error.message || "決済に失敗しました。" });
     return;
   }
 

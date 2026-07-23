@@ -346,6 +346,14 @@
             closePayModal();
             showSuccessToast(result.message || "お支払いが完了しました。");
             load().catch(function (error) { console.error(error); });
+          } else if (result.retryable === false) {
+            // Payment outcome is unclear (e.g. pay.jp didn't respond) - do not
+            // leave the modal open inviting an immediate retry that could
+            // become a real second charge. Close it and refresh the list so
+            // the invoice's actual (locked) status is what the user sees.
+            closePayModal();
+            window.alert(result.message || "決済状況を確認できませんでした。しばらくしてから状態をご確認ください。");
+            load().catch(function (error) { console.error(error); });
           } else {
             showPayError(result.message || "決済に失敗しました。");
           }
