@@ -3027,3 +3027,66 @@ body.profession-modal-open { overflow: hidden; }
   }
 }
 
+/* Dashboard-style headers (seeker/employer/admin) share the marketing
+   .site-header class but must never wrap onto a second line the way the
+   marketing nav-links are designed to - brand + user actions have no
+   sensible 2-line layout here, so shrink them instead so everything
+   always stays on one row. */
+.site-header.seeker-topbar,
+.site-header.dash-topbar {
+  flex-wrap: nowrap;
+}
+.site-header.seeker-topbar .brand,
+.site-header.dash-topbar .brand {
+  min-width: 0;
+  flex-shrink: 1;
+  overflow: hidden;
+}
+.site-header.seeker-topbar .brand-text,
+.site-header.dash-topbar .brand-text {
+  min-width: 0;
+  overflow: hidden;
+}
+.site-header.seeker-topbar .brand strong,
+.site-header.dash-topbar .brand strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .site-header.seeker-topbar,
+  .site-header.dash-topbar {
+    gap: 10px;
+    padding: 10px 14px;
+  }
+  .site-header.seeker-topbar .seeker-topbar-right,
+  .site-header.dash-topbar .dash-topbar-right {
+    gap: 8px;
+  }
+  .site-header.seeker-topbar .brand-mark,
+  .site-header.dash-topbar .brand-mark {
+    width: 32px;
+    height: 40px;
+  }
+  .site-header.seeker-topbar .brand strong,
+  .site-header.dash-topbar .brand strong {
+    font-size: 15px;
+  }
+  .site-header.seeker-topbar .brand small,
+  .site-header.dash-topbar .brand small {
+    display: none;
+  }
+  .site-header.seeker-topbar .seeker-user strong {
+    display: none;
+  }
+  .site-header.dash-topbar .dash-user-text {
+    display: none;
+  }
+  .site-header.seeker-topbar .logout-btn,
+  .site-header.dash-topbar .dash-logout {
+    padding: 0 10px;
+    font-size: 11px;
+  }
+}
+
