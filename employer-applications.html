@@ -176,8 +176,9 @@
         }
         button.disabled = true;
         button.textContent = "開始しています…";
-        const r = await client.from("seeker_applications").update({ status: "screening" }).eq("id", id).eq("employer_id", user.id).select().single();
-        if (r.error) {
+        const rpcResult = await client.rpc("employer_update_application_status", { p_application_id: id, p_status: "screening" });
+        const r = rpcResult.error ? rpcResult : await client.from("seeker_applications").select("*").eq("id", id).maybeSingle();
+        if (r.error || !r.data) {
           console.error(r.error);
           button.disabled = false;
           button.textContent = "選考を開始";

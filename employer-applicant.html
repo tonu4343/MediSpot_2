@@ -181,7 +181,7 @@
         const button = document.getElementById("startSelectionButton");
         if (!supabaseClient || !currentUser) { location.href = "application-chat.html?id=" + encodeURIComponent(appId); return; }
         button.disabled = true; button.textContent = "開始しています…";
-        const result = await supabaseClient.from("seeker_applications").update({ status: "screening" }).eq("id", appId).eq("employer_id", currentUser.id).select().single();
+        const result = await supabaseClient.rpc("employer_update_application_status", { p_application_id: appId, p_status: "screening" });
         if (result.error) { console.error(result.error); button.disabled = false; button.textContent = "選考を開始"; message("選考を開始できませんでした。", true); return; }
         location.href = "application-chat.html?id=" + encodeURIComponent(appId);
       }

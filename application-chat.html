@@ -93,6 +93,20 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
   function show(text, error) { notice.className = 'notice ' + (error ? 'error' : 'show'); notice.textContent = text; }
   function isPreview() { return local && user && String(user.id).includes('preview'); }
 
+  // Employer-driven status changes go through a locked-down RPC that only
+  // ever touches status/interview_at/work_start_at, instead of a raw
+  // table update (which would let any column on the row be rewritten).
+  async function applyEmployerStatusUpdate(fields) {
+    const rpcResult = await client.rpc('employer_update_application_status', {
+      p_application_id: id,
+      p_status: fields.status,
+      p_interview_at: fields.interview_at || null,
+      p_work_start_at: fields.work_start_at || null
+    });
+    if (rpcResult.error) return { error: rpcResult.error };
+    return client.from('seeker_applications').select('*').eq('id', id).maybeSingle();
+  }
+
   async function updateStatus(fields, confirmMsg, successMsg) {
     if (confirmMsg && !window.confirm(confirmMsg)) return;
     if (isPreview() || !client) {
@@ -101,12 +115,14 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
       show('プレビュー上で更新しました。', false);
       return;
     }
-    const r = await client.from('seeker_applications').update(fields).eq('id', id).eq('employer_id', user.id).select().single();
-    if (r.error) { console.error(r.error); show('状態を更新できませんでした。', true); return; }
+    const r = await applyEmployerStatusUpdate(fields);
+    if (r.error || !r.data) { console.error(r.error); show('状態を更新できませんでした。', true); return; }
     setup(r.data);
     show(successMsg, false);
   }
-  // withdraw/cancel are written by the seeker too, so they can't filter on employer_id.
+  // withdraw is seeker-only; cancel can come from either role. The seeker
+  // path still updates its own row directly (user_id-filtered); the
+  // employer path goes through the same restricted RPC as updateStatus().
   async function updateStatusAsParticipant(fields, confirmMsg, successMsg) {
     if (confirmMsg && !window.confirm(confirmMsg)) return;
     if (isPreview() || !client) {
@@ -115,8 +131,14 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
       show('プレビュー上で更新しました。', false);
       return;
     }
-    const filterColumn = role === 'employer' ? 'employer_id' : 'user_id';
-    const r = await client.from('seeker_applications').update(fields).eq('id', id).eq(filterColumn, user.id).select().single();
+    if (role === 'employer') {
+      const r = await applyEmployerStatusUpdate(fields);
+      if (r.error || !r.data) { console.error(r.error); show('状態を更新できませんでした。', true); return; }
+      setup(r.data);
+      show(successMsg, false);
+      return;
+    }
+    const r = await client.from('seeker_applications').update(fields).eq('id', id).eq('user_id', user.id).select().single();
     if (r.error) { console.error(r.error); show('状態を更新できませんでした。', true); return; }
     setup(r.data);
     show(successMsg, false);
