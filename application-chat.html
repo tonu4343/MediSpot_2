@@ -152,6 +152,13 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
   function rejectApplicant() { updateStatus({ status: 'rejected' }, 'この応募者を不採用にします。よろしいですか？', '不採用として更新しました。'); }
   function withdrawApplication() { updateStatusAsParticipant({ status: 'withdrawn' }, 'この応募を辞退します。よろしいですか？', '辞退として更新しました。'); }
   function cancelHire() { updateStatusAsParticipant({ status: 'cancelled' }, 'この採用をキャンセルします。よろしいですか？', 'キャンセルとして更新しました。'); }
+  async function cancelSelectionStart() {
+    if (!window.confirm('選考の開始をキャンセルします。応募したばかりの状態に戻ります。よろしいですか？')) return;
+    if (isPreview() || !client) { location.href = 'employer-applications.html'; return; }
+    const r = await applyEmployerStatusUpdate({ status: 'applied' });
+    if (r.error || !r.data) { console.error(r.error); show('状態を更新できませんでした。', true); return; }
+    location.href = 'employer-applications.html';
+  }
 
   function confirmInterview(event) {
     event.preventDefault();
@@ -172,7 +179,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     const status = app.status;
     const parts = [];
     if (role === 'employer') {
-      if (status === 'screening') parts.push(actionButton('startInterviewButton', '面接を調整する'));
+      if (status === 'screening') { parts.push(actionButton('startInterviewButton', '面接を調整する')); parts.push(actionButton('cancelStartButton', '選考開始をキャンセル', 'btn-danger-outline')); }
       if (status === 'interview_scheduling') parts.push('<form class="date-form" id="interviewForm"><input type="datetime-local" id="interviewAtInput" required><button class="btn btn-green" type="submit">面接日時を確定する</button></form>');
       if (status === 'interview_scheduled') parts.push(actionButton('offerButton', '内定を提示する'));
       if (status === 'offer_pending') parts.push(actionButton('hireButton', '採用を確定する'));
@@ -215,6 +222,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     wireAction('rejectButton', rejectApplicant);
     wireAction('withdrawButton', withdrawApplication);
     wireAction('cancelButton', cancelHire);
+    wireAction('cancelStartButton', cancelSelectionStart);
     const interviewForm = document.getElementById('interviewForm'); if (interviewForm) interviewForm.addEventListener('submit', confirmInterview);
     const workStartForm = document.getElementById('workStartForm'); if (workStartForm) workStartForm.addEventListener('submit', confirmWorkStart);
 
