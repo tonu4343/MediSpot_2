@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メッセージ | Medi Job</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#005bac"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="icon" href="assets/icon-32.png">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.employer-dashboard-page { color: var(--ink); background: #f5f9fc; }
+    .site-header.dash-topbar { position: sticky; top: 0; z-index: 70; }
+    .dash-topbar-right { display: flex; align-items: center; gap: 18px; }
+    .bell-btn { position: relative; display: grid; place-items: center; width: 40px; height: 40px; color: var(--blue-dark); background: #f1f7fc; border: 1px solid var(--line); border-radius: 50%; cursor: pointer; }
+    .bell-btn svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .bell-btn .dot { position: absolute; top: 5px; right: 6px; min-width: 15px; height: 15px; padding: 0 3px; display: none; place-items: center; color: #fff; background: #e6483c; border: 2px solid #fff; border-radius: 999px; font-size: 9px; font-weight: 900; }
+    .bell-btn .dot:not([hidden]) { display: grid; }
+    .dash-user { display: flex; align-items: center; gap: 10px; }
+    .dash-user-text { text-align: right; line-height: 1.4; }
+    .dash-user-text small { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .dash-user-text strong { display: block; color: #14324c; font-size: 13px; font-weight: 900; }
+    .dash-logout { min-height: 34px; padding: 0 14px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer; }
+
+    .dash-body { display: grid; grid-template-columns: 232px 1fr; align-items: start; }
+    .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
+    .side-nav { display: grid; gap: 3px; margin: 0 0 18px; padding: 0; list-style: none; }
+    .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; transition: background .15s ease, color .15s ease; }
+    .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
+    .side-nav a.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); box-shadow: 0 8px 18px rgba(0,91,172,.24); }
+    .side-nav a .nav-badge { margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px; display: none; place-items: center; color: #fff; background: #e6483c; border-radius: 999px; font-size: 10px; font-weight: 900; }
+    .side-nav a .nav-badge:not([hidden]) { display: grid; }
+    .side-nav a.active .nav-badge { background: rgba(255,255,255,.28); }
+    .side-nav a .nav-soon { margin-left: auto; color: var(--muted); background: #eef3f7; border-radius: 999px; padding: 1px 7px; font-size: 9.5px; font-weight: 900; }
+
+    .support-card { margin: 0 2px; padding: 15px; background: #f7fbff; border: 1px solid var(--line); border-radius: 12px; }
+    .support-card strong { display: block; color: var(--blue-dark); font-size: 12.5px; font-weight: 900; }
+    .support-card span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .support-card .support-phone { margin-top: 8px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .support-card a.support-cta { display: block; margin-top: 10px; text-align: center; min-height: 32px; line-height: 32px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; }
+
+    .dash-main { min-width: 0; max-width: 880px; margin: 0 auto; padding: 26px clamp(16px,2.6vw,34px) 60px; }
+    .page-head { margin-bottom: 20px; }
+    .page-head h1 { margin: 0; color: var(--blue-dark); font-size: clamp(24px,3vw,32px); font-weight: 900; }
+    .page-head p { margin: 8px 0 0; color: var(--muted); font-size: 13.5px; font-weight: 700; }
+
+    .inbox-list { display: grid; gap: 10px; }
+    .inbox-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,63,125,.05); transition: transform .15s ease, box-shadow .15s ease; }
+    .inbox-item:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(0,63,125,.12); }
+    .inbox-item.unread { border-color: #b9dbf5; background: #f7fbff; }
+    .inbox-avatar { position: relative; flex: 0 0 42px; display: grid; place-items: center; width: 42px; height: 42px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 15px; font-weight: 900; }
+    .inbox-avatar .unread-dot { position: absolute; top: -2px; right: -2px; width: 11px; height: 11px; background: #e6483c; border: 2px solid #fff; border-radius: 50%; }
+    .inbox-body { flex: 1; min-width: 0; }
+    .inbox-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .inbox-top strong { color: var(--blue-dark); font-size: 14.5px; font-weight: 900; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inbox-top time { flex: 0 0 auto; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .inbox-job { margin: 2px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .inbox-schedule { margin: 4px 0 0; color: var(--blue-dark); font-size: 12px; font-weight: 900; }
+    .inbox-preview { margin: 6px 0 0; color: #4e6578; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inbox-item.unread .inbox-preview { color: #14324c; font-weight: 900; }
+    .inbox-status { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 24px; margin-top: 2px; padding: 0 10px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 999px; font-size: 10.5px; font-weight: 900; white-space: nowrap; }
+    .inbox-status.status-selection { color: #b5670f; background: #fff6e9; border-color: #f2cf9c; }
+    .inbox-status.status-hired { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
+    .inbox-status.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
+    .inbox-status.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
+    .inbox-status.status-rejected { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
+    .panel-empty { padding: 40px 20px; text-align: center; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 12px; font-size: 13px; font-weight: 800; }
+
+    @media (max-width: 960px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+      .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .side-nav a { white-space: nowrap; }
+      .side-nav a .nav-badge, .side-nav a .nav-soon { display: none; }
+      .support-card { display: none; }
+    }
+    @media (max-width: 640px) {
+      .dash-main { padding: 20px 14px 48px; }
+      .inbox-top { flex-direction: column; align-items: flex-start; gap: 2px; }
+    }
+  </style>
+</head>
+<body class="employer-dashboard-page">
+  <header class="site-header dash-topbar">
+    <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
+    <div class="dash-topbar-right">
+      <button class="bell-btn" type="button" aria-label="通知"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="dot" id="unreadBadge" hidden>0</span></button>
+      <div class="dash-user"><div class="dash-user-text"><small id="topbarFacility">読み込み中</small><strong id="topbarContact">-</strong></div></div>
+      <button class="dash-logout" id="logoutButton" type="button">ログアウト</button>
+    </div>
+  </header>
+
+  <div class="dash-body">
+    <aside class="dash-sidebar" aria-label="求人者メニュー">
+      <ul class="side-nav">
+        <li><a href="employer-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a></li>
+        <li><a href="employer-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>応募者管理</a></li>
+        <li><a class="active" href="employer-messages.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden>0</span></a></li>
+        <li><a href="employer-hires.html"><svg viewBox="0 0 24 24"><path d="M9 12.5l2 2 4-4.5"/><circle cx="12" cy="12" r="9"/></svg>採用管理</a></li>
+        <li><a href="employer-profile.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>施設情報</a></li>
+        <li><a href="employer-payments.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>料金・お支払い</a></li>
+        <li><a href="employer-analytics.html"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="3" width="3" height="17"/></svg>分析・レポート</a></li>
+        <li><a href="employer-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>設定</a></li>
+        <li><a href="employer-help.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 0 1 5.2.9c0 1.8-2.6 2.1-2.6 4.1"/><line x1="12" y1="17.3" x2="12" y2="17.31"/></svg>ヘルプ・お問い合わせ</a></li>
+        <li id="adminNavItem" hidden><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z"/></svg>管理者画面</a></li>
+      </ul>
+
+      <div class="support-card">
+        <strong>サポート窓口</strong>
+        <span>平日 9:00〜18:00</span>
+        <span class="support-phone">03-1234-5678</span>
+        <a class="support-cta" href="employer-help.html">お問い合わせ</a>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <section class="page-head">
+        <h1>メッセージ</h1>
+        <p>応募者とのやり取りを確認できます。選考の連絡や面接日程、勤務条件のすり合わせはここから行えます。</p>
+      </section>
+
+      <section class="inbox-list" id="inboxList"><div class="panel-empty">メッセージを読み込んでいます…</div></section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="account-guard.js"></script>
+  <script src="application-status.js"></script>
+  <script>
+    (function () {
+      const config = window.MEDISPOT_SUPABASE || {};
+      const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
+      const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
+      function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
+      function initial(name) { return (name || "求").trim().charAt(0).toUpperCase() || "求"; }
+      function formatTime(value) { return value ? new Date(value).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : ""; }
+      function formatInterviewAt(value) { return value ? new Date(value).toLocaleString("ja-JP", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : null; }
+      function formatWorkStartAt(value) { if (!value) return null; const parts = String(value).split("-").map(Number); const d = new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1); return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" }); }
+
+      function renderInbox(conversations) {
+        const list = document.getElementById("inboxList");
+        if (!conversations.length) { list.innerHTML = '<div class="panel-empty">まだメッセージはありません。選考を開始すると応募者とやり取りできます。</div>'; return; }
+        list.innerHTML = conversations.map(function (c) {
+          const unread = c.unreadCount > 0;
+          const preview = c.lastMessage ? esc(c.lastMessage.body) : "まだメッセージはありません。";
+          const time = c.lastMessage ? formatTime(c.lastMessage.created_at) : "";
+          const scheduleParts = [];
+          const interviewAt = formatInterviewAt(c.interview_at);
+          const workStartAt = formatWorkStartAt(c.work_start_at);
+          if (interviewAt) scheduleParts.push("面接日時：" + interviewAt);
+          if (workStartAt) scheduleParts.push("勤務開始日：" + workStartAt);
+          return '<a class="inbox-item' + (unread ? ' unread' : '') + '" href="application-chat.html?id=' + encodeURIComponent(c.id) + '">'
+            + '<span class="inbox-avatar">' + esc(initial(c.seeker_name)) + (unread ? '<span class="unread-dot"></span>' : '') + '</span>'
+            + '<span class="inbox-body">'
+              + '<span class="inbox-top"><strong>' + esc(c.seeker_name || "求職者") + '</strong><time>' + esc(time) + '</time></span>'
+              + '<p class="inbox-job">' + esc(c.job_title || "求人") + '</p>'
+              + (scheduleParts.length ? '<p class="inbox-schedule">' + esc(scheduleParts.join("　／　")) + '</p>' : '')
+              + '<p class="inbox-preview">' + preview + '</p>'
+            + '</span>'
+            + '<span class="inbox-status ' + window.MEDISPOT_STATUS.cssClass(c.status) + '">' + esc(window.MEDISPOT_STATUS.label(c.status)) + '</span>'
+          + '</a>';
+        }).join("");
+      }
+
+      async function load() {
+        if (!supabaseClient) { text("topbarFacility", "医療機関"); text("topbarContact", "ご担当者 様"); renderInbox([]); return; }
+        const sessionResult = await supabaseClient.auth.getSession();
+        const user = sessionResult.data.session?.user;
+        if (!user) { window.location.href = "login.html?role=employer"; return; }
+        if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, "employer"))) return;
+        const profileResult = await supabaseClient.from("employer_profiles").select("facility_name,contact_name,is_admin").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+        if (profileResult.error || !profileResult.data) { await supabaseClient.auth.signOut(); window.location.href = "login.html?role=employer&roleError=1"; return; }
+        text("topbarFacility", profileResult.data.facility_name || "医療機関");
+        text("topbarContact", (profileResult.data.contact_name || "ご担当者") + " 様");
+        const adminNavItem = document.getElementById("adminNavItem");
+        if (adminNavItem) adminNavItem.hidden = !profileResult.data.is_admin;
+
+        const appsResult = await supabaseClient.from("seeker_applications").select("id,job_title,seeker_name,status,interview_at,work_start_at").eq("employer_id", user.id).not("status", "in", "(" + window.MEDISPOT_STATUS.CLOSED.join(",") + ")");
+        const apps = appsResult.error ? [] : (appsResult.data || []);
+        if (!apps.length) { renderInbox([]); return; }
+
+        const appIds = apps.map(function (a) { return a.id; });
+        const messagesResult = await supabaseClient.from("application_messages").select("application_id,sender_id,body,created_at,read_at").in("application_id", appIds).order("created_at", { ascending: false });
+        const messages = messagesResult.error ? [] : (messagesResult.data || []);
+
+        const conversations = apps.map(function (app) {
+          const appMessages = messages.filter(function (m) { return m.application_id === app.id; });
+          const unreadCount = appMessages.filter(function (m) { return m.sender_id !== user.id && !m.read_at; }).length;
+          return Object.assign({}, app, { lastMessage: appMessages[0] || null, unreadCount: unreadCount });
+        });
+        conversations.sort(function (a, b) {
+          const aTime = a.lastMessage ? new Date(a.lastMessage.created_at).getTime() : 0;
+          const bTime = b.lastMessage ? new Date(b.lastMessage.created_at).getTime() : 0;
+          return bTime - aTime;
+        });
+        renderInbox(conversations);
+
+        const totalUnread = conversations.reduce(function (sum, c) { return sum + c.unreadCount; }, 0);
+        const badge = document.getElementById("unreadBadge");
+        const sideBadge = document.getElementById("sideMsgBadge");
+        if (totalUnread > 0) { badge.hidden = false; badge.textContent = String(totalUnread); sideBadge.hidden = false; sideBadge.textContent = String(totalUnread); }
+      }
+
+      document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
+      load().catch(function (error) { console.error(error); renderInbox([]); });
+    })();
+  </script>
+<script src="pwa-register.js"></script></body>
+</html>

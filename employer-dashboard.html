@@ -183,9 +183,9 @@
     <aside class="dash-sidebar" aria-label="求人者メニュー">
       <ul class="side-nav">
         <li><a class="active" href="employer-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a></li>
-        <li><a href="employer-dashboard.html#jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="employer-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
         <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>応募者管理</a></li>
-        <li><a href="employer-dashboard.html#messages"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden>0</span></a></li>
+        <li><a href="employer-messages.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden>0</span></a></li>
         <li><a href="employer-hires.html"><svg viewBox="0 0 24 24"><path d="M9 12.5l2 2 4-4.5"/><circle cx="12" cy="12" r="9"/></svg>採用管理</a></li>
         <li><a href="employer-profile.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>施設情報</a></li>
         <li><a href="employer-payments.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>料金・お支払い</a></li>
@@ -217,7 +217,7 @@
       <section class="stats-grid" aria-label="求人状況">
         <a class="stat-card c-blue" href="#jobs"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span></div><span class="label">掲載中の求人</span><strong id="openJobs">0</strong><small class="hint" id="openJobsHint">-</small></a>
         <a class="stat-card c-blue" href="employer-applications.html"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg></span></div><span class="label">応募者総数</span><strong id="totalApplicants">0</strong><small class="hint" id="totalApplicantsHint">-</small></a>
-        <a class="stat-card c-amber" href="employer-dashboard.html#messages"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span></div><span class="label">未読メッセージ</span><strong id="receivedMessages">0</strong><small class="hint">全体</small></a>
+        <a class="stat-card c-amber" href="employer-messages.html"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span></div><span class="label">未読メッセージ</span><strong id="receivedMessages">0</strong><small class="hint">全体</small></a>
         <a class="stat-card c-green" href="employer-hires.html"><div class="stat-top"><span class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-9.5-8.7C1 8.3 2.6 5 6 5c2 0 3.3 1.1 4 2.2C10.7 6.1 12 5 14 5c3.4 0 5 3.3 3.5 6.3C19 15.7 12 20 12 20z"/></svg></span></div><span class="label">採用成立数</span><strong id="hiredApplications">0</strong><small class="hint">累計</small></a>
       </section>
 
@@ -231,14 +231,14 @@
           </div>
         </article>
         <aside class="panel-card" id="messages">
-          <div class="section-title-row"><h2>最近のメッセージ</h2><a class="section-link" href="employer-applications.html">すべて見る ›</a></div>
+          <div class="section-title-row"><h2>最近のメッセージ</h2><a class="section-link" href="employer-messages.html">すべて見る ›</a></div>
           <div class="message-list" id="messageList"><div class="message-empty">メッセージを読み込んでいます…</div></div>
         </aside>
       </section>
 
       <section class="row-2col">
         <article class="panel-card" id="jobs">
-          <div class="section-title-row"><h2>掲載中の求人</h2><a class="section-link" href="employer-job-new.html">求人を新規作成 ›</a></div>
+          <div class="section-title-row"><h2>求人管理</h2><a class="section-link" href="employer-jobs.html">すべて見る ›</a></div>
           <div class="job-list" id="jobList"></div>
         </article>
         <aside class="panel-card">
@@ -305,8 +305,9 @@
         const openCount = items.filter(function (job) { return job.status !== "closed"; }).length;
         text("openJobs", String(openCount));
         text("openJobsHint", "募集中 " + openCount + "件");
-        if (!items.length) { document.getElementById("jobList").innerHTML = '<div class="job-empty"><strong>掲載中の求人はありません</strong><span>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</span><a class="btn btn-green" href="employer-job-new.html">新しい求人を作成</a></div>'; return; }
-        document.getElementById("jobList").innerHTML = items.map(function (job) {
+        const jobList = document.getElementById("jobList");
+        if (!items.length) { jobList.innerHTML = '<div class="job-empty"><strong>掲載中の求人はありません</strong><span>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</span><a class="btn btn-green" href="employer-job-new.html">新しい求人を作成</a></div>'; return; }
+        jobList.innerHTML = items.slice(0, 5).map(function (job) {
           const closed = job.status === "closed";
           const href = demo || !job.id ? "employer-job-new.html" : "employer-job-detail.html?id=" + encodeURIComponent(job.id);
           const applyCount = job.id ? (applications || []).filter(function (app) { return app.job_id === job.id; }).length : 0;
@@ -369,7 +370,7 @@
         else { renderMessages(messagesResult.data || [], applications); }
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
-      document.querySelector(".bell-btn").addEventListener("click", function () { window.location.href = "employer-applications.html"; });
+      document.querySelector(".bell-btn").addEventListener("click", function () { window.location.href = "employer-messages.html"; });
       loadDashboard().catch(function (error) { console.error(error); applyProfile(null); renderJobs([], []); renderStatusSummary([]); renderMessages([], []); });
     })();
   </script>
