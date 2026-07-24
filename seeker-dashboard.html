@@ -40,8 +40,6 @@
     .dash-main { width: 100%; min-width: 0; padding: 26px clamp(16px,2.6vw,34px) 60px; }
 
     .seeker-hero { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 410px; margin-bottom: 20px; padding: clamp(26px,3.6vw,42px); background: linear-gradient(130deg,#ffffff 0%,#f7fbff 52%,#f1fbf7 100%); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 26px 60px rgba(6,59,114,.1); }
-    .seeker-hero::before { content: ""; position: absolute; z-index: 0; right: -40px; top: -170px; width: 440px; height: 440px; border: 60px solid rgba(0,91,172,.05); border-radius: 50%; }
-    .seeker-hero::after { content: ""; position: absolute; z-index: 0; right: 300px; bottom: -40px; width: 90px; height: 90px; background: rgba(0,91,172,.07); border-radius: 50%; }
     .seeker-hero-graphic::before { content: ""; position: absolute; z-index: 1; right: 200px; top: 54%; width: 90px; height: 70px; background-image: radial-gradient(rgba(0,91,172,.24) 1.4px, transparent 1.4px); background-size: 12px 12px; opacity: .6; pointer-events: none; }
     .seeker-hero-photo-shadow { position: absolute; z-index: 0; left: 54px; bottom: 4px; width: 240px; height: 30px; background: radial-gradient(ellipse, rgba(6,59,114,.18), transparent 72%); pointer-events: none; }
     .seeker-hero-cross { position: absolute; z-index: 2; left: 232px; top: 118px; width: 18px; height: 18px; color: rgba(0,91,172,.5); pointer-events: none; }
@@ -71,8 +69,6 @@
     .hero-stat-card strong small { margin-left: 1px; font-size: 12px; font-weight: 800; }
     .hero-stat-chevron { flex: 0 0 auto; color: var(--muted); font-size: 17px; }
     .seeker-hero-photo { position: relative; z-index: 1; overflow: visible; flex: 0 0 clamp(320px,28vw,410px); width: clamp(320px,28vw,410px); height: 390px; align-self: flex-end; pointer-events: none; isolation: isolate; }
-    .seeker-hero-photo::before { content: ""; position: absolute; z-index: -1; width: 340px; height: 340px; left: 50%; top: 48%; transform: translate(-50%,-50%); border-radius: 50%; background: linear-gradient(145deg,rgba(222,246,255,.96),rgba(228,250,240,.82)); box-shadow: inset 0 0 0 1px rgba(190,225,240,.32); }
-    .seeker-hero-photo::after { content: ""; position: absolute; z-index: 2; right: 12px; bottom: 22px; width: 70px; height: 70px; border-radius: 50%; background: rgba(218,249,235,.78); }
     .seeker-hero-photo img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: saturate(.96) contrast(1.02); }
 
     .notice-banner { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding: 15px 20px; text-decoration: none; background: linear-gradient(105deg, #ecfff5, #eafaff); border: 1px solid #a8e6c1; border-radius: 12px; box-shadow: 0 14px 32px rgba(33,183,97,.1); }
@@ -193,9 +189,7 @@
       .seeker-hero-text { max-width: none; flex: 1 1 auto; order: 2; }
       .seeker-hero-graphic { order: 1; flex-direction: column; align-items: stretch; gap: 14px; }
       .seeker-hero-graphic::before, .seeker-hero-cross, .seeker-hero-photo-shadow { display: none; }
-      .seeker-hero-photo { width: 100%; height: 220px; flex: none; }
-      .seeker-hero-photo::before { width: 230px; height: 230px; }
-      .seeker-hero-photo::after { right: calc(50% - 150px); bottom: 8px; width: 46px; height: 46px; }
+      .seeker-hero-photo { width: 100%; height: 300px; flex: none; }
       .seeker-hero-photo img { object-fit: contain; }
       .hero-stats-panel { width: auto; }
       .seeker-hero-stats { grid-auto-flow: column; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -231,9 +225,7 @@
          keep every seeker-only grid constrained to the content track. */
       .seeker-hero { padding: 18px; gap: 14px; }
       .seeker-hero-graphic { gap: 10px; }
-      .seeker-hero-photo { height: 150px; }
-      .seeker-hero-photo::before { width: 160px; height: 160px; }
-      .seeker-hero-photo::after { right: calc(50% - 108px); width: 34px; height: 34px; }
+      .seeker-hero-photo { height: 230px; }
       .seeker-hero-text .eyebrow { margin-bottom: 8px; }
       .seeker-hero-text h1 { margin-bottom: 8px; }
       .seeker-hero-actions { margin-top: 14px; }
