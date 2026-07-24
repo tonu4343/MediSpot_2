@@ -226,6 +226,32 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 
   function actionButton(id, label, extraClass) { return '<button class="btn ' + (extraClass || 'btn-green') + '" id="' + id + '" type="button">' + label + '</button>'; }
 
+  function downloadInvoice() {
+    if (!currentInvoice || !application) return;
+    const methodLabel = currentInvoice.payment_method === 'card' ? 'カード払い' : '月末請求書払い';
+    const lines = [
+      '請求書',
+      '',
+      '請求先：' + (application.facility_name || '医療機関') + ' 様',
+      '発行日：' + new Date().toLocaleDateString('ja-JP'),
+      '',
+      '求職者：' + (application.seeker_name || '求職者'),
+      '求人：' + (application.job_title || '医療求人'),
+      '金額：3,300円（税込）',
+      '支払い方法：' + methodLabel,
+      '支払いステータス：' + (currentInvoice.payment_status || '未払い'),
+      '',
+      'Medical Spot Job'
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'invoice_' + currentInvoice.id + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   function buildActions(app) {
     const status = app.status;
     const parts = [];
@@ -235,6 +261,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
       if (status === 'hired') parts.push(actionButton('startWorkButton', '勤務を開始する'));
       if (status === 'working') parts.push(actionButton('completeButton', '完了にする'));
       if (currentInvoice && currentInvoice.payment_method === 'card' && (currentInvoice.payment_status === '未払い' || currentInvoice.payment_status === '決済エラー')) parts.push(actionButton('retryPayButton', 'カードでお支払いへ進む', 'btn-outline'));
+      if (currentInvoice) parts.push(actionButton('downloadInvoiceButton', '請求書をダウンロード', 'btn-outline'));
       if (window.MEDISPOT_STATUS.isPreHire(status)) parts.push(actionButton('rejectButton', '不採用にする', 'btn-danger-outline'));
       if (window.MEDISPOT_STATUS.isCancelable(status)) parts.push(actionButton('cancelButton', 'キャンセルする', 'btn-danger-outline'));
     } else {
@@ -271,6 +298,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     wireAction('startWorkButton', startWork);
     wireAction('completeButton', markCompleted);
     wireAction('retryPayButton', function () { if (currentInvoice) openPayModal(currentInvoice.id); });
+    wireAction('downloadInvoiceButton', downloadInvoice);
     wireAction('rejectButton', rejectApplicant);
     wireAction('withdrawButton', withdrawApplication);
     wireAction('cancelButton', cancelHire);

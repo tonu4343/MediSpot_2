@@ -59,6 +59,8 @@
     .table-empty { padding: 30px 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
     .method-pill { display: inline-flex; align-items: center; min-height: 22px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; color: #5b6270; background: #eef1f5; border: 1px solid #ccd3dd; }
     .method-pill.method-card { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
+    .invoice-download-btn { min-height: 30px; padding: 0 12px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; white-space: nowrap; cursor: pointer; }
+    .invoice-download-btn:hover { background: #eaf5ff; }
 
     .employer-footer { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) 1.1fr; gap: 28px; padding: 40px clamp(20px,5vw,64px) 18px; color: var(--ink); background: #fff; border-top: 1px solid var(--line); }
     .employer-footer .footer-brand p { max-width: 250px; margin: 12px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
@@ -143,8 +145,8 @@
         <div class="panel-head"><h2>請求履歴 <span class="count" id="invoiceCount"></span></h2></div>
         <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead><tr><th>求職者</th><th>求人</th><th>採用日</th><th>金額</th><th>支払い方法</th><th>支払いステータス</th></tr></thead>
-            <tbody id="invoiceTableBody"><tr><td colspan="6" class="table-empty">読み込んでいます…</td></tr></tbody>
+            <thead><tr><th>求職者</th><th>求人</th><th>採用日</th><th>金額</th><th>支払い方法</th><th>支払いステータス</th><th>操作</th></tr></thead>
+            <tbody id="invoiceTableBody"><tr><td colspan="7" class="table-empty">読み込んでいます…</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -202,12 +204,43 @@
 
       function methodLabel(method) { return method === "card" ? "カード払い" : "月末請求書"; }
 
+      let facilityName = "医療機関";
+      let invoiceRows = [];
+
+      function downloadInvoice(id) {
+        const row = invoiceRows.find(function (r) { return r.id === id; });
+        if (!row) return;
+        const lines = [
+          "請求書",
+          "",
+          "請求先：" + facilityName + " 様",
+          "発行日：" + new Date().toLocaleDateString("ja-JP"),
+          "",
+          "求職者：" + (row.seeker_name || "求職者"),
+          "求人：" + (row.job_title || "医療求人"),
+          "採用日：" + formatDate(row.created_at),
+          "金額：" + yen(row.total_amount) + "（税込）",
+          "支払い方法：" + methodLabel(row.payment_method),
+          "支払いステータス：" + (row.payment_status || "未払い"),
+          "",
+          "Medical Spot Job"
+        ];
+        const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "invoice_" + id + ".txt";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
       function renderInvoices(rows) {
+        invoiceRows = rows;
         const body = document.getElementById("invoiceTableBody");
         text("invoiceCount", rows.length ? "(" + rows.length + "件)" : "");
-        if (!rows.length) { body.innerHTML = '<tr><td colspan="6" class="table-empty">まだ採用成立による請求はありません。</td></tr>'; return; }
+        if (!rows.length) { body.innerHTML = '<tr><td colspan="7" class="table-empty">まだ採用成立による請求はありません。</td></tr>'; return; }
         body.innerHTML = rows.map(function (row) {
-          return "<tr><td class=\"name-cell\">" + esc(row.seeker_name || "求職者") + "</td><td>" + esc(row.job_title || "-") + "</td><td>" + esc(formatDate(row.created_at)) + "</td><td>" + yen(row.total_amount) + "</td><td><span class=\"method-pill" + (row.payment_method === "card" ? " method-card" : "") + "\">" + esc(methodLabel(row.payment_method)) + "</span></td><td><span class=\"status-pill " + statusClass(row.payment_status) + "\">" + esc(row.payment_status || "未払い") + "</span></td></tr>";
+          return "<tr><td class=\"name-cell\">" + esc(row.seeker_name || "求職者") + "</td><td>" + esc(row.job_title || "-") + "</td><td>" + esc(formatDate(row.created_at)) + "</td><td>" + yen(row.total_amount) + "</td><td><span class=\"method-pill" + (row.payment_method === "card" ? " method-card" : "") + "\">" + esc(methodLabel(row.payment_method)) + "</span></td><td><span class=\"status-pill " + statusClass(row.payment_status) + "\">" + esc(row.payment_status || "未払い") + "</span></td><td><button class=\"invoice-download-btn\" type=\"button\" data-id=\"" + esc(row.id) + "\">ダウンロード</button></td></tr>";
         }).join("");
       }
 
@@ -219,6 +252,7 @@
         if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, "employer"))) return;
         const profileResult = await supabaseClient.from("employer_profiles").select("facility_name,contact_name,is_admin").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
         const profile = profileResult.data || {};
+        facilityName = profile.facility_name || "医療機関";
         text("topbarFacility", profile.facility_name || "医療機関");
         text("topbarContact", (profile.contact_name || "ご担当者") + " 様");
         const adminNavItem = document.getElementById("adminNavItem");
@@ -231,6 +265,10 @@
         renderInvoices(invoices);
       }
 
+      document.getElementById("invoiceTableBody").addEventListener("click", function (event) {
+        const btn = event.target.closest(".invoice-download-btn");
+        if (btn) downloadInvoice(btn.dataset.id);
+      });
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
       load().catch(function (error) { console.error(error); renderSummary([]); renderInvoices([]); });
     })();
