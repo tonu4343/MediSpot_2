@@ -8,7 +8,8 @@
   <style>
     body.applicant-page { background: linear-gradient(180deg,#f3f9fd,#fff 55%,#f2faf7); color: var(--ink); }
     .main-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
-    .main-nav a { padding: 8px 0; }
+    .main-nav a { padding: 8px 0; border-bottom: 2px solid transparent; }
+    .main-nav a.active { color: var(--green-dark); border-bottom-color: var(--green-dark); }
     .detail-shell { width: min(980px,calc(100% - 40px)); margin: 0 auto; padding: 36px 0 72px; }
     .breadcrumb { display: flex; gap: 8px; margin-bottom: 18px; color: var(--muted); font-size: 13px; font-weight: 800; }
     .breadcrumb a { color: var(--blue); }
@@ -45,7 +46,7 @@
   </style>
 </head>
 <body class="applicant-page">
-  <header class="site-header"><a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><nav class="main-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">マイページ</a><a href="employer-job-new.html">求人を作成</a><a href="employer-jobs.html">掲載求人管理</a><a href="employer-applications.html">応募者管理</a></nav><div class="header-actions"><button class="btn btn-outline" id="logoutButton" type="button">ログアウト</button></div></header>
+  <header class="site-header"><a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a><nav class="main-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">マイページ</a><a href="employer-job-new.html">求人を作成</a><a href="employer-jobs.html">掲載求人管理</a><a class="active" href="employer-applications.html">応募者管理</a></nav><div class="header-actions"><button class="btn btn-outline" id="logoutButton" type="button">ログアウト</button></div></header>
   <main class="detail-shell">
     <div class="breadcrumb"><a href="employer-dashboard.html">求人者マイページ</a><span>›</span><a href="employer-applications.html">応募者管理</a><span>›</span><span>応募者プロフィール</span></div>
     <div class="page-status" id="pageStatus" role="status" aria-live="polite">応募者情報を読み込んでいます…</div>

@@ -8,7 +8,8 @@
   <style>
     body.applications-page { background: linear-gradient(180deg, #f4faff 0%, #ffffff 46%, #f2faf8 100%); color: var(--ink); }
     .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
-    .dashboard-nav a { padding: 8px 0; }
+    .dashboard-nav a { padding: 8px 0; border-bottom: 2px solid transparent; }
+    .dashboard-nav a.active { color: var(--green-dark); border-bottom-color: var(--green-dark); }
     .apps-shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 34px 0 72px; }
 
     .hero-card, .stat-card, .panel-card, .app-card, .empty { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 42px rgba(0,63,125,.09); }
@@ -81,7 +82,7 @@
 <body class="applications-page">
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人作成</a><a href="employer-jobs.html">求人管理</a><a href="employer-applications.html">応募者・メッセージ</a><a href="employer-profile.html">施設情報</a></nav>
+    <nav class="dashboard-nav" aria-label="求人者メニュー"><a href="employer-dashboard.html">ダッシュボード</a><a href="employer-job-new.html">求人作成</a><a href="employer-jobs.html">求人管理</a><a class="active" href="employer-applications.html">応募者・メッセージ</a><a href="employer-profile.html">施設情報</a></nav>
     <div class="header-actions"><button class="btn btn-outline" id="logoutButton" type="button">ログアウト</button></div>
   </header>
 

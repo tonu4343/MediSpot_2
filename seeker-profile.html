@@ -46,7 +46,8 @@
     .side-list b { display: grid; place-items: center; width: 34px; height: 34px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 50%; }
 
     .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
-    .dashboard-nav a { padding: 8px 0; }
+    .dashboard-nav a { padding: 8px 0; border-bottom: 2px solid transparent; }
+    .dashboard-nav a.active { color: var(--green-dark); border-bottom-color: var(--green-dark); }
     .header-actions { display: flex; align-items: center; gap: 12px; }
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
     @media (max-width: 920px) { .profile-layout, .page-heading { grid-template-columns: 1fr; } .side-stack { position: static; } .site-header { flex-wrap: wrap; } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
@@ -56,7 +57,7 @@
 <body class="profile-page">
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Medi Job home"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="dashboard-nav" aria-label="profile menu"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-dashboard.html#matchedJobs">おすすめ求人</a><a href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav>
+    <nav class="dashboard-nav" aria-label="profile menu"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-dashboard.html#matchedJobs">おすすめ求人</a><a class="active" href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav>
     <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
   </header>
 
