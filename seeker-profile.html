@@ -7,7 +7,26 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     body.profile-page { background: linear-gradient(180deg, #f4faff 0%, #ffffff 46%, #f2faf8 100%); color: var(--ink); }
-    .profile-shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 70px; }
+    .site-header.seeker-topbar { position: sticky; top: 0; z-index: 70; }
+    .seeker-topbar-right { display: flex; align-items: center; gap: 16px; }
+    .seeker-user { display: flex; align-items: center; gap: 9px; }
+    .seeker-avatar { display: grid; place-items: center; width: 32px; height: 32px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 12px; font-weight: 900; }
+    .seeker-user strong { color: #14324c; font-size: 13px; font-weight: 900; }
+
+    .dash-body { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: start; width: 100%; min-width: 0; }
+    .dash-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; padding: 18px 14px 24px; background: #fff; border-right: 1px solid var(--line); }
+    .side-nav { display: grid; gap: 3px; margin: 0 0 16px; padding: 0; list-style: none; }
+    .side-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #3c5266; border-radius: 9px; font-size: 13px; font-weight: 800; }
+    .side-nav a svg { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .side-nav a:hover { background: #f1f7fc; color: var(--blue-dark); }
+    .side-nav a.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); box-shadow: 0 8px 18px rgba(0,91,172,.24); }
+    .support-card { padding: 15px; background: #f7fbff; border: 1px solid var(--line); border-radius: 12px; }
+    .support-card strong { display: block; color: var(--blue-dark); font-size: 12.5px; font-weight: 900; }
+    .support-card span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .support-card .support-phone { margin-top: 8px; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
+    .support-card a.support-cta { display: block; margin-top: 10px; text-align: center; min-height: 32px; line-height: 32px; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; }
+
+    .profile-shell { width: 100%; min-width: 0; padding: 26px clamp(16px,2.6vw,34px) 60px; }
     .page-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 22px; align-items: end; margin-bottom: 24px; }
     .page-heading h1 { margin: 0; color: var(--blue-dark); font-size: clamp(34px, 4vw, 52px); line-height: 1.2; font-weight: 900; }
     .page-heading p { margin: 12px 0 0; color: var(--muted); font-size: 16px; font-weight: 800; }
@@ -45,21 +64,48 @@
     .side-list li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; color: #243b53; font-size: 14px; font-weight: 800; }
     .side-list b { display: grid; place-items: center; width: 34px; height: 34px; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; border-radius: 50%; }
 
-    .dashboard-nav { display: flex; justify-content: center; gap: clamp(12px, 2vw, 28px); flex: 1; color: var(--blue-dark); font-size: 13px; font-weight: 900; white-space: nowrap; }
-    .dashboard-nav a { padding: 8px 0; border-bottom: 2px solid transparent; }
-    .dashboard-nav a.active { color: var(--green-dark); border-bottom-color: var(--green-dark); }
     .header-actions { display: flex; align-items: center; gap: 12px; }
     .logout-btn { min-height: 38px; padding: 0 18px; color: var(--blue); background: #fff; border: 1px solid var(--blue); border-radius: 8px; font-size: 13px; font-weight: 900; cursor: pointer; }
-    @media (max-width: 920px) { .profile-layout, .page-heading { grid-template-columns: 1fr; } .side-stack { position: static; } .site-header { flex-wrap: wrap; } .dashboard-nav { order: 3; width: 100%; overflow-x: auto; justify-content: flex-start; } }
-    @media (max-width: 640px) { .profile-shell { width: calc(100% - 28px); padding-top: 28px; } .form-grid { grid-template-columns: 1fr; } .save-btn, .back-btn { width: 100%; justify-content: center; } }
+    @media (max-width: 960px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { position: static; height: auto; display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; }
+      .side-nav { display: flex; gap: 4px; margin: 0; flex: 0 0 auto; }
+      .side-nav a { white-space: nowrap; }
+      .support-card { display: none; }
+    }
+    @media (max-width: 920px) { .profile-layout, .page-heading { grid-template-columns: 1fr; } .side-stack { position: static; } }
+    @media (max-width: 640px) { .profile-shell { padding: 20px 14px 48px; } .form-grid { grid-template-columns: 1fr; } .save-btn, .back-btn { width: 100%; justify-content: center; } }
   </style>
 </head>
-<body class="profile-page">
-  <header class="site-header">
+<body class="profile-page dashboard-page">
+  <header class="site-header seeker-topbar">
     <a class="brand" href="index.html" aria-label="Medi Job home"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="dashboard-nav" aria-label="profile menu"><a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-dashboard.html#matchedJobs">おすすめ求人</a><a class="active" href="seeker-profile.html">プロフィール</a><a href="seeker-resume.html">履歴書</a></nav>
-    <div class="header-actions"><button class="logout-btn" id="logoutButton" type="button">ログアウト</button></div>
+    <div class="seeker-topbar-right">
+      <div class="seeker-user"><span class="seeker-avatar" id="topbarInitial">求</span><strong id="topbarName">読み込み中</strong></div>
+      <button class="logout-btn" id="logoutButton" type="button">ログアウト</button>
+    </div>
   </header>
+
+  <div class="dash-body">
+    <aside class="dash-sidebar" aria-label="求職者メニュー">
+      <ul class="side-nav">
+        <li><a href="seeker-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
+        <li><a href="seeker-jobs.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/></svg>求人を探す</a></li>
+        <li><a href="seeker-applications.html"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>応募管理</a></li>
+        <li><a href="seeker-messages.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ</a></li>
+        <li><a class="active" href="seeker-profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>プロフィール</a></li>
+        <li><a href="seeker-resume.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>履歴書・職務経歴書</a></li>
+        <li><a href="seeker-notices.html"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>お知らせ</a></li>
+        <li><a href="seeker-settings.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>設定</a></li>
+      </ul>
+
+      <div class="support-card">
+        <strong>サポート窓口</strong>
+        <span>平日 9:00〜18:00</span>
+        <span class="support-phone">03-1234-5678</span>
+        <a class="support-cta" href="#">お問い合わせ</a>
+      </div>
+    </aside>
 
   <main class="profile-shell">
     <div class="page-heading">
@@ -113,6 +159,7 @@
       </aside>
     </div>
   </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
@@ -208,6 +255,8 @@
         renderSkills(el('license').value, checkedSkills, otherText);
         el('saveStatus').textContent = currentProfile.license ? '登録済み' : '未完了';
         updateAgeHint();
+        el('topbarName').textContent = currentProfile.name || '求職者';
+        el('topbarInitial').textContent = (currentProfile.name || '求').trim().charAt(0).toUpperCase() || '求';
       }
       async function load() { renderSkills(el('license').value, []); if (!supabaseClient) { message('Supabase URL と anon key を設定してください。', true); return; } const session = await supabaseClient.auth.getSession(); currentUser = session.data.session?.user; if (!currentUser) { window.location.href = 'login.html?role=seeker'; return; } if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, currentUser, 'seeker'))) return; const result = await supabaseClient.from('seeker_profiles').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (result.error || !result.data) { window.location.href = 'login.html?role=seeker&roleError=1'; return; } fill(result.data, currentUser); }
       el('license').addEventListener('change', function () {

@@ -215,8 +215,12 @@
       const session = await supabaseClient.auth.getSession(); const user = session.data.session?.user;
       if (!user && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') { location.href = 'login.html?role=seeker'; return; }
       if (user) {
-        const profileResult = await supabaseClient.from('seeker_profiles').select('id').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+        const profileResult = await supabaseClient.from('seeker_profiles').select('id,name').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
         if (profileResult.error || !profileResult.data) { await supabaseClient.auth.signOut(); location.href = 'login.html?role=seeker&roleError=1'; return; }
+        const topbarName = document.getElementById('topbarName');
+        const topbarInitial = document.getElementById('topbarInitial');
+        if (topbarName) topbarName.textContent = profileResult.data.name || '求職者';
+        if (topbarInitial) topbarInitial.textContent = (profileResult.data.name || '求').trim().charAt(0).toUpperCase() || '求';
         const r = await supabaseClient.from('seeker_applications').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
         if (!r.error) apps = r.data || [];
       }
