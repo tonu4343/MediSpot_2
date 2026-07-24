@@ -63,6 +63,18 @@
     .status-select.status-paid { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
     .status-select.status-error { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
     .status-select.status-refunded { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
+    .method-pill, .issue-pill { display: inline-flex; align-items: center; min-height: 24px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; }
+    .method-pill.card { color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; }
+    .method-pill.invoice { color: #8a590c; background: #fff7e8; border: 1px solid #f0cf98; }
+    .monthly-toolbar { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px; }
+    .monthly-toolbar label { display: grid; gap: 7px; color: #3c5266; font-size: 12px; font-weight: 900; }
+    .monthly-toolbar input { min-height: 40px; padding: 0 12px; color: #37566f; background: #fbfdff; border: 1px solid #cfdfe9; border-radius: 8px; font: inherit; }
+    .monthly-note { margin: 12px 0 18px; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
+    .issue-pill.pending { color: #8a590c; background: #fff7e8; border: 1px solid #f0cf98; }
+    .issue-pill.issued { color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; }
+    .issue-action { min-height: 34px; padding: 0 12px; color: #fff; background: #2b3646; border: 0; border-radius: 7px; font-size: 11.5px; font-weight: 900; cursor: pointer; white-space: nowrap; }
+    .issue-action:hover { background: #46566d; }
+    .issue-action:disabled { opacity: .55; cursor: wait; }
     .table-empty { padding: 30px 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
 
     .admin-footer-light { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 26px clamp(20px,5vw,64px); background: #fff; border-top: 1px solid var(--line); }
@@ -138,8 +150,22 @@
         </div>
         <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead><tr><th>求人者（施設）</th><th>求職者</th><th>応募求人</th><th>採用日</th><th>金額</th><th>支払いステータス</th></tr></thead>
-            <tbody id="invoiceTableBody"><tr><td colspan="6" class="table-empty">読み込んでいます…</td></tr></tbody>
+            <thead><tr><th>求人者（施設）</th><th>求職者</th><th>応募求人</th><th>採用日</th><th>金額</th><th>支払い方法</th><th>支払いステータス</th></tr></thead>
+            <tbody id="invoiceTableBody"><tr><td colspan="7" class="table-empty">読み込んでいます…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel-card" id="monthlyInvoices">
+        <div class="monthly-toolbar">
+          <div class="panel-head" style="margin-bottom:0"><h2>月次請求書発行</h2></div>
+          <label>対象月<input id="billingMonth" type="month"></label>
+        </div>
+        <p class="monthly-note">「請求書払い」を選択した採用を、施設ごと・月ごとにまとめて請求書として発行します。</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>対象月</th><th>求人者（施設）</th><th>採用人数</th><th>小計</th><th>消費税</th><th>合計金額</th><th>発行状況</th><th>操作</th></tr></thead>
+            <tbody id="monthlyInvoiceBody"><tr><td colspan="8" class="table-empty">読み込んでいます…</td></tr></tbody>
           </table>
         </div>
       </section>
@@ -160,12 +186,19 @@
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
       const STATUSES = ["未払い", "決済処理中", "支払い済み", "決済エラー", "返金済み"];
       let invoices = [];
+      let monthlyGroups = new Map();
 
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
       function initial(name) { return (name || "管").trim().charAt(0).toUpperCase() || "管"; }
       function yen(amount) { return (amount || 0).toLocaleString("ja-JP") + "円"; }
       function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
+      function formatMonth(value) {
+        if (!value || !/^\d{4}-\d{2}$/.test(value)) return "-";
+        const parts = value.split("-");
+        return parts[0] + "年" + Number(parts[1]) + "月";
+      }
+      function methodLabel(method) { return method === "card" ? "カード" : "請求書払い"; }
       function statusClass(status) {
         return status === "決済処理中" ? "status-processing"
           : status === "支払い済み" ? "status-paid"
@@ -200,10 +233,11 @@
       function renderInvoices(rows) {
         const body = document.getElementById("invoiceTableBody");
         text("invoiceTableCount", rows.length ? "(" + rows.length + "件)" : "");
-        if (!rows.length) { body.innerHTML = '<tr><td colspan="6" class="table-empty">該当する請求がありません。</td></tr>'; return; }
+        if (!rows.length) { body.innerHTML = '<tr><td colspan="7" class="table-empty">該当する請求がありません。</td></tr>'; return; }
         body.innerHTML = rows.map(function (row) {
           return "<tr><td class=\"name-cell\">" + esc(row.facility_name || "-") + "</td><td>" + esc(row.seeker_name || "求職者") + "</td><td>" + esc(row.job_title || "-") + "</td><td>" + esc(formatDate(row.created_at)) + "</td><td>" + yen(row.total_amount) +
-            "</td><td><select class=\"status-select " + statusClass(row.payment_status) + "\" data-id=\"" + esc(row.id) + "\">" + statusOptions(row.payment_status) + "</select></td></tr>";
+            "</td><td><span class=\"method-pill " + (row.payment_method === "card" ? "card" : "invoice") + "\">" + methodLabel(row.payment_method) +
+            "</span></td><td><select class=\"status-select " + statusClass(row.payment_status) + "\" data-id=\"" + esc(row.id) + "\">" + statusOptions(row.payment_status) + "</select></td></tr>";
         }).join("");
       }
 
@@ -213,9 +247,109 @@
         return rows.filter(function (row) { return fields.some(function (field) { return String(row[field] || "").toLowerCase().includes(q); }); });
       }
 
+      function buildMonthlyGroups(rows, month) {
+        const groups = new Map();
+        rows.filter(function (row) {
+          return row.payment_method === "invoice" && String(row.created_at || "").slice(0, 7) === month;
+        }).forEach(function (row) {
+          const key = (row.employer_id || "unknown") + "|" + (row.facility_name || "施設名未登録");
+          if (!groups.has(key)) groups.set(key, {
+            key: key,
+            month: month,
+            employerId: row.employer_id,
+            facilityName: row.facility_name || "施設名未登録",
+            rows: []
+          });
+          groups.get(key).rows.push(row);
+        });
+        groups.forEach(function (group) {
+          const billing = computeBilling(group.rows);
+          group.count = billing.count;
+          group.subtotal = billing.subtotal;
+          group.tax = billing.tax;
+          group.total = billing.total;
+          group.issued = group.rows.length > 0 && group.rows.every(function (row) { return !!row.invoice_issued_at; });
+          group.issuedAt = group.rows.reduce(function (latest, row) {
+            return row.invoice_issued_at && (!latest || row.invoice_issued_at > latest) ? row.invoice_issued_at : latest;
+          }, "");
+        });
+        return groups;
+      }
+
+      function renderMonthlyInvoices() {
+        const body = document.getElementById("monthlyInvoiceBody");
+        const month = document.getElementById("billingMonth").value;
+        monthlyGroups = buildMonthlyGroups(invoices, month);
+        const groups = Array.from(monthlyGroups.values()).sort(function (a, b) { return a.facilityName.localeCompare(b.facilityName, "ja"); });
+        if (!groups.length) {
+          body.innerHTML = '<tr><td colspan="8" class="table-empty">この月の請求書払いはありません。</td></tr>';
+          return;
+        }
+        body.innerHTML = groups.map(function (group) {
+          const issueStatus = group.issued
+            ? '<span class="issue-pill issued">発行済み</span>'
+            : '<span class="issue-pill pending">未発行</span>';
+          return "<tr><td>" + esc(formatMonth(group.month)) + "</td><td class=\"name-cell\">" + esc(group.facilityName) +
+            "</td><td>" + group.count + "名</td><td>" + yen(group.subtotal) + "</td><td>" + yen(group.tax) +
+            "</td><td>" + yen(group.total) + "</td><td>" + issueStatus +
+            "</td><td><button class=\"issue-action\" type=\"button\" data-group=\"" + esc(group.key) + "\">" +
+            (group.issued ? "再表示" : "請求書を発行") + "</button></td></tr>";
+        }).join("");
+      }
+
+      function invoiceDueDate(month) {
+        const parts = month.split("-").map(Number);
+        const due = new Date(parts[0], parts[1] + 1, 0);
+        return due.getFullYear() + "年" + (due.getMonth() + 1) + "月" + due.getDate() + "日";
+      }
+
+      function printMonthlyInvoice(group) {
+        const popup = window.open("", "_blank", "width=900,height=760");
+        if (!popup) { window.alert("請求書を表示するため、ポップアップを許可してください。"); return; }
+        const number = "MSJ-" + group.month.replace("-", "") + "-" + String(group.employerId || "000000").replace(/-/g, "").slice(-6).toUpperCase();
+        const detailRows = group.rows.map(function (row) {
+          return "<tr><td>" + esc(formatDate(row.created_at)) + "</td><td>" + esc(row.job_title || "-") +
+            "</td><td>" + esc(row.seeker_name || "求職者") + "</td><td class=\"num\">" + yen(row.total_amount) + "</td></tr>";
+        }).join("");
+        popup.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>請求書 ' + esc(number) +
+          '</title><style>body{margin:0;padding:48px;color:#17324d;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}header{display:flex;justify-content:space-between;gap:32px;border-bottom:3px solid #005bac;padding-bottom:22px}h1{margin:0;color:#005bac;font-size:30px}.meta{text-align:right;font-size:13px;line-height:1.8}.to{margin:34px 0;font-size:20px;font-weight:800}.total{padding:20px;background:#f1f7fc;border-radius:10px;font-size:15px}.total strong{display:block;margin-top:6px;color:#005bac;font-size:28px}table{width:100%;margin-top:28px;border-collapse:collapse;font-size:13px}th,td{padding:11px;border-bottom:1px solid #dce8f0;text-align:left}th{background:#f5f9fc}.num{text-align:right}.summary{margin:24px 0 0 auto;width:320px}.summary div{display:flex;justify-content:space-between;padding:8px 0}.summary .grand{border-top:2px solid #005bac;color:#005bac;font-size:18px;font-weight:900}.foot{margin-top:44px;color:#63788a;font-size:12px;line-height:1.8}@media print{body{padding:24px}.no-print{display:none}}</style></head><body><header><div><h1>請求書</h1><p>MEDICAL SPOT JOB</p></div><div class="meta">請求書番号：' +
+          esc(number) + '<br>対象月：' + esc(formatMonth(group.month)) + '<br>お支払期限：' + esc(invoiceDueDate(group.month)) +
+          '</div></header><div class="to">' + esc(group.facilityName) + ' 御中</div><div class="total">下記のとおりご請求申し上げます。<strong>' +
+          yen(group.total) + '（税込）</strong></div><table><thead><tr><th>採用日</th><th>求人</th><th>求職者</th><th class="num">金額</th></tr></thead><tbody>' +
+          detailRows + '</tbody></table><div class="summary"><div><span>小計</span><span>' + yen(group.subtotal) +
+          '</span></div><div><span>消費税</span><span>' + yen(group.tax) + '</span></div><div class="grand"><span>合計</span><span>' +
+          yen(group.total) + '</span></div></div><p class="foot">発行元：MEDICAL SPOT JOB 運営事務局<br>本請求書は「請求書払い」を選択した採用分を月次でまとめたものです。</p><button class="no-print" onclick="window.print()">印刷・PDF保存</button></body></html>');
+        popup.document.close();
+      }
+
       document.getElementById("invoiceSearch").addEventListener("input", function (event) {
         const filtered = applyFilter(invoices, event.target.value, ["facility_name", "seeker_name", "job_title"]);
         renderInvoices(filtered);
+      });
+
+      document.getElementById("billingMonth").value = new Date().toISOString().slice(0, 7);
+      document.getElementById("billingMonth").addEventListener("change", renderMonthlyInvoices);
+
+      document.getElementById("monthlyInvoiceBody").addEventListener("click", async function (event) {
+        const button = event.target.closest(".issue-action");
+        if (!button) return;
+        const group = monthlyGroups.get(button.getAttribute("data-group"));
+        if (!group) return;
+        if (group.issued || !supabaseClient) { printMonthlyInvoice(group); return; }
+
+        button.disabled = true;
+        const issuedAt = new Date().toISOString();
+        const ids = group.rows.map(function (row) { return row.id; });
+        const result = await supabaseClient.from("hire_invoices").update({ invoice_issued_at: issuedAt }).in("id", ids);
+        button.disabled = false;
+        if (result.error) {
+          console.error(result.error);
+          window.alert("請求書の発行状況を保存できませんでした。データベース更新をご確認ください。");
+          return;
+        }
+        group.rows.forEach(function (row) { row.invoice_issued_at = issuedAt; });
+        renderMonthlyInvoices();
+        printMonthlyInvoice(group);
       });
 
       document.getElementById("invoiceTableBody").addEventListener("change", async function (event) {
@@ -235,7 +369,7 @@
       });
 
       async function load() {
-        if (!supabaseClient) { text("topbarName", "運営管理者"); text("topbarInitial", "管"); renderSummary([]); renderInvoices([]); return; }
+        if (!supabaseClient) { text("topbarName", "運営管理者"); text("topbarInitial", "管"); renderSummary([]); renderInvoices([]); renderMonthlyInvoices(); return; }
         const sessionResult = await supabaseClient.auth.getSession();
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "admin-login.html"; return; }
@@ -245,15 +379,20 @@
         text("topbarName", adminName);
         text("topbarInitial", initial(adminName));
 
-        const invoicesResult = await supabaseClient.from("hire_invoices").select("id,facility_name,seeker_name,job_title,total_amount,payment_status,created_at").order("created_at", { ascending: false });
+        let invoicesResult = await supabaseClient.from("hire_invoices").select("id,employer_id,facility_name,seeker_name,job_title,total_amount,payment_method,payment_status,invoice_issued_at,created_at").order("created_at", { ascending: false });
+        if (invoicesResult.error && String(invoicesResult.error.message || "").includes("invoice_issued_at")) {
+          console.warn("Monthly invoice migration is not applied yet; loading payments without issuance state.");
+          invoicesResult = await supabaseClient.from("hire_invoices").select("id,employer_id,facility_name,seeker_name,job_title,total_amount,payment_method,payment_status,created_at").order("created_at", { ascending: false });
+        }
         invoices = invoicesResult.error ? [] : (invoicesResult.data || []);
         if (invoicesResult.error) console.error(invoicesResult.error);
         renderSummary(invoices);
         renderInvoices(invoices);
+        renderMonthlyInvoices();
       }
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "admin-login.html"; });
-      load().catch(function (error) { console.error(error); renderSummary([]); renderInvoices([]); });
+      load().catch(function (error) { console.error(error); renderSummary([]); renderInvoices([]); renderMonthlyInvoices(); });
     })();
   </script>
 <script src="pwa-register.js"></script></body>

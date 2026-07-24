@@ -1243,3 +1243,10 @@ end;
 $$;
 
 grant execute on function public.employer_update_application_status(uuid, text, text) to authenticated;
+
+-- Monthly bundled invoice issuance from admin-payments.html.
+alter table public.hire_invoices
+  add column if not exists invoice_issued_at timestamptz;
+
+create index if not exists hire_invoices_invoice_issued_at_idx
+  on public.hire_invoices(invoice_issued_at);
