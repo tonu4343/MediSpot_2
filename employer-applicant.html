@@ -26,6 +26,8 @@
     .status-badge.status-rejected { color: #b3261e; background: #fdecea; border-color: #f3b6b0; }
     .panel-card { padding: clamp(22px,4vw,32px); margin-bottom: 20px; }
     .panel-card h2 { margin: 0 0 16px; color: var(--blue-dark); font-size: 20px; font-weight: 900; }
+    .panel-title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .panel-title-row h2 { margin: 0; }
     .detail-list { display: grid; grid-template-columns: 160px 1fr; gap: 12px 16px; margin: 0; }
     .detail-list dt { color: var(--muted); font-weight: 900; font-size: 13px; }
     .detail-list dd { margin: 0; color: #102338; font-weight: 800; overflow-wrap: anywhere; }
@@ -73,7 +75,7 @@
     </section>
 
     <section class="panel-card" id="resumePanel" style="display:none;">
-      <h2>履歴書・職務経歴書</h2>
+      <div class="panel-title-row"><h2>履歴書・職務経歴書</h2><button class="btn btn-outline" id="downloadResumeButton" type="button">PDFでダウンロード</button></div>
       <div style="margin-bottom:18px;"><dt style="color:var(--muted);font-weight:900;font-size:13px;">本人希望</dt><p class="pr-text" id="resumeWishes"></p></div>
       <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">学歴</span><ul class="entry-list" id="resumeEducation"></ul></div>
       <div style="margin-bottom:18px;"><span style="display:block;margin-bottom:8px;color:var(--muted);font-weight:900;font-size:13px;">免許・資格</span><ul class="entry-list" id="resumeLicenses"></ul></div>
@@ -89,8 +91,10 @@
     </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="supabase-config.js"></script><script src="account-guard.js"></script>
   <script src="application-status.js"></script>
+  <script src="resume-pdf.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
@@ -100,6 +104,8 @@
       const pageStatus = document.getElementById("pageStatus");
       let currentUser = null;
       let currentApp = null;
+      let currentProfile = null;
+      let currentResume = null;
 
       function message(text, error) { pageStatus.style.display = text ? "block" : "none"; pageStatus.className = "page-status" + (error ? " error" : ""); pageStatus.textContent = text; }
       function esc(value) { return String(value || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
@@ -143,6 +149,7 @@
 
       function fillProfile(profile) {
         if (!profile) return;
+        currentProfile = profile;
         text("profLicense", profile.license);
         text("profExperience", profile.experience_years);
         const age = computeAge(profile.birth_date);
@@ -166,6 +173,7 @@
 
       function fillResume(resume) {
         if (!resume) { document.getElementById("certificatePanel").style.display = ""; return; }
+        currentResume = resume;
         text("resumeWishes", resume.wishes);
         document.getElementById("resumeEducation").innerHTML = (resume.education || []).length ? resume.education.map(function (i) { return "<li><b>" + esc(i.date || "") + "</b>" + esc(i.detail || "") + "</li>"; }).join("") : '<li>登録がありません。</li>';
         document.getElementById("resumeLicenses").innerHTML = (resume.licenses || []).length ? resume.licenses.map(function (i) { return "<li><b>" + esc(i.date || "") + "</b>" + esc(i.detail || "") + "</li>"; }).join("") : '<li>登録がありません。</li>';
@@ -184,6 +192,30 @@
         const result = await supabaseClient.rpc("employer_update_application_status", { p_application_id: appId, p_status: "screening" });
         if (result.error) { console.error(result.error); button.disabled = false; button.textContent = "選考を開始"; message("選考を開始できませんでした。", true); return; }
         location.href = "application-chat.html?id=" + encodeURIComponent(appId);
+      }
+
+      async function downloadResumePdf() {
+        if (!currentResume || !window.MEDISPOT_RESUME_PDF) {
+          message("ダウンロードできる履歴書・職務経歴書がありません。", true);
+          return;
+        }
+        const button = document.getElementById("downloadResumeButton");
+        button.disabled = true;
+        button.textContent = "PDFを作成しています…";
+        try {
+          await window.MEDISPOT_RESUME_PDF.download({
+            name: currentApp?.seeker_name || currentProfile?.name || "求職者",
+            email: currentProfile?.email || "",
+            profile: currentProfile || {},
+            resume: currentResume
+          });
+        } catch (error) {
+          console.error(error);
+          message(error.message || "PDFを作成できませんでした。", true);
+        } finally {
+          button.disabled = false;
+          button.textContent = "PDFでダウンロード";
+        }
       }
 
       async function load() {
@@ -209,6 +241,7 @@
       }
 
       document.getElementById("startSelectionButton").addEventListener("click", startSelection);
+      document.getElementById("downloadResumeButton").addEventListener("click", downloadResumePdf);
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
       load().catch(function (error) { console.error(error); message("応募者情報の読み込み中にエラーが発生しました。", true); });
     })();
