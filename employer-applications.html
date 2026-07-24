@@ -34,8 +34,10 @@
     .notice.error { display: block; color: #9d2d24; background: #fff2f0; border: 1px solid #f1bbb5; }
 
     .apps-panel { padding: clamp(22px,3.4vw,28px); }
-    .section-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .section-title-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
     .section-title-row h2 { margin: 0; color: var(--blue-dark); font-size: 20px; font-weight: 900; }
+    .job-filter-select { min-height: 38px; padding: 0 34px 0 14px; color: #17354d; background: #fff; border: 1px solid #c9d9e4; border-radius: 8px; font-size: 12.5px; font-weight: 800; }
+    .job-filter-select:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0,91,172,.1); }
 
     .app-list { display: grid; gap: 14px; }
     .app-card { display: grid; grid-template-columns: 52px minmax(0,1fr) auto; gap: 18px; align-items: start; padding: 20px; transition: transform .18s ease, box-shadow .18s ease; }
@@ -100,7 +102,7 @@
     <div class="notice" id="notice"></div>
 
     <section class="panel-card apps-panel">
-      <div class="section-title-row"><h2>応募者一覧</h2></div>
+      <div class="section-title-row"><h2>応募者一覧</h2><select class="job-filter-select" id="jobFilterSelect" hidden></select></div>
       <div class="app-list" id="applicationList"><div class="empty"><strong>読み込み中</strong><span>応募情報を読み込んでいます…</span></div></div>
     </section>
   </main>
@@ -115,8 +117,11 @@
       const client = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
       const local = location.hostname === "localhost" || location.hostname === "127.0.0.1";
       const list = document.getElementById("applicationList");
+      const jobFilterSelect = document.getElementById("jobFilterSelect");
       let user = null;
       let apps = [];
+      let jobs = [];
+      let selectedJobId = new URLSearchParams(location.search).get("job") || "";
 
       const demo = [{
         id: "preview-app",
@@ -136,15 +141,30 @@
       // treats it as UTC midnight and can shift the day depending on the
       // browser's timezone, so build the local date explicitly.
       function formatWorkStartAt(value) { if (!value) return null; const parts = String(value).split("-").map(Number); const d = new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1); return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" }); }
+      function filteredApps() { return selectedJobId ? apps.filter(function (a) { return a.job_id === selectedJobId; }) : apps; }
+
       function counts() {
-        document.getElementById("newCount").textContent = apps.filter(function (a) { return a.status === "applied"; }).length;
-        document.getElementById("selectionCount").textContent = apps.filter(function (a) { return window.MEDISPOT_STATUS.isPreHire(a.status) && a.status !== "applied"; }).length;
-        document.getElementById("hiredCount").textContent = apps.filter(function (a) { return window.MEDISPOT_STATUS.isHiredOrLater(a.status); }).length;
+        const scoped = filteredApps();
+        document.getElementById("newCount").textContent = scoped.filter(function (a) { return a.status === "applied"; }).length;
+        document.getElementById("selectionCount").textContent = scoped.filter(function (a) { return window.MEDISPOT_STATUS.isPreHire(a.status) && a.status !== "applied"; }).length;
+        document.getElementById("hiredCount").textContent = scoped.filter(function (a) { return window.MEDISPOT_STATUS.isHiredOrLater(a.status); }).length;
+      }
+
+      function populateJobFilter() {
+        if (!jobs.length) { jobFilterSelect.hidden = true; return; }
+        const counted = jobs.map(function (job) { return { job: job, count: apps.filter(function (a) { return a.job_id === job.id; }).length }; });
+        jobFilterSelect.innerHTML = '<option value="">すべての求人（' + apps.length + '件）</option>' + counted.map(function (entry) {
+          return '<option value="' + esc(entry.job.id) + '">' + esc(entry.job.title || "医療求人") + '（' + entry.count + '件）</option>';
+        }).join("");
+        jobFilterSelect.value = selectedJobId && counted.some(function (entry) { return entry.job.id === selectedJobId; }) ? selectedJobId : "";
+        selectedJobId = jobFilterSelect.value;
+        jobFilterSelect.hidden = false;
       }
 
       function render() {
         counts();
-        list.innerHTML = apps.length ? apps.map(function (a) {
+        const scoped = filteredApps();
+        list.innerHTML = scoped.length ? scoped.map(function (a) {
           const fresh = a.status === "applied";
           const scheduleParts = [];
           const interviewAt = formatInterviewAt(a.interview_at);
@@ -162,7 +182,7 @@
             + '<div class="actions"><a class="btn btn-outline" href="employer-applicant.html?id=' + encodeURIComponent(a.id) + '">プロフィールを見る</a>'
             + (fresh ? '<button class="btn btn-green start-selection" data-id="' + esc(a.id) + '" type="button">選考を開始</button>' : '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>')
             + '</div></article>';
-        }).join("") : '<div class="empty"><strong>まだ応募者はいません</strong><span>求人への応募が届くと、ここに表示されます。</span></div>';
+        }).join("") : (selectedJobId ? '<div class="empty"><strong>この求人への応募はまだありません</strong><span>別の求人を選択するか、「すべての求人」に戻ってご確認ください。</span></div>' : '<div class="empty"><strong>まだ応募者はいません</strong><span>求人への応募が届くと、ここに表示されます。</span></div>');
         document.querySelectorAll(".start-selection").forEach(function (btn) { btn.addEventListener("click", function () { start(btn.dataset.id, btn); }); });
       }
 
@@ -200,10 +220,7 @@
           return;
         }
         if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(client, user, "employer"))) return;
-        const jobFilter = new URLSearchParams(location.search).get("job");
-        let q = client.from("seeker_applications").select("*").eq("employer_id", user.id).order("created_at", { ascending: false });
-        if (jobFilter) q = q.eq("job_id", jobFilter);
-        const r = await q;
+        const r = await client.from("seeker_applications").select("*").eq("employer_id", user.id).order("created_at", { ascending: false });
         if (r.error) {
           console.error(r.error);
           const n = document.getElementById("notice");
@@ -213,8 +230,20 @@
         } else {
           apps = r.data || [];
         }
+        const jobsResult = await client.from("jobs").select("id,title").eq("employer_id", user.id).order("created_at", { ascending: false });
+        jobs = jobsResult.error ? [] : (jobsResult.data || []);
+        if (jobsResult.error) console.error(jobsResult.error);
+        populateJobFilter();
         render();
       }
+
+      jobFilterSelect.addEventListener("change", function () {
+        selectedJobId = jobFilterSelect.value;
+        const url = new URL(location.href);
+        if (selectedJobId) url.searchParams.set("job", selectedJobId); else url.searchParams.delete("job");
+        history.replaceState(null, "", url);
+        render();
+      });
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (client) await client.auth.signOut(); location.href = "login.html"; });
       load().catch(function (e) { console.error(e); list.innerHTML = '<div class="empty"><strong>読み込みエラー</strong><span>応募者情報を読み込めませんでした。</span></div>'; });
