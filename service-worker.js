@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'medi-job-v5';
+const CACHE_VERSION = 'medi-job-v6';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 
 const PRECACHE_URLS = [
