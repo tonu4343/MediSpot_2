@@ -31,6 +31,21 @@
   const pinIcon = '<svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/></svg>';
   const clockIcon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.3 2"/></svg>';
   async function logoutWire() { const btn = document.getElementById('logoutButton'); if (!btn) return; btn.addEventListener('click', async () => { if (supabaseClient) await supabaseClient.auth.signOut(); location.href='login.html'; }); }
+  // Pages like seeker-jobs.html are browsable without logging in, so this
+  // just fills the sidebar topbar when a session exists and leaves the
+  // default placeholder text otherwise - no redirect either way.
+  async function topbarWire() {
+    const nameEl = document.getElementById('topbarName');
+    if (!nameEl || !supabaseClient) return;
+    const session = await supabaseClient.auth.getSession();
+    const user = session.data.session?.user;
+    if (!user) return;
+    const profileResult = await supabaseClient.from('seeker_profiles').select('name').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).maybeSingle();
+    const name = profileResult.data?.name;
+    nameEl.textContent = name || '求職者';
+    const initialEl = document.getElementById('topbarInitial');
+    if (initialEl) initialEl.textContent = (name || '求').trim().charAt(0).toUpperCase() || '求';
+  }
   function card(job) {
     const title = esc(job.title || job.category || t.medicalJob);
     const href = 'job-detail.html?id=' + encodeURIComponent(job.id);
@@ -244,5 +259,5 @@
       return '<article class="job-card"><div class="job-card-main"><span class="status ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span><h3>' + esc(a.job_title || t.appJob) + '</h3><p class="job-facility">' + esc(a.facility_name || t.facility) + '</p><dl class="app-detail-list">' + details + '</dl></div><div class="job-actions"><a class="btn btn-outline" href="job-detail.html?id=' + encodeURIComponent(a.job_id || '') + '">' + t.detail + '</a>' + (canChat ? '<a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ</a>' : chatHint) + '</div></article>';
     }).join('') : '<div class="panel">' + t.noApps + '</div>';
   }
-  logoutWire(); loadJobsPage(); loadDetailPage(); loadApplicationsPage();
+  logoutWire(); topbarWire(); loadJobsPage(); loadDetailPage(); loadApplicationsPage();
 })();
