@@ -40,12 +40,6 @@
     .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
     .panel-head h2 { margin: 0; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
 
-    .price-explainer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; background: linear-gradient(120deg,#eaf5ff 0%,#f2fbf6 100%); border: 1px solid var(--line); border-radius: 12px; }
-    .price-explainer .label { color: var(--blue-dark); font-size: 13.5px; font-weight: 900; }
-    .price-explainer .amount { color: var(--blue-dark); font-size: 26px; font-weight: 900; }
-    .price-explainer .amount small { margin-left: 4px; color: var(--muted); font-size: 12px; font-weight: 800; }
-    .price-explainer .note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 12.5px; font-weight: 700; line-height: 1.8; }
-
     .billing-summary { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; }
     .billing-stat { padding: 14px 16px; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; }
     .billing-stat span { display: block; color: var(--muted); font-size: 11.5px; font-weight: 800; }
@@ -87,7 +81,6 @@
     }
     @media (max-width: 640px) {
       .dash-main { padding: 20px 14px 48px; }
-      .price-explainer { flex-direction: column; align-items: flex-start; }
       .billing-summary { grid-template-columns: 1fr 1fr; }
       .employer-footer { grid-template-columns: 1fr; }
     }
@@ -146,13 +139,6 @@
       <section class="admin-hero">
         <h1>料金・お支払い</h1>
         <p>求人掲載・応募受付・メッセージのご利用は無料です。成功報酬は採用が成立した場合のみ発生します。</p>
-      </section>
-
-      <section class="panel-card">
-        <div class="price-explainer">
-          <div><span class="label">成功報酬</span><div class="amount">1名採用あたり3,300円<small>税込</small></div></div>
-          <p class="note">求人掲載・応募受付・メッセージ利用は無料です。採用が成立した場合のみ、採用人数 × 3,300円（税込）を請求します。複数名を採用した場合は、3,300円 × 採用人数で計算します（例：2名採用 6,600円、3名採用 9,900円）。</p>
-        </div>
       </section>
 
       <section class="panel-card">

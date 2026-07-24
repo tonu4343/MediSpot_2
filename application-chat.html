@@ -14,7 +14,6 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 .chat-head{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap;padding:22px 24px;background:linear-gradient(105deg,#f2f9ff,#effff6);border-bottom:1px solid #d9e8f2}
 .chat-head h1{margin:5px 0;color:var(--blue-dark);font-size:22px}
 .chat-head p{margin:0;color:var(--muted);font-size:12px;font-weight:800}
-#scheduleInfo{margin-top:6px!important;color:var(--blue-dark)!important;font-weight:900!important}
 .status{display:inline-flex;min-height:26px;align-items:center;padding:0 11px;color:var(--blue);background:#fff;border:1px solid #b9dbf5;border-radius:999px;font-size:11px;font-weight:900}
 .status.status-selection{color:#b5670f;background:#fff6e9;border-color:#f2cf9c}
 .status.status-hired{color:var(--green-dark);background:#ecfff5;border-color:#b8ebcf}
@@ -23,8 +22,6 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 .status.status-rejected{color:#b3261e;background:#fdecea;border-color:#f3b6b0}
 .chat-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .btn-danger-outline{color:#b3261e;background:#fff;border:1px solid #f3b6b0}
-.date-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.date-form input{min-height:40px;padding:0 10px;color:#102338;background:#fff;border:1px solid #cfdfe9;border-radius:8px;font:inherit;font-size:13px}
 .conversation{display:grid;align-content:start;gap:13px;min-height:390px;max-height:540px;overflow:auto;padding:24px;background:#f8fbfd}
 .bubble{align-self:start;max-width:min(72%,620px);padding:12px 15px;background:#fff;border:1px solid #d9e7f0;border-radius:4px 14px 14px 14px;box-shadow:0 4px 12px rgba(0,63,125,.05)}
 .bubble.mine{justify-self:end;color:#fff;background:linear-gradient(135deg,var(--blue),#1683c9);border:0;border-radius:14px 4px 14px 14px}
@@ -42,7 +39,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 .notice.show{display:block;color:#067044;background:#eafff3;border:1px solid #a8e4c2}
 .notice.error{display:block;color:#9d2d24;background:#fff2f0;border:1px solid #f1bbb5}
 .safety{padding:12px 20px;color:#49667d;background:#fffdf3;border-top:1px solid #efe5bc;font-size:11px;line-height:1.6;font-weight:800}
-@media(max-width:680px){.site-header{flex-wrap:wrap}.main-nav{order:3;width:100%;overflow-x:auto;justify-content:flex-start}.chat-shell{width:calc(100% - 24px);padding-top:18px}.chat-head,.composer-row{align-items:flex-start;flex-direction:column}.chat-actions,.chat-actions .btn,.composer-row .btn{width:100%}.date-form{width:100%}.date-form input{flex:1}.conversation{min-height:360px;padding:16px}.bubble{max-width:88%}}
+@media(max-width:680px){.site-header{flex-wrap:wrap}.main-nav{order:3;width:100%;overflow-x:auto;justify-content:flex-start}.chat-shell{width:calc(100% - 24px);padding-top:18px}.chat-head,.composer-row{align-items:flex-start;flex-direction:column}.chat-actions,.chat-actions .btn,.composer-row .btn{width:100%}.conversation{min-height:360px;padding:16px}.bubble{max-width:88%}}
 </style>
 </head>
 <body class="chat-page">
@@ -54,7 +51,7 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
 <main class="chat-shell">
   <article class="chat-card">
     <header class="chat-head">
-      <div><span class="status" id="applicationStatus">読み込み中</span><h1 id="chatTitle">メッセージ</h1><p id="participantText">応募情報を確認しています…</p><p id="scheduleInfo" style="display:none;"></p></div>
+      <div><span class="status" id="applicationStatus">読み込み中</span><h1 id="chatTitle">メッセージ</h1><p id="participantText">応募情報を確認しています…</p></div>
       <div class="chat-actions" id="chatActions"></div>
     </header>
     <section class="conversation" id="conversation" aria-live="polite"><div class="empty">メッセージを読み込んでいます…</div></section>
@@ -94,14 +91,12 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
   function isPreview() { return local && user && String(user.id).includes('preview'); }
 
   // Employer-driven status changes go through a locked-down RPC that only
-  // ever touches status/interview_at/work_start_at, instead of a raw
-  // table update (which would let any column on the row be rewritten).
+  // ever touches status, instead of a raw table update (which would let
+  // any column on the row be rewritten).
   async function applyEmployerStatusUpdate(fields) {
     const rpcResult = await client.rpc('employer_update_application_status', {
       p_application_id: id,
-      p_status: fields.status,
-      p_interview_at: fields.interview_at || null,
-      p_work_start_at: fields.work_start_at || null
+      p_status: fields.status
     });
     if (rpcResult.error) return { error: rpcResult.error };
     return client.from('seeker_applications').select('*').eq('id', id).maybeSingle();
@@ -145,7 +140,6 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
   }
 
   function hireApplicant() { updateStatus({ status: 'hired' }, null, '採用を確定しました。'); }
-  function startInterviewScheduling() { updateStatus({ status: 'interview_scheduling' }, null, '面接調整中に更新しました。'); }
   function proposeOffer() { updateStatus({ status: 'offer_pending' }, null, '採用承諾待ちに更新しました。'); }
   function startWork() { updateStatus({ status: 'working' }, null, '勤務中に更新しました。'); }
   function markCompleted() { updateStatus({ status: 'completed' }, '完了として確定します。よろしいですか？', '完了として更新しました。'); }
@@ -160,31 +154,15 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     location.href = 'employer-applications.html';
   }
 
-  function confirmInterview(event) {
-    event.preventDefault();
-    const value = document.getElementById('interviewAtInput').value;
-    if (!value) return;
-    updateStatus({ status: 'interview_scheduled', interview_at: new Date(value).toISOString() }, null, '面接日時を確定しました。');
-  }
-  function confirmWorkStart(event) {
-    event.preventDefault();
-    const value = document.getElementById('workStartInput').value;
-    if (!value) return;
-    updateStatus({ status: 'work_scheduled', work_start_at: value }, null, '勤務開始日を設定しました。');
-  }
-
   function actionButton(id, label, extraClass) { return '<button class="btn ' + (extraClass || 'btn-green') + '" id="' + id + '" type="button">' + label + '</button>'; }
 
   function buildActions(app) {
     const status = app.status;
     const parts = [];
     if (role === 'employer') {
-      if (status === 'screening') { parts.push(actionButton('startInterviewButton', '面接を調整する')); parts.push(actionButton('cancelStartButton', '選考開始をキャンセル', 'btn-danger-outline')); }
-      if (status === 'interview_scheduling') parts.push('<form class="date-form" id="interviewForm"><input type="datetime-local" id="interviewAtInput" required><button class="btn btn-green" type="submit">面接日時を確定する</button></form>');
-      if (status === 'interview_scheduled') parts.push(actionButton('offerButton', '内定を提示する'));
+      if (status === 'screening') { parts.push(actionButton('offerButton', '内定を提示する')); parts.push(actionButton('cancelStartButton', '選考開始をキャンセル', 'btn-danger-outline')); }
       if (status === 'offer_pending') parts.push(actionButton('hireButton', '採用を確定する'));
-      if (status === 'hired') parts.push('<form class="date-form" id="workStartForm"><input type="date" id="workStartInput" required><button class="btn btn-green" type="submit">勤務開始日を設定する</button></form>');
-      if (status === 'work_scheduled') parts.push(actionButton('startWorkButton', '勤務を開始する'));
+      if (status === 'hired') parts.push(actionButton('startWorkButton', '勤務を開始する'));
       if (status === 'working') parts.push(actionButton('completeButton', '完了にする'));
       if (window.MEDISPOT_STATUS.isPreHire(status)) parts.push(actionButton('rejectButton', '不採用にする', 'btn-danger-outline'));
       if (window.MEDISPOT_STATUS.isCancelable(status)) parts.push(actionButton('cancelButton', 'キャンセルする', 'btn-danger-outline'));
@@ -206,15 +184,9 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     statusEl.className = 'status ' + window.MEDISPOT_STATUS.cssClass(app.status);
     document.getElementById('chatTitle').textContent = app.job_title || '応募メッセージ';
     document.getElementById('participantText').textContent = role === 'employer' ? (app.seeker_name || '求職者') + 'さんとのメッセージ' : (app.facility_name || '医療機関') + 'とのメッセージ';
-    const scheduleEl = document.getElementById('scheduleInfo');
-    const scheduleParts = [];
-    if (app.interview_at) scheduleParts.push('面接日時：' + new Date(app.interview_at).toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
-    if (app.work_start_at) scheduleParts.push('勤務開始日：' + new Date(app.work_start_at + 'T00:00:00').toLocaleDateString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' }));
-    if (scheduleParts.length) { scheduleEl.textContent = scheduleParts.join('　／　'); scheduleEl.style.display = ''; } else { scheduleEl.style.display = 'none'; }
     document.getElementById('roleNav').innerHTML = role === 'employer' ? '<a href="employer-dashboard.html">ダッシュボード</a><a href="employer-applications.html">応募者管理</a>' : '<a href="seeker-dashboard.html">ダッシュボード</a><a href="seeker-applications.html">応募管理</a>';
 
     document.getElementById('chatActions').innerHTML = buildActions(app);
-    wireAction('startInterviewButton', startInterviewScheduling);
     wireAction('offerButton', proposeOffer);
     wireAction('hireButton', hireApplicant);
     wireAction('startWorkButton', startWork);
@@ -223,8 +195,6 @@ body.chat-page{background:linear-gradient(180deg,#f4faff,#fff 52%,#f2faf8);color
     wireAction('withdrawButton', withdrawApplication);
     wireAction('cancelButton', cancelHire);
     wireAction('cancelStartButton', cancelSelectionStart);
-    const interviewForm = document.getElementById('interviewForm'); if (interviewForm) interviewForm.addEventListener('submit', confirmInterview);
-    const workStartForm = document.getElementById('workStartForm'); if (workStartForm) workStartForm.addEventListener('submit', confirmWorkStart);
 
     const chatOpen = window.MEDISPOT_STATUS.isChatOpen(app.status);
     form.style.display = chatOpen ? '' : 'none';

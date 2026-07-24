@@ -190,5 +190,5 @@ test("seeker_applications: an employer cannot rewrite applicant-authored fields 
 
   const { data: afterRpc } = await admin.from("seeker_applications").select("status,seeker_name").eq("id", application.id).single();
   assert.equal(afterRpc.status, "screening", "status should be updated via the RPC");
-  assert.equal(afterRpc.seeker_name, "本物の応募者名", "seeker_name must still be untouched - the RPC only ever writes status/interview_at/work_start_at");
+  assert.equal(afterRpc.seeker_name, "本物の応募者名", "seeker_name must still be untouched - the RPC only ever writes status");
 });
