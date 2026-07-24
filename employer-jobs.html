@@ -63,9 +63,10 @@
     .job-row h3 a:hover { text-decoration: underline; }
     .job-row p.job-meta { margin: 0; color: var(--muted); font-size: 12.5px; font-weight: 700; }
     .job-row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; min-width: 168px; }
-    .job-apply-count { text-align: right; white-space: nowrap; }
+    .job-apply-count { display: block; text-align: right; white-space: nowrap; }
     .job-apply-count b { display: block; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
     .job-apply-count span { color: var(--muted); font-size: 10.5px; font-weight: 800; }
+    a.job-apply-count:hover b { text-decoration: underline; }
     .job-row-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
     .job-action-btn { min-height: 30px; padding: 0 12px; display: inline-flex; align-items: center; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; cursor: pointer; white-space: nowrap; }
     .job-action-btn:hover { background: #eaf5ff; }
@@ -217,7 +218,9 @@
           const href = editable ? "employer-job-detail.html?id=" + encodeURIComponent(job.id) : "employer-job-new.html";
           const applyCount = job.id ? allApplications.filter(function (app) { return app.job_id === job.id; }).length : 0;
           const actions = editable ? '<div class="job-row-actions"><a class="job-action-btn" href="' + href + '">編集</a><button class="job-action-btn" type="button" data-action="toggle" data-id="' + esc(job.id) + '">' + (closed ? "募集を再開" : "募集を終了") + '</button><button class="job-action-btn danger" type="button" data-action="delete" data-id="' + esc(job.id) + '">削除</button></div>' : '';
-          return '<div class="job-row"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3><a href="' + href + '">' + esc(job.title || "医療求人") + '</a></h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><div class="job-row-side"><div class="job-apply-count"><b>' + applyCount + '名</b><span>応募</span></div>' + actions + '</div></div>';
+          const applyCountTag = editable ? "a" : "div";
+          const applyCountHref = editable ? ' href="employer-applications.html?job=' + encodeURIComponent(job.id) + '"' : '';
+          return '<div class="job-row"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3><a href="' + href + '">' + esc(job.title || "医療求人") + '</a></h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><div class="job-row-side"><' + applyCountTag + ' class="job-apply-count"' + applyCountHref + '><b>' + applyCount + '名</b><span>応募</span></' + applyCountTag + '>' + actions + '</div></div>';
         }).join("");
       }
 
