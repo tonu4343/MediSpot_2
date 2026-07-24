@@ -90,29 +90,16 @@
     .message-item p { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #4e6578; font-size: 12.5px; font-weight: 700; }
     .message-empty { padding: 26px 16px; text-align: center; color: var(--muted); background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; font-size: 12.5px; font-weight: 800; }
 
-    .job-filter-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .job-filter-tab { min-height: 30px; padding: 0 14px; color: var(--muted); background: #f1f7fc; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; font-weight: 900; cursor: pointer; }
-    .job-filter-tab:hover { color: var(--blue-dark); }
-    .job-filter-tab.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); border-color: transparent; }
     .job-list { display: grid; gap: 12px; }
     .job-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 15px 16px; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; transition: box-shadow .15s ease, transform .15s ease; }
-    .job-row:hover { box-shadow: 0 10px 22px rgba(0,63,125,.1); }
+    .job-row:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(0,63,125,.1); }
     .job-tag { display: inline-flex; align-items: center; min-height: 22px; padding: 0 9px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 10.5px; font-weight: 900; }
     .job-tag.closed { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
-    .job-row h3 { margin: 7px 0 3px; font-size: 15px; font-weight: 900; }
-    .job-row h3 a { color: var(--blue-dark); }
-    .job-row h3 a:hover { text-decoration: underline; }
+    .job-row h3 { margin: 7px 0 3px; color: var(--blue-dark); font-size: 15px; font-weight: 900; }
     .job-row p.job-meta { margin: 0; color: var(--muted); font-size: 12px; font-weight: 700; }
-    .job-row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
     .job-apply-count { text-align: right; white-space: nowrap; }
     .job-apply-count b { display: block; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
     .job-apply-count span { color: var(--muted); font-size: 10.5px; font-weight: 800; }
-    .job-row-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
-    .job-action-btn { min-height: 28px; padding: 0 11px; display: inline-flex; align-items: center; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11px; font-weight: 900; cursor: pointer; white-space: nowrap; }
-    .job-action-btn:hover { background: #eaf5ff; }
-    .job-action-btn.danger { color: #b13a32; border-color: #e6aaa5; }
-    .job-action-btn.danger:hover { background: #fff2f0; }
-    .job-action-btn:disabled { opacity: .6; cursor: default; }
     .job-empty { padding: 30px 18px; text-align: center; background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; }
     .job-empty strong { display: block; color: var(--blue-dark); font-size: 15px; }
     .job-empty span { display: block; margin: 6px 0 16px; color: var(--muted); font-size: 12.5px; font-weight: 700; }
@@ -176,9 +163,7 @@
       .welcome-photo img { -webkit-mask-image: none; mask-image: none; }
       .stats-grid, .quick-actions, .tips-grid { grid-template-columns: 1fr 1fr; }
       .job-row { grid-template-columns: 1fr; }
-      .job-row-side { align-items: flex-start; width: 100%; }
       .job-apply-count { text-align: left; }
-      .job-row-actions { justify-content: flex-start; width: 100%; }
       .employer-footer-cta-inner { position: static; transform: none; max-width: none; padding: 26px 22px; text-align: center; background: linear-gradient(110deg, var(--blue) 0%, var(--green) 100%); }
       .employer-footer { grid-template-columns: 1fr; }
     }
@@ -198,7 +183,7 @@
     <aside class="dash-sidebar" aria-label="求人者メニュー">
       <ul class="side-nav">
         <li><a class="active" href="employer-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a></li>
-        <li><a href="employer-dashboard.html#jobs"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="employer-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
         <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>応募者管理</a></li>
         <li><a href="employer-dashboard.html#messages"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ<span class="nav-badge" id="sideMsgBadge" hidden>0</span></a></li>
         <li><a href="employer-hires.html"><svg viewBox="0 0 24 24"><path d="M9 12.5l2 2 4-4.5"/><circle cx="12" cy="12" r="9"/></svg>採用管理</a></li>
@@ -253,12 +238,7 @@
 
       <section class="row-2col">
         <article class="panel-card" id="jobs">
-          <div class="section-title-row"><h2>求人管理</h2><a class="section-link" href="employer-job-new.html">求人を新規作成 ›</a></div>
-          <div class="job-filter-tabs" id="jobFilterTabs">
-            <button type="button" class="job-filter-tab active" data-filter="all">すべて</button>
-            <button type="button" class="job-filter-tab" data-filter="open">掲載中</button>
-            <button type="button" class="job-filter-tab" data-filter="closed">募集終了</button>
-          </div>
+          <div class="section-title-row"><h2>求人管理</h2><a class="section-link" href="employer-jobs.html">すべて見る ›</a></div>
           <div class="job-list" id="jobList"></div>
         </article>
         <aside class="panel-card">
@@ -309,11 +289,6 @@
         { id: null, title: "スポット看護師募集", type: "スポット", location: "東京都 新宿区", work_date: "来週金曜 9:00-17:00", salary: "日給 18,000円〜22,000円" },
         { id: null, title: "臨床検査技師 業務委託", type: "業務委託", location: "神奈川県 横浜市", work_date: "週1日から相談", salary: "日給 16,000円〜20,000円" }
       ];
-      let allJobs = [];
-      let allApplications = [];
-      let isDemoJobs = false;
-      let activeJobFilter = "all";
-      let activeUser = null;
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
       function initial(name) { return (name || "M").trim().charAt(0).toUpperCase() || "M"; }
@@ -325,32 +300,18 @@
         const adminNavItem = document.getElementById("adminNavItem");
         if (adminNavItem) adminNavItem.hidden = !profile?.is_admin;
       }
-      function filterJobs(jobs, filter) {
-        if (filter === "open") return jobs.filter(function (job) { return job.status !== "closed"; });
-        if (filter === "closed") return jobs.filter(function (job) { return job.status === "closed"; });
-        return jobs;
-      }
       function renderJobs(jobs, applications, demo) {
-        allJobs = Array.isArray(jobs) ? jobs : [];
-        allApplications = applications || [];
-        isDemoJobs = !!demo;
-        const openCount = allJobs.filter(function (job) { return job.status !== "closed"; }).length;
+        const items = Array.isArray(jobs) ? jobs : [];
+        const openCount = items.filter(function (job) { return job.status !== "closed"; }).length;
         text("openJobs", String(openCount));
         text("openJobsHint", "募集中 " + openCount + "件");
-        renderJobList();
-      }
-      function renderJobList() {
         const jobList = document.getElementById("jobList");
-        if (!allJobs.length) { jobList.innerHTML = '<div class="job-empty"><strong>掲載中の求人はありません</strong><span>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</span><a class="btn btn-green" href="employer-job-new.html">新しい求人を作成</a></div>'; return; }
-        const items = filterJobs(allJobs, activeJobFilter);
-        if (!items.length) { jobList.innerHTML = '<div class="job-empty"><strong>該当する求人はありません</strong><span>フィルターを変更してご確認ください。</span></div>'; return; }
-        jobList.innerHTML = items.map(function (job) {
+        if (!items.length) { jobList.innerHTML = '<div class="job-empty"><strong>掲載中の求人はありません</strong><span>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</span><a class="btn btn-green" href="employer-job-new.html">新しい求人を作成</a></div>'; return; }
+        jobList.innerHTML = items.slice(0, 5).map(function (job) {
           const closed = job.status === "closed";
-          const editable = !isDemoJobs && !!job.id;
-          const href = editable ? "employer-job-detail.html?id=" + encodeURIComponent(job.id) : "employer-job-new.html";
-          const applyCount = job.id ? allApplications.filter(function (app) { return app.job_id === job.id; }).length : 0;
-          const actions = editable ? '<div class="job-row-actions"><a class="job-action-btn" href="' + href + '">編集</a><button class="job-action-btn" type="button" data-action="toggle" data-id="' + esc(job.id) + '">' + (closed ? "募集を再開" : "募集を終了") + '</button><button class="job-action-btn danger" type="button" data-action="delete" data-id="' + esc(job.id) + '">削除</button></div>' : '';
-          return '<div class="job-row"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3><a href="' + href + '">' + esc(job.title || "医療求人") + '</a></h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><div class="job-row-side"><div class="job-apply-count"><b>' + applyCount + '名</b><span>応募</span></div>' + actions + '</div></div>';
+          const href = demo || !job.id ? "employer-job-new.html" : "employer-job-detail.html?id=" + encodeURIComponent(job.id);
+          const applyCount = job.id ? (applications || []).filter(function (app) { return app.job_id === job.id; }).length : 0;
+          return '<a class="job-row" href="' + href + '"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3>' + esc(job.title || "医療求人") + '</h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><div class="job-apply-count"><b>' + applyCount + '名</b><span>応募</span></div></a>';
         }).join("");
       }
       function renderMessages(messages, applications) {
@@ -383,7 +344,6 @@
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "login.html?role=employer"; return; }
         if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, "employer"))) return;
-        activeUser = user;
         const profileResult = await supabaseClient.from("employer_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
         if (profileResult.error || !profileResult.data) {
           await supabaseClient.auth.signOut();
@@ -411,40 +371,6 @@
       }
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
       document.querySelector(".bell-btn").addEventListener("click", function () { window.location.href = "employer-applications.html"; });
-      document.getElementById("jobFilterTabs").addEventListener("click", function (event) {
-        const tab = event.target.closest(".job-filter-tab");
-        if (!tab) return;
-        activeJobFilter = tab.dataset.filter;
-        document.querySelectorAll(".job-filter-tab").forEach(function (t) { t.classList.toggle("active", t === tab); });
-        renderJobList();
-      });
-      document.getElementById("jobList").addEventListener("click", async function (event) {
-        const btn = event.target.closest("[data-action]");
-        if (!btn) return;
-        const id = btn.getAttribute("data-id");
-        const job = allJobs.find(function (j) { return j.id === id; });
-        if (!job) return;
-        if (btn.dataset.action === "toggle") {
-          const next = job.status === "closed" ? "open" : "closed";
-          if (next === "closed" && !window.confirm("この求人の募集を終了しますか？\n終了すると求職者の検索結果に表示されなくなり、新しい応募を受け付けなくなります。")) return;
-          if (!supabaseClient || !activeUser) { job.status = next; renderJobList(); return; }
-          btn.disabled = true;
-          const result = await supabaseClient.from("jobs").update({ status: next }).eq("id", id).eq("employer_id", activeUser.id).select().single();
-          btn.disabled = false;
-          if (result.error) { console.error(result.error); window.alert("募集状態を変更できませんでした。"); return; }
-          job.status = result.data.status;
-          renderJobList();
-        } else if (btn.dataset.action === "delete") {
-          if (!window.confirm("この求人を削除しますか？この操作は取り消せません。")) return;
-          if (!supabaseClient || !activeUser) { allJobs = allJobs.filter(function (j) { return j.id !== id; }); renderJobList(); return; }
-          btn.disabled = true;
-          const result = await supabaseClient.from("jobs").delete().eq("id", id).eq("employer_id", activeUser.id);
-          btn.disabled = false;
-          if (result.error) { console.error(result.error); window.alert("求人を削除できませんでした。応募がある求人は削除できない場合があります。"); return; }
-          allJobs = allJobs.filter(function (j) { return j.id !== id; });
-          renderJobList();
-        }
-      });
       loadDashboard().catch(function (error) { console.error(error); applyProfile(null); renderJobs([], []); renderStatusSummary([]); renderMessages([], []); });
     })();
   </script>

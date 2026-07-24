@@ -76,7 +76,7 @@
 <body class="job-new-page">
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Medi Job ホーム"><span class="brand-mark" aria-hidden="true"><span></span></span><span class="brand-text"><strong>Medical Spot Job</strong><small aria-hidden="true"></small></span></a>
-    <nav class="main-nav" aria-label="メインナビゲーション"><a href="employer-dashboard.html">マイページ</a><a href="employer-job-new.html">求人を作成</a><a href="employer-dashboard.html#jobs">掲載求人管理</a></nav>
+    <nav class="main-nav" aria-label="メインナビゲーション"><a href="employer-dashboard.html">マイページ</a><a href="employer-job-new.html">求人を作成</a><a href="employer-jobs.html">掲載求人管理</a></nav>
     <div class="header-actions"><button class="btn btn-outline" id="logoutButton" type="button">ログアウト</button></div>
   </header>
 
@@ -206,7 +206,7 @@
         closePreview();
         localStorage.removeItem("medi_job_employer_job_draft");
         message("求人を掲載しました。求人管理画面へ移動します。", false);
-        setTimeout(function () { window.location.href = "employer-dashboard.html#jobs"; }, 900);
+        setTimeout(function () { window.location.href = "employer-jobs.html"; }, 900);
       });
       document.getElementById("previewBack").addEventListener("click", closePreview);
       document.getElementById("previewBackdrop").addEventListener("click", closePreview);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>採用管理 | Medi Job</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#005bac"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="icon" href="assets/icon-32.png">
+  <title>求人管理 | Medi Job</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#005bac"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png"><link rel="icon" href="assets/icon-32.png">
   <link rel="stylesheet" href="styles.css">
   <style>
     body.employer-dashboard-page { color: var(--ink); background: #f5f9fc; }
@@ -32,38 +32,48 @@
 
     .dash-main { min-width: 0; max-width: 1100px; margin: 0 auto; padding: 26px clamp(16px,2.6vw,34px) 60px; }
 
-    .admin-hero { margin-bottom: 22px; }
+    .admin-hero { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
     .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.6vw,28px); font-weight: 900; }
-    .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; }
+    .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; max-width: 640px; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
     .stat-card { padding: 18px 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); }
     .stat-card span { color: var(--muted); font-size: 12px; font-weight: 900; }
     .stat-card strong { display: block; margin-top: 6px; font-size: 28px; line-height: 1; font-weight: 900; }
-    .stat-card.stat-hired strong { color: var(--green-dark); }
-    .stat-card.stat-work-scheduled strong { color: #0c8a8f; }
-    .stat-card.stat-working strong { color: var(--blue); }
-    .stat-card.stat-completed strong { color: #5b6270; }
+    .stat-card.stat-open strong { color: var(--green-dark); }
+    .stat-card.stat-closed strong { color: #657585; }
+    .stat-card.stat-applicants strong { color: var(--blue); }
 
     .panel-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); padding: 22px; }
     .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
     .panel-head h2 { margin: 0; color: var(--blue-dark); font-size: 17px; font-weight: 900; }
 
-    .hire-list { display: grid; gap: 14px; }
-    .hire-card { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; gap: 16px; align-items: start; padding: 18px; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; }
-    .hire-avatar { display: grid; place-items: center; width: 48px; height: 48px; color: #fff; background: var(--blue); border-radius: 50%; font-size: 16px; font-weight: 900; }
-    .hire-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .status-pill { display: inline-flex; align-items: center; min-height: 24px; padding: 0 11px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; color: var(--green-dark); background: #ecfff5; border: 1px solid #b8ebcf; }
-    .status-pill.status-working { color: var(--blue); background: #edf7ff; border-color: #b9dbf5; }
-    .status-pill.status-completed { color: #5b6270; background: #eef1f5; border-color: #ccd3dd; }
-    .pay-pill { display: inline-flex; align-items: center; min-height: 24px; padding: 0 11px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; color: var(--blue); background: #edf7ff; border: 1px solid #b9dbf5; }
-    .pay-pill.paid { color: var(--green-dark); background: #ecfff5; border-color: #b8ebcf; }
-    .hire-card h3 { margin: 0 0 4px; color: var(--blue-dark); font-size: 16.5px; font-weight: 900; }
-    .hire-card h3 small { color: var(--muted); font-size: 12.5px; font-weight: 800; }
-    .hire-meta { margin: 0; color: var(--muted); font-size: 12.5px; font-weight: 700; line-height: 1.7; }
-    .hire-actions { display: flex; flex-direction: column; gap: 8px; min-width: 150px; }
-    .hire-actions .btn { width: 100%; min-height: 38px; font-size: 12.5px; }
+    .job-filter-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .job-filter-tab { min-height: 32px; padding: 0 15px; color: var(--muted); background: #f1f7fc; border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; font-weight: 900; cursor: pointer; }
+    .job-filter-tab:hover { color: var(--blue-dark); }
+    .job-filter-tab.active { color: #fff; background: linear-gradient(120deg, var(--blue), var(--blue-2)); border-color: transparent; }
+
+    .job-list { display: grid; gap: 14px; }
+    .job-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 16px; align-items: center; padding: 18px; background: #f8fcff; border: 1px solid #e1eef8; border-radius: 10px; transition: box-shadow .15s ease; }
+    .job-row:hover { box-shadow: 0 10px 22px rgba(0,63,125,.1); }
+    .job-tag { display: inline-flex; align-items: center; min-height: 22px; padding: 0 9px; color: var(--green-dark); background: #effff6; border: 1px solid #8bdbad; border-radius: 999px; font-size: 10.5px; font-weight: 900; }
+    .job-tag.closed { color: #657585; background: #f2f5f7; border-color: #ccd6dc; }
+    .job-row h3 { margin: 7px 0 3px; font-size: 16px; font-weight: 900; }
+    .job-row h3 a { color: var(--blue-dark); }
+    .job-row h3 a:hover { text-decoration: underline; }
+    .job-row p.job-meta { margin: 0; color: var(--muted); font-size: 12.5px; font-weight: 700; }
+    .job-row-side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; min-width: 168px; }
+    .job-apply-count { text-align: right; white-space: nowrap; }
+    .job-apply-count b { display: block; color: var(--blue-dark); font-size: 18px; font-weight: 900; }
+    .job-apply-count span { color: var(--muted); font-size: 10.5px; font-weight: 800; }
+    .job-row-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+    .job-action-btn { min-height: 30px; padding: 0 12px; display: inline-flex; align-items: center; color: var(--blue); background: #fff; border: 1px solid #acd3f1; border-radius: 7px; font-size: 11.5px; font-weight: 900; cursor: pointer; white-space: nowrap; }
+    .job-action-btn:hover { background: #eaf5ff; }
+    .job-action-btn.danger { color: #b13a32; border-color: #e6aaa5; }
+    .job-action-btn.danger:hover { background: #fff2f0; }
+    .job-action-btn:disabled { opacity: .6; cursor: default; }
     .table-empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; background: #f7fbff; border: 1px dashed #bcd8eb; border-radius: 10px; }
+    .table-empty strong { display: block; margin-bottom: 6px; color: var(--blue-dark); font-size: 15px; }
 
     .employer-footer { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) 1.1fr; gap: 28px; padding: 40px clamp(20px,5vw,64px) 18px; color: var(--ink); background: #fff; border-top: 1px solid var(--line); }
     .employer-footer .footer-brand p { max-width: 250px; margin: 12px 0 0; color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.7; }
@@ -89,9 +99,9 @@
     @media (max-width: 640px) {
       .dash-main { padding: 20px 14px 48px; }
       .stats-grid { grid-template-columns: 1fr; }
-      .hire-card { grid-template-columns: 40px minmax(0,1fr); }
-      .hire-actions { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; min-width: 0; margin-top: 6px; }
-      .hire-actions .btn { flex: 1 1 140px; width: auto; }
+      .job-row { grid-template-columns: 1fr; }
+      .job-row-side { align-items: flex-start; width: 100%; }
+      .job-row-actions { justify-content: flex-start; width: 100%; }
     }
   </style>
 </head>
@@ -107,11 +117,11 @@
   <div class="dash-body">
     <aside class="dash-sidebar" aria-label="求人者メニュー">
       <ul class="side-nav">
-        <li><a href="employer-dashboard.html"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>ダッシュボード</a></li>
-        <li><a href="employer-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
+        <li><a href="employer-dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>ダッシュボード</a></li>
+        <li><a class="active" href="employer-jobs.html"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>求人管理</a></li>
         <li><a href="employer-applications.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15 20c.2-2.3 1.6-4.2 3.5-5"/></svg>応募者管理</a></li>
         <li><a href="employer-dashboard.html#messages"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>メッセージ</a></li>
-        <li><a class="active" href="employer-hires.html"><svg viewBox="0 0 24 24"><path d="M9 12.5l2 2 4-4.5"/><circle cx="12" cy="12" r="9"/></svg>採用管理</a></li>
+        <li><a href="employer-hires.html"><svg viewBox="0 0 24 24"><path d="M9 12.5l2 2 4-4.5"/><circle cx="12" cy="12" r="9"/></svg>採用管理</a></li>
         <li><a href="employer-profile.html"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="7" height="13"/><rect x="13" y="3" width="7" height="18"/><line x1="6" y1="11" x2="7" y2="11"/><line x1="6" y1="14" x2="7" y2="14"/><line x1="15" y1="7" x2="18" y2="7"/><line x1="15" y1="11" x2="18" y2="11"/></svg>施設情報</a></li>
         <li><a href="employer-payments.html"><svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>料金・お支払い</a></li>
         <li><a href="employer-analytics.html"><svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="8"/><rect x="11" y="7" width="3" height="13"/><rect x="16" y="3" width="3" height="17"/></svg>分析・レポート</a></li>
@@ -130,20 +140,24 @@
 
     <main class="dash-main">
       <section class="admin-hero">
-        <h1>採用管理</h1>
-        <p>採用が決まった方の勤務状況（採用決定・勤務予定・勤務中・完了）と、成功報酬のお支払い状況を確認できます。</p>
+        <div><h1>求人管理</h1><p>掲載中・募集終了の求人をまとめて確認し、編集や募集状態の変更、削除ができます。</p></div>
+        <a class="btn btn-green" href="employer-job-new.html">求人を新規作成</a>
       </section>
 
-      <section class="stats-grid" aria-label="採用状況">
-        <article class="stat-card stat-hired"><span>採用決定</span><strong id="countHired">0</strong></article>
-        <article class="stat-card stat-work-scheduled"><span>勤務予定</span><strong id="countWorkScheduled">0</strong></article>
-        <article class="stat-card stat-working"><span>勤務中</span><strong id="countWorking">0</strong></article>
-        <article class="stat-card stat-completed"><span>完了</span><strong id="countCompleted">0</strong></article>
+      <section class="stats-grid" aria-label="求人状況">
+        <article class="stat-card stat-open"><span>掲載中</span><strong id="countOpen">0</strong></article>
+        <article class="stat-card stat-closed"><span>募集終了</span><strong id="countClosed">0</strong></article>
+        <article class="stat-card stat-applicants"><span>応募者総数</span><strong id="countApplicants">0</strong></article>
       </section>
 
       <section class="panel-card">
-        <div class="panel-head"><h2>採用者一覧 <span id="hireCount"></span></h2></div>
-        <div class="hire-list" id="hireList"><div class="table-empty">読み込んでいます…</div></div>
+        <div class="panel-head"><h2>求人一覧 <span id="jobCount"></span></h2></div>
+        <div class="job-filter-tabs" id="jobFilterTabs">
+          <button type="button" class="job-filter-tab active" data-filter="all">すべて</button>
+          <button type="button" class="job-filter-tab" data-filter="open">掲載中</button>
+          <button type="button" class="job-filter-tab" data-filter="closed">募集終了</button>
+        </div>
+        <div class="job-list" id="jobList"><div class="table-empty">読み込んでいます…</div></div>
       </section>
     </main>
   </div>
@@ -159,55 +173,69 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script><script src="account-guard.js"></script>
-  <script src="application-status.js"></script>
   <script>
     (function () {
       const config = window.MEDISPOT_SUPABASE || {};
       const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
+      const demoJobs = [
+        { id: null, title: "スポット看護師募集", type: "スポット", location: "東京都 新宿区", work_date: "来週金曜 9:00-17:00", salary: "日給 18,000円〜22,000円", status: "open" },
+        { id: null, title: "臨床検査技師 業務委託", type: "業務委託", location: "神奈川県 横浜市", work_date: "週1日から相談", salary: "日給 16,000円〜20,000円", status: "closed" }
+      ];
+      let allJobs = [];
+      let allApplications = [];
+      let isDemoJobs = false;
+      let activeJobFilter = "all";
+      let activeUser = null;
 
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
-      function initial(name) { return (name || "求").trim().charAt(0).toUpperCase() || "求"; }
-      function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
-      function formatDateTime(value) { return value ? new Date(value).toLocaleString("ja-JP", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : null; }
 
-      function renderCounts(apps) {
-        text("countHired", String(apps.filter(function (a) { return a.status === "hired"; }).length));
-        text("countWorkScheduled", String(apps.filter(function (a) { return a.status === "work_scheduled"; }).length));
-        text("countWorking", String(apps.filter(function (a) { return a.status === "working"; }).length));
-        text("countCompleted", String(apps.filter(function (a) { return a.status === "completed"; }).length));
+      function filterJobs(jobs, filter) {
+        if (filter === "open") return jobs.filter(function (job) { return job.status !== "closed"; });
+        if (filter === "closed") return jobs.filter(function (job) { return job.status === "closed"; });
+        return jobs;
       }
 
-      function renderHires(apps, invoicesByApp) {
-        const list = document.getElementById("hireList");
-        text("hireCount", apps.length ? "(" + apps.length + "件)" : "");
-        if (!apps.length) { list.innerHTML = '<div class="table-empty">まだ採用が確定した応募者はいません。</div>'; return; }
-        list.innerHTML = apps.map(function (a) {
-          const invoice = invoicesByApp[a.id];
-          const payPill = invoice ? '<span class="pay-pill' + (invoice.payment_status === "支払い済み" ? " paid" : "") + '">' + esc(invoice.payment_status) + '</span>' : "";
-          const hiredDate = invoice ? formatDate(invoice.created_at) : formatDate(a.created_at);
-          const extraMeta = [
-            a.work_start_at ? "勤務開始日：" + esc(formatDate(a.work_start_at)) : "",
-            a.interview_at ? "面接日時：" + esc(formatDateTime(a.interview_at)) : ""
-          ].filter(Boolean).join("　／　");
-          return '<article class="hire-card">'
-            + '<span class="hire-avatar">' + esc(initial(a.seeker_name)) + '</span>'
-            + '<div><div class="hire-top"><span class="status-pill ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span>' + payPill + '</div>'
-            + '<h3>' + esc(a.seeker_name || "求職者") + ' <small>／ ' + esc(a.seeker_profession || "医療資格者") + '</small></h3>'
-            + '<p class="hire-meta">応募求人：' + esc(a.job_title || "医療求人") + '　／　採用日：' + esc(hiredDate) + (extraMeta ? '　／　' + extraMeta : '') + '</p>'
-            + '</div>'
-            + '<div class="hire-actions"><a class="btn btn-outline" href="employer-applicant.html?id=' + encodeURIComponent(a.id) + '">プロフィールを見る</a><a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ・状況更新</a></div>'
-            + '</article>';
+      function renderCounts() {
+        const openCount = allJobs.filter(function (job) { return job.status !== "closed"; }).length;
+        const closedCount = allJobs.filter(function (job) { return job.status === "closed"; }).length;
+        text("countOpen", String(openCount));
+        text("countClosed", String(closedCount));
+        text("countApplicants", String(allApplications.length));
+        text("jobCount", allJobs.length ? "(" + allJobs.length + "件)" : "");
+      }
+
+      function renderJobList() {
+        const jobList = document.getElementById("jobList");
+        if (!allJobs.length) { jobList.innerHTML = '<div class="table-empty"><strong>掲載中の求人はありません</strong>まずは募集条件を登録して、医療資格者とのマッチングを始めましょう。</div>'; return; }
+        const items = filterJobs(allJobs, activeJobFilter);
+        if (!items.length) { jobList.innerHTML = '<div class="table-empty"><strong>該当する求人はありません</strong>フィルターを変更してご確認ください。</div>'; return; }
+        jobList.innerHTML = items.map(function (job) {
+          const closed = job.status === "closed";
+          const editable = !isDemoJobs && !!job.id;
+          const href = editable ? "employer-job-detail.html?id=" + encodeURIComponent(job.id) : "employer-job-new.html";
+          const applyCount = job.id ? allApplications.filter(function (app) { return app.job_id === job.id; }).length : 0;
+          const actions = editable ? '<div class="job-row-actions"><a class="job-action-btn" href="' + href + '">編集</a><button class="job-action-btn" type="button" data-action="toggle" data-id="' + esc(job.id) + '">' + (closed ? "募集を再開" : "募集を終了") + '</button><button class="job-action-btn danger" type="button" data-action="delete" data-id="' + esc(job.id) + '">削除</button></div>' : '';
+          return '<div class="job-row"><div><span class="job-tag' + (closed ? ' closed' : '') + '">' + esc(closed ? "募集終了" : (job.type || "掲載中")) + '</span><h3><a href="' + href + '">' + esc(job.title || "医療求人") + '</a></h3><p class="job-meta">' + esc(job.location || "勤務地未設定") + (job.work_date ? ' / ' + esc(job.work_date) : '') + '</p><p class="job-meta">' + esc(job.salary || "報酬未設定") + '</p></div><div class="job-row-side"><div class="job-apply-count"><b>' + applyCount + '名</b><span>応募</span></div>' + actions + '</div></div>';
         }).join("");
       }
 
+      function renderJobs(jobs, applications, demo) {
+        allJobs = Array.isArray(jobs) ? jobs : [];
+        allApplications = applications || [];
+        isDemoJobs = !!demo;
+        renderCounts();
+        renderJobList();
+      }
+
       async function load() {
-        if (!supabaseClient) { text("topbarFacility", "医療機関"); text("topbarContact", "ご担当者 様"); renderCounts([]); renderHires([], {}); return; }
+        if (!supabaseClient) { text("topbarFacility", "医療機関"); text("topbarContact", "ご担当者 様"); renderJobs(demoJobs, [], true); return; }
         const sessionResult = await supabaseClient.auth.getSession();
         const user = sessionResult.data.session?.user;
         if (!user) { window.location.href = "login.html?role=employer"; return; }
         if (!(await window.MEDISPOT_ACCOUNT_GUARD.check(supabaseClient, user, "employer"))) return;
+        activeUser = user;
         const profileResult = await supabaseClient.from("employer_profiles").select("facility_name,contact_name,is_admin").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
         const profile = profileResult.data || {};
         text("topbarFacility", profile.facility_name || "医療機関");
@@ -215,21 +243,56 @@
         const adminNavItem = document.getElementById("adminNavItem");
         if (adminNavItem) adminNavItem.hidden = !profile.is_admin;
 
-        const appsResult = await supabaseClient.from("seeker_applications").select("id,seeker_name,seeker_profession,job_title,status,created_at,interview_at,work_start_at").eq("employer_id", user.id).in("status", window.MEDISPOT_STATUS.HIRED_PLUS).order("created_at", { ascending: false });
-        const apps = appsResult.error ? [] : (appsResult.data || []);
-        if (appsResult.error) console.error(appsResult.error);
-        renderCounts(apps);
+        const applicationsResult = await supabaseClient.from("seeker_applications").select("id,job_id").eq("employer_id", user.id);
+        const applications = applicationsResult.error ? [] : (applicationsResult.data || []);
+        if (applicationsResult.error) console.error(applicationsResult.error);
 
-        let invoicesByApp = {};
-        if (apps.length) {
-          const invoicesResult = await supabaseClient.from("hire_invoices").select("application_id,payment_status,created_at").eq("employer_id", user.id).in("application_id", apps.map(function (a) { return a.id; }));
-          if (!invoicesResult.error) invoicesByApp = Object.fromEntries((invoicesResult.data || []).map(function (inv) { return [inv.application_id, inv]; }));
-        }
-        renderHires(apps, invoicesByApp);
+        const jobsResult = await supabaseClient.from("jobs").select("*").eq("employer_id", user.id).order("created_at", { ascending: false });
+        if (jobsResult.error) { console.error(jobsResult.error); renderJobs([], applications); }
+        else { renderJobs(jobsResult.data || [], applications); }
       }
 
       document.getElementById("logoutButton").addEventListener("click", async function () { if (supabaseClient) await supabaseClient.auth.signOut(); window.location.href = "login.html"; });
-      load().catch(function (error) { console.error(error); renderCounts([]); renderHires([], {}); });
+
+      document.getElementById("jobFilterTabs").addEventListener("click", function (event) {
+        const tab = event.target.closest(".job-filter-tab");
+        if (!tab) return;
+        activeJobFilter = tab.dataset.filter;
+        document.querySelectorAll(".job-filter-tab").forEach(function (t) { t.classList.toggle("active", t === tab); });
+        renderJobList();
+      });
+
+      document.getElementById("jobList").addEventListener("click", async function (event) {
+        const btn = event.target.closest("[data-action]");
+        if (!btn) return;
+        const id = btn.getAttribute("data-id");
+        const job = allJobs.find(function (j) { return j.id === id; });
+        if (!job) return;
+        if (btn.dataset.action === "toggle") {
+          const next = job.status === "closed" ? "open" : "closed";
+          if (next === "closed" && !window.confirm("この求人の募集を終了しますか？\n終了すると求職者の検索結果に表示されなくなり、新しい応募を受け付けなくなります。")) return;
+          if (!supabaseClient || !activeUser) { job.status = next; renderCounts(); renderJobList(); return; }
+          btn.disabled = true;
+          const result = await supabaseClient.from("jobs").update({ status: next }).eq("id", id).eq("employer_id", activeUser.id).select().single();
+          btn.disabled = false;
+          if (result.error) { console.error(result.error); window.alert("募集状態を変更できませんでした。"); return; }
+          job.status = result.data.status;
+          renderCounts();
+          renderJobList();
+        } else if (btn.dataset.action === "delete") {
+          if (!window.confirm("この求人を削除しますか？この操作は取り消せません。")) return;
+          if (!supabaseClient || !activeUser) { allJobs = allJobs.filter(function (j) { return j.id !== id; }); renderCounts(); renderJobList(); return; }
+          btn.disabled = true;
+          const result = await supabaseClient.from("jobs").delete().eq("id", id).eq("employer_id", activeUser.id);
+          btn.disabled = false;
+          if (result.error) { console.error(result.error); window.alert("求人を削除できませんでした。応募がある求人は削除できない場合があります。"); return; }
+          allJobs = allJobs.filter(function (j) { return j.id !== id; });
+          renderCounts();
+          renderJobList();
+        }
+      });
+
+      load().catch(function (error) { console.error(error); renderJobs([], []); });
     })();
   </script>
 <script src="pwa-register.js"></script></body>
