@@ -1,20 +1,16 @@
-// Shared 12-stage application status pipeline (seeker_applications.status):
-// applied -> screening -> interview_scheduling -> interview_scheduled ->
-// offer_pending -> hired -> work_scheduled -> working -> completed
+// Shared 9-stage application status pipeline (seeker_applications.status):
+// applied -> screening -> offer_pending -> hired -> working -> completed
 // (rejected / withdrawn / cancelled are branch exits).
 // Centralized here because this mapping is used by 10+ pages; keeping a
-// hand-duplicated copy of a 12-branch table in every file is exactly the
+// hand-duplicated copy of a multi-branch table in every file is exactly the
 // kind of duplication this codebase's usual per-page boilerplate pattern
 // doesn't scale to.
 window.MEDISPOT_STATUS = (function () {
   const LABELS = {
     applied: '応募済み',
     screening: '選考中',
-    interview_scheduling: '面接調整中',
-    interview_scheduled: '面接確定',
     offer_pending: '採用承諾待ち',
     hired: '採用決定',
-    work_scheduled: '勤務予定',
     working: '勤務中',
     completed: '完了',
     rejected: '不採用',
@@ -23,20 +19,17 @@ window.MEDISPOT_STATUS = (function () {
   };
   const CLASSES = {
     screening: 'status-selection',
-    interview_scheduling: 'status-selection',
-    interview_scheduled: 'status-selection',
     offer_pending: 'status-selection',
     hired: 'status-hired',
-    work_scheduled: 'status-working',
     working: 'status-working',
     completed: 'status-completed',
     rejected: 'status-rejected',
     withdrawn: 'status-rejected',
     cancelled: 'status-rejected'
   };
-  const PRE_HIRE = ['applied', 'screening', 'interview_scheduling', 'interview_scheduled', 'offer_pending'];
-  const HIRED_PLUS = ['hired', 'work_scheduled', 'working', 'completed'];
-  const CANCELABLE = ['hired', 'work_scheduled', 'working'];
+  const PRE_HIRE = ['applied', 'screening', 'offer_pending'];
+  const HIRED_PLUS = ['hired', 'working', 'completed'];
+  const CANCELABLE = ['hired', 'working'];
   const CLOSED = ['applied', 'rejected', 'withdrawn', 'cancelled'];
 
   function label(status) { return LABELS[status] || status || '-'; }

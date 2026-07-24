@@ -71,7 +71,7 @@
           <div class="form-grid">
             <div class="field full"><label for="facilityName">医療機関名<span class="required">必須</span></label><input class="input" id="facilityName" required placeholder="例）ブランチ総合クリニック"></div>
             <div class="field"><label for="facilityType">施設区分</label><select class="input" id="facilityType"><option value="">選択してください</option><option>病院</option><option>クリニック</option><option>薬局</option><option>介護施設</option><option>健診センター</option><option>訪問看護ステーション</option><option>その他</option></select></div>
-            <div class="field"><label for="staffNeed">募集職種</label><input class="input" id="staffNeed" placeholder="例）看護師、臨床検査技師"></div>
+            <div class="field" hidden><label for="staffNeed">募集職種</label><input class="input" id="staffNeed" placeholder="例）看護師、臨床検査技師"></div>
             <div class="field full"><label for="address">所在地<span class="required">必須</span></label><input class="input" id="address" required placeholder="例）東京都世田谷区〇〇1-2-3"></div>
           </div>
         </section>
@@ -86,7 +86,7 @@
           </div>
         </section>
 
-        <section class="form-section">
+        <section class="form-section" hidden>
           <h2>募集条件</h2>
           <label class="check-label">募集したい雇用形態（複数選択可）</label>
           <div class="check-grid" id="recruitStylesGrid"><label class="check-pill"><input type="checkbox" value="スポット"><span>スポット</span></label><label class="check-pill"><input type="checkbox" value="非常勤"><span>非常勤</span></label><label class="check-pill"><input type="checkbox" value="パート"><span>パート</span></label><label class="check-pill"><input type="checkbox" value="業務委託"><span>業務委託</span></label><label class="check-pill"><input type="checkbox" value="常勤"><span>常勤</span></label></div>

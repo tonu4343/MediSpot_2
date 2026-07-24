@@ -207,11 +207,6 @@
     });
   }
   function formatJaDate(value) { if (!value) return '-'; const d = new Date(value); return Number.isNaN(d.getTime()) ? '-' : d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }); }
-  // work_start_at is a bare "date" column (e.g. "2026-08-05"); parsing it
-  // with `new Date(value)` treats it as UTC midnight and can shift the day
-  // depending on the browser's timezone, so build the local date explicitly.
-  function formatJaDateOnly(value) { if (!value) return null; const parts = String(value).split('-').map(Number); const d = new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1); return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }); }
-  function formatJaDateTime(value) { if (!value) return null; const d = new Date(value); return Number.isNaN(d.getTime()) ? null : d.toLocaleString('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
   function appDetailRow(label, value) { return value ? '<div><dt>' + esc(label) + '</dt><dd>' + esc(value) + '</dd></div>' : ''; }
   async function loadApplicationsPage() {
     const list = document.getElementById('applicationsList'); if (!list) return;
@@ -237,8 +232,6 @@
       const job = jobsById[a.job_id] || {};
       const details = [
         appDetailRow('応募日', formatJaDate(a.created_at)),
-        appDetailRow('面接日時', formatJaDateTime(a.interview_at)),
-        appDetailRow('勤務開始日', formatJaDateOnly(a.work_start_at)),
         appDetailRow('勤務日', job.work_date),
         appDetailRow('勤務地', job.location),
         appDetailRow('給与', formatSalary(job.salary))

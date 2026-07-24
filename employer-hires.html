@@ -36,12 +36,11 @@
     .admin-hero h1 { margin: 0 0 8px; color: var(--blue-dark); font-size: clamp(22px,2.6vw,28px); font-weight: 900; }
     .admin-hero p { margin: 0; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.8; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
     .stat-card { padding: 18px 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,63,125,.06); }
     .stat-card span { color: var(--muted); font-size: 12px; font-weight: 900; }
     .stat-card strong { display: block; margin-top: 6px; font-size: 28px; line-height: 1; font-weight: 900; }
     .stat-card.stat-hired strong { color: var(--green-dark); }
-    .stat-card.stat-work-scheduled strong { color: #0c8a8f; }
     .stat-card.stat-working strong { color: var(--blue); }
     .stat-card.stat-completed strong { color: #5b6270; }
 
@@ -131,12 +130,11 @@
     <main class="dash-main">
       <section class="admin-hero">
         <h1>採用管理</h1>
-        <p>採用が決まった方の勤務状況（採用決定・勤務予定・勤務中・完了）と、成功報酬のお支払い状況を確認できます。</p>
+        <p>採用が決まった方の勤務状況（採用決定・勤務中・完了）と、成功報酬のお支払い状況を確認できます。</p>
       </section>
 
       <section class="stats-grid" aria-label="採用状況">
         <article class="stat-card stat-hired"><span>採用決定</span><strong id="countHired">0</strong></article>
-        <article class="stat-card stat-work-scheduled"><span>勤務予定</span><strong id="countWorkScheduled">0</strong></article>
         <article class="stat-card stat-working"><span>勤務中</span><strong id="countWorking">0</strong></article>
         <article class="stat-card stat-completed"><span>完了</span><strong id="countCompleted">0</strong></article>
       </section>
@@ -170,11 +168,9 @@
       function esc(value) { return String(value || "").replace(/[&<>\"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]; }); }
       function initial(name) { return (name || "求").trim().charAt(0).toUpperCase() || "求"; }
       function formatDate(value) { return value ? String(value).slice(0, 10) : "-"; }
-      function formatDateTime(value) { return value ? new Date(value).toLocaleString("ja-JP", { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : null; }
 
       function renderCounts(apps) {
         text("countHired", String(apps.filter(function (a) { return a.status === "hired"; }).length));
-        text("countWorkScheduled", String(apps.filter(function (a) { return a.status === "work_scheduled"; }).length));
         text("countWorking", String(apps.filter(function (a) { return a.status === "working"; }).length));
         text("countCompleted", String(apps.filter(function (a) { return a.status === "completed"; }).length));
       }
@@ -187,15 +183,11 @@
           const invoice = invoicesByApp[a.id];
           const payPill = invoice ? '<span class="pay-pill' + (invoice.payment_status === "支払い済み" ? " paid" : "") + '">' + esc(invoice.payment_status) + '</span>' : "";
           const hiredDate = invoice ? formatDate(invoice.created_at) : formatDate(a.created_at);
-          const extraMeta = [
-            a.work_start_at ? "勤務開始日：" + esc(formatDate(a.work_start_at)) : "",
-            a.interview_at ? "面接日時：" + esc(formatDateTime(a.interview_at)) : ""
-          ].filter(Boolean).join("　／　");
           return '<article class="hire-card">'
             + '<span class="hire-avatar">' + esc(initial(a.seeker_name)) + '</span>'
             + '<div><div class="hire-top"><span class="status-pill ' + window.MEDISPOT_STATUS.cssClass(a.status) + '">' + esc(window.MEDISPOT_STATUS.label(a.status)) + '</span>' + payPill + '</div>'
             + '<h3>' + esc(a.seeker_name || "求職者") + ' <small>／ ' + esc(a.seeker_profession || "医療資格者") + '</small></h3>'
-            + '<p class="hire-meta">応募求人：' + esc(a.job_title || "医療求人") + '　／　採用日：' + esc(hiredDate) + (extraMeta ? '　／　' + extraMeta : '') + '</p>'
+            + '<p class="hire-meta">応募求人：' + esc(a.job_title || "医療求人") + '　／　採用日：' + esc(hiredDate) + '</p>'
             + '</div>'
             + '<div class="hire-actions"><a class="btn btn-outline" href="employer-applicant.html?id=' + encodeURIComponent(a.id) + '">プロフィールを見る</a><a class="btn btn-blue" href="application-chat.html?id=' + encodeURIComponent(a.id) + '">メッセージ・状況更新</a></div>'
             + '</article>';
@@ -215,7 +207,7 @@
         const adminNavItem = document.getElementById("adminNavItem");
         if (adminNavItem) adminNavItem.hidden = !profile.is_admin;
 
-        const appsResult = await supabaseClient.from("seeker_applications").select("id,seeker_name,seeker_profession,job_title,status,created_at,interview_at,work_start_at").eq("employer_id", user.id).in("status", window.MEDISPOT_STATUS.HIRED_PLUS).order("created_at", { ascending: false });
+        const appsResult = await supabaseClient.from("seeker_applications").select("id,seeker_name,seeker_profession,job_title,status,created_at").eq("employer_id", user.id).in("status", window.MEDISPOT_STATUS.HIRED_PLUS).order("created_at", { ascending: false });
         const apps = appsResult.error ? [] : (appsResult.data || []);
         if (appsResult.error) console.error(appsResult.error);
         renderCounts(apps);

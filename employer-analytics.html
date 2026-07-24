@@ -198,7 +198,7 @@
       const configured = config.url && config.anonKey && !config.url.includes("YOUR_PROJECT_ID") && !config.anonKey.includes("YOUR_SUPABASE_ANON_KEY");
       const supabaseClient = configured && window.supabase ? window.supabase.createClient(config.url, config.anonKey) : null;
 
-      const FUNNEL_STAGES = ["applied", "screening", "interview_scheduling", "interview_scheduled", "offer_pending", "hired", "work_scheduled", "working", "completed"];
+      const FUNNEL_STAGES = ["applied", "screening", "offer_pending", "hired", "working", "completed"];
       const EXIT_STAGES = ["rejected", "withdrawn", "cancelled"];
 
       function text(id, value) { const el = document.getElementById(id); if (el) el.textContent = value == null ? "-" : value; }
